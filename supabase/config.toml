@@ -1,0 +1,40 @@
+# Supabase CLI config — used by CI (`supabase start`) only. There is no local Docker on dev
+# machines (ADR-013); hosted projects are configured in the Supabase dashboard, and settings here
+# do not propagate to them.
+
+project_id = "redux-platform"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 17
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+jwt_expiry = 3600
+enable_signup = false
+
+# ADR-004 — mirror of the hosted setting: Authentication → Hooks → Custom Access Token
+[auth.hook.custom_access_token]
+enabled = true
+uri = "pg-functions://postgres/public/custom_access_token_hook"
+
+[studio]
+enabled = false
+
+[inbucket]
+enabled = false
+
+[analytics]
+enabled = false
