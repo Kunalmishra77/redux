@@ -353,3 +353,22 @@ against a fresh database, which is the property that matters.
 
 **What would change this.** A second developer joining who needs an isolated DB → Supabase
 branching, or Docker/Podman on that machine.
+
+---
+
+## ADR-014 — One repository; the surveyor app lives in `mobile/`
+
+*Added 27 Sep 2026. Supersedes the "two repositories" layout in `../07-build/04-repo-structure.md`.*
+
+**Decision.** The Expo surveyor app lives in `mobile/` inside the platform repo and imports
+`lib/validators/` and `lib/services/` directly. No copied package, no copy-and-check CI script.
+
+**Why.** Pricing and validation logic must be identical on web and mobile. Importing one copy
+makes that true by construction; a scripted copy checked across two repos makes it true only as
+long as the script and the cross-repo CI job keep working.
+
+**Costs we accept.** Metro needs `watchFolders` pointing at the repo root; `lib/services` and
+`lib/validators` must stay free of Next and React Native imports (already a coding standard).
+CI jobs for the web app ignore `mobile/**` changes and vice versa via path filters.
+
+**What would change this.** A separate team owning the mobile app on its own release cadence.

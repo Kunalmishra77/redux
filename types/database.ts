@@ -7,22 +7,16 @@ export type Database = {
           Tables: {
             "assignment_state": {
                   Row: {
-                    "city_id": string,"last_user_id": string | null,"updated_at": string
+                    "last_user_id": string | null,"scope": string,"updated_at": string
                   }
                   Insert: {
-                    "city_id": string,"last_user_id"?: string | null,"updated_at"?: string
+                    "last_user_id"?: string | null,"scope": string,"updated_at"?: string
                   }
                   Update: {
-                    "city_id"?: string,"last_user_id"?: string | null,"updated_at"?: string
+                    "last_user_id"?: string | null,"scope"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     {
-      foreignKeyName: "assignment_state_city_id_fkey"
-      columns: ["city_id"]
-isOneToOne: true
-      referencedRelation: "cities"
-      referencedColumns: ["id"]
-    },{
       foreignKeyName: "assignment_state_last_user_id_fkey"
       columns: ["last_user_id"]
 isOneToOne: false
@@ -61,6 +55,25 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"campaigns": {
+                  Row: {
+                    "ended_on": string | null,"external_id": string | null,"id": string,"name": string,"source_id": string,"spend_to_date": number | null,"started_on": string | null
+                  }
+                  Insert: {
+                    "ended_on"?: string | null,"external_id"?: string | null,"id"?: string,"name": string,"source_id": string,"spend_to_date"?: number | null,"started_on"?: string | null
+                  }
+                  Update: {
+                    "ended_on"?: string | null,"external_id"?: string | null,"id"?: string,"name"?: string,"source_id"?: string,"spend_to_date"?: number | null,"started_on"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "campaigns_source_id_fkey"
+      columns: ["source_id"]
+isOneToOne: false
+      referencedRelation: "lead_sources"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"cities": {
                   Row: {
@@ -113,6 +126,174 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"follow_ups": {
+                  Row: {
+                    "assigned_to": string,"completed_at": string | null,"created_at": string,"due_at": string,"id": string,"lead_id": string,"note": string | null
+                  }
+                  Insert: {
+                    "assigned_to": string,"completed_at"?: string | null,"created_at"?: string,"due_at": string,"id"?: string,"lead_id": string,"note"?: string | null
+                  }
+                  Update: {
+                    "assigned_to"?: string,"completed_at"?: string | null,"created_at"?: string,"due_at"?: string,"id"?: string,"lead_id"?: string,"note"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "follow_ups_assigned_to_fkey"
+      columns: ["assigned_to"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "follow_ups_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"lead_notes": {
+                  Row: {
+                    "author_id": string | null,"body": string,"created_at": string,"id": string,"lead_id": string
+                  }
+                  Insert: {
+                    "author_id"?: string | null,"body": string,"created_at"?: string,"id"?: string,"lead_id": string
+                  }
+                  Update: {
+                    "author_id"?: string | null,"body"?: string,"created_at"?: string,"id"?: string,"lead_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lead_notes_author_id_fkey"
+      columns: ["author_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lead_notes_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"lead_sources": {
+                  Row: {
+                    "code": string,"id": string,"is_active": boolean,"name": string
+                  }
+                  Insert: {
+                    "code": string,"id"?: string,"is_active"?: boolean,"name": string
+                  }
+                  Update: {
+                    "code"?: string,"id"?: string,"is_active"?: boolean,"name"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"lead_status_history": {
+                  Row: {
+                    "actor_id": string | null,"changed_at": string,"from_status": Database["public"]['Enums']["lead_status"] | null,"id": string,"lead_id": string,"note": string | null,"to_status": Database["public"]['Enums']["lead_status"]
+                  }
+                  Insert: {
+                    "actor_id"?: string | null,"changed_at"?: string,"from_status"?: Database["public"]['Enums']["lead_status"] | null,"id"?: string,"lead_id": string,"note"?: string | null,"to_status": Database["public"]['Enums']["lead_status"]
+                  }
+                  Update: {
+                    "actor_id"?: string | null,"changed_at"?: string,"from_status"?: Database["public"]['Enums']["lead_status"] | null,"id"?: string,"lead_id"?: string,"note"?: string | null,"to_status"?: Database["public"]['Enums']["lead_status"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lead_status_history_actor_id_fkey"
+      columns: ["actor_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lead_status_history_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"lead_touches": {
+                  Row: {
+                    "campaign_id": string | null,"id": string,"lead_id": string,"occurred_at": string,"payload": Json | null,"source_id": string
+                  }
+                  Insert: {
+                    "campaign_id"?: string | null,"id"?: string,"lead_id": string,"occurred_at"?: string,"payload"?: Json | null,"source_id": string
+                  }
+                  Update: {
+                    "campaign_id"?: string | null,"id"?: string,"lead_id"?: string,"occurred_at"?: string,"payload"?: Json | null,"source_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lead_touches_campaign_id_fkey"
+      columns: ["campaign_id"]
+isOneToOne: false
+      referencedRelation: "campaigns"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lead_touches_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lead_touches_source_id_fkey"
+      columns: ["source_id"]
+isOneToOne: false
+      referencedRelation: "lead_sources"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"leads": {
+                  Row: {
+                    "assigned_at": string | null,"assigned_to": string | null,"campaign_id": string | null,"city_id": string | null,"created_at": string,"ctwa_clid": string | null,"customer_type": string | null,"email": string | null,"enquirer_role": string | null,"firm_gstin": string | null,"google_lead_id": string | null,"id": string,"lost_note": string | null,"lost_reason_id": string | null,"meta_ad_id": string | null,"meta_form_id": string | null,"meta_leadgen_id": string | null,"name": string | null,"phone": string,"previous_lead_id": string | null,"property_name": string | null,"raw_payload": Json | null,"sla_due_at": string | null,"source_id": string,"status": Database["public"]['Enums']["lead_status"],"unit_count": number | null,"updated_at": string,"utm": Json | null
+                  }
+                  Insert: {
+                    "assigned_at"?: string | null,"assigned_to"?: string | null,"campaign_id"?: string | null,"city_id"?: string | null,"created_at"?: string,"ctwa_clid"?: string | null,"customer_type"?: string | null,"email"?: string | null,"enquirer_role"?: string | null,"firm_gstin"?: string | null,"google_lead_id"?: string | null,"id"?: string,"lost_note"?: string | null,"lost_reason_id"?: string | null,"meta_ad_id"?: string | null,"meta_form_id"?: string | null,"meta_leadgen_id"?: string | null,"name"?: string | null,"phone": string,"previous_lead_id"?: string | null,"property_name"?: string | null,"raw_payload"?: Json | null,"sla_due_at"?: string | null,"source_id": string,"status"?: Database["public"]['Enums']["lead_status"],"unit_count"?: number | null,"updated_at"?: string,"utm"?: Json | null
+                  }
+                  Update: {
+                    "assigned_at"?: string | null,"assigned_to"?: string | null,"campaign_id"?: string | null,"city_id"?: string | null,"created_at"?: string,"ctwa_clid"?: string | null,"customer_type"?: string | null,"email"?: string | null,"enquirer_role"?: string | null,"firm_gstin"?: string | null,"google_lead_id"?: string | null,"id"?: string,"lost_note"?: string | null,"lost_reason_id"?: string | null,"meta_ad_id"?: string | null,"meta_form_id"?: string | null,"meta_leadgen_id"?: string | null,"name"?: string | null,"phone"?: string,"previous_lead_id"?: string | null,"property_name"?: string | null,"raw_payload"?: Json | null,"sla_due_at"?: string | null,"source_id"?: string,"status"?: Database["public"]['Enums']["lead_status"],"unit_count"?: number | null,"updated_at"?: string,"utm"?: Json | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "leads_assigned_to_fkey"
+      columns: ["assigned_to"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "leads_campaign_id_fkey"
+      columns: ["campaign_id"]
+isOneToOne: false
+      referencedRelation: "campaigns"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "leads_city_id_fkey"
+      columns: ["city_id"]
+isOneToOne: false
+      referencedRelation: "cities"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "leads_lost_reason_id_fkey"
+      columns: ["lost_reason_id"]
+isOneToOne: false
+      referencedRelation: "lost_reasons"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "leads_previous_lead_id_fkey"
+      columns: ["previous_lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "leads_source_id_fkey"
+      columns: ["source_id"]
+isOneToOne: false
+      referencedRelation: "lead_sources"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"lost_reasons": {
                   Row: {
@@ -210,7 +391,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "authorize":
+            "assign_lead":
+{ Args: { "p_city_id": string }; Returns: string
+                           },
+"authorize":
 { Args: { "requested": string }; Returns: boolean
                            },
 "current_role_is":
@@ -218,6 +402,9 @@ isOneToOne: false
                            },
 "custom_access_token_hook":
 { Args: { "event": Json }; Returns: Json
+                           },
+"ingest_lead":
+{ Args: { "p_lead": Json }; Returns: Json
                            },
 "is_staff":
 { Args: Record<PropertyKey, never>; Returns: boolean

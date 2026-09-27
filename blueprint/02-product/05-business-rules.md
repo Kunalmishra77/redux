@@ -9,7 +9,7 @@ If a rule here conflicts with a screen mock or a convenient shortcut, **this fil
 
 | ID | Rule | Test |
 |---|---|---|
-| BR-L1 | A lead is identified by **phone number normalised to E.164**. A repeat enquiry from the same number attaches to the existing lead as a new *touch* — it never creates a second lead row | Submit the same number twice from different sources → 1 lead, 2 touches, both sources recorded |
+| BR-L1 | A lead is identified by **phone number normalised to E.164**. A repeat enquiry from the same number attaches to the existing **open** lead as a new *touch* — it never creates a second open lead. If that number's lead is already **won or lost**, the enquiry creates a new lead linked to it by `previous_lead_id` *(amended 27 Sep 2026)* | Submit the same number twice from different sources → 1 lead, 2 touches, both sources recorded. Mark it won, enquire again → a second lead pointing at the first |
 | BR-L2 | Source attribution is **first-touch for the lead**, and every touch keeps its own source | Google Ads then WhatsApp → lead source `google_ads`, touches show both |
 | BR-L3 | `ctwa_clid`, `ad_id`, `form_id`, `campaign_id` are written at creation and are **immutable** | Attempt to update → denied |
 | BR-L4 | Auto-assignment: by city if a `cc_exec` covers it, else round-robin across active executives. Inactive executives are skipped | Deactivate an executive → their next turn is skipped, open leads reassign |
@@ -28,6 +28,7 @@ If a rule here conflicts with a screen mock or a convenient shortcut, **this fil
 | BR-S4 | Server-side integrity: check-in outside a 500 m geofence of the property, or implying impossible travel from the previous check-in, is flagged for admin review | Both cases → flag raised, work continues |
 | BR-S5 | **A fitting cannot be saved without all four photo slots filled** | Save with 3 → rejected in the app, and rejected server-side |
 | BR-S6 | A survey cannot be submitted while any attachment is unsynced | Submit with 1 pending → blocked, "needs attention" shown |
+| BR-S8 | **A survey is always booked against a property** with an address and location. If the lead has no customer yet, booking creates a *prospect* customer + property; OTP approval later **converts** that customer, never recreates it *(added 27 Sep 2026)* | Book a survey for a new lead → customer (prospect) + property exist with lat/lng; approve the quote → same customer id |
 | BR-S7 | Photos are immutable once synced. A correction adds a new photo; it never overwrites | Re-upload same slot → new row, old retained |
 
 ## Assessment & pricing

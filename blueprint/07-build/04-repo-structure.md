@@ -1,7 +1,8 @@
 # 04 — Repository Structure
 
-Two repositories. Scaffold both in Step 0 even though the mobile app is not built until Phase 2 —
-it keeps the shared validators honest from the start.
+**One repository** (ADR-014, 27 Sep 2026 — supersedes "two repositories"). The web platform sits
+at the root; the Expo surveyor app lives in `mobile/` and imports `lib/validators/` and
+`lib/services/` directly. `mobile/` is scaffolded when Phase 2 starts (E8), not before.
 
 ---
 
@@ -79,10 +80,10 @@ gets updated to as-built at handover. A spec in someone's Drive is a spec nobody
 
 ---
 
-## `redux-surveyor-app`
+## `mobile/` — the surveyor app
 
 ```
-redux-surveyor-app/
+mobile/
 ├── app/                             # expo-router
 │   ├── (auth)/login.tsx
 │   ├── (onboarding)/{permissions,battery}.tsx    # C2 — ships in build 1
@@ -102,8 +103,7 @@ redux-surveyor-app/
 │   ├── camera/{capture,compress,stamp}.ts
 │   ├── api/client.ts
 │   ├── components/
-│   ├── services/                    # shared pure logic with the web app
-│   └── hooks/
+│   └── hooks/                       # shared logic is imported from ../lib, not copied
 ├── app.json  eas.json               # targetSdk 36, dataSync FGS
 └── assets/
 ```
@@ -115,10 +115,10 @@ it. Review it more carefully than anything else.
 
 ## Shared code
 
-`lib/validators/` (Zod) and `lib/services/` are duplicated into the mobile app as a copied
-package rather than a workspace dependency. One shared file is not worth monorepo tooling — but
-pricing logic **must** be identical on both sides, so the copy is scripted and checked in CI,
-not done by hand.
+`lib/validators/` (Zod) and `lib/services/` are imported by the mobile app straight from the
+repo root (Metro `watchFolders` + a path alias) — one copy, so pricing logic is identical on both
+sides by construction. Anything under those two folders must stay framework-free (no Next, no
+React Native imports), which the coding standards already require.
 
 ---
 
