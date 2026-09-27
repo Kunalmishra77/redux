@@ -1,0 +1,87 @@
+# E0-S08 — the always-on CI gates (blueprint/06-delivery/06-qa-uat-plan.md §2).
+# A PR cannot merge if any job fails (enable branch protection on `main` → require these checks).
+#
+# Docker runs HERE, on GitHub's runners, and nowhere else (ADR-013): the database gates spin up a
+# throwaway Supabase stack, and the ₹ gate builds our Gotenberg image.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    name: Gates 1–3, 6 · types, lint, tests, client-bundle secret scan
+    runs-on: ubuntu-latest
+    env:
+      # Canary values: gate 6 fails if any of these strings reaches .next/static
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-public-anon-key
+      SUPABASE_SERVICE_ROLE_KEY: ci-canary-service-role-key
+      META_APP_SECRET: ci-canary-meta-app-secret
+      RAZORPAY_KEY_SECRET: ci-canary-razorpay-key-secret
+      RAZORPAY_WEBHOOK_SECRET: ci-canary-razorpay-webhook-secret
+      CRON_SECRET: ci-canary-cron-secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Gate 1 · tsc --noEmit
+        run: pnpm typecheck
+      - name: Gate 2 · ESLint (next lint was removed in Next 16)
+        run: pnpm lint
+      - name: Gate 3 · unit tests
+        run: pnpm test
+      - name: next build
+        run: pnpm build
+      - name: Gate 6 · no server secret in any client bundle (BR-X2, P5)
+        run: node scripts/check-client-bundle.mjs
+
+  db:
+    name: Gates 4–5 · migrations on a fresh DB, RLS + permission tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Gate 4 · migrations apply cleanly to a fresh database
+        run: supabase start -x studio,imgproxy,logflare,vector,edge-runtime,mailpit,realtime,storage-api
+      - name: PL/pgSQL lint
+        run: supabase db lint --local --level error --fail-on error
+      - name: Gate 5 · RLS on every table + permission tests (pgTAP)
+        run: supabase test db
+      - if: always()
+        run: supabase stop --no-backup
+
+  pdf:
+    name: Gate 7 · ₹ renders in a Gotenberg PDF
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and start our Gotenberg image
+        run: |
+          docker build -t redux-gotenberg docker/gotenberg
+          docker run -d --name gotenberg -p 3000:3000 redux-gotenberg
+          for i in $(seq 1 30); do curl -sf http://localhost:3000/health && break; sleep 2; done
+      - run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Gate 7 · ₹ test
+        env:
+          GOTENBERG_URL: http://localhost:3000
+        run: pnpm vitest run tests/integration/rupee-pdf.test.ts
