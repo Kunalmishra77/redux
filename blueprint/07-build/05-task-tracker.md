@@ -15,7 +15,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | **Phase** | Phase 0 — Mobilisation |
 | **Week** | W0 (5–9 Oct 2026) |
 | **Sprint goal** | Accounts, approvals and infrastructure. Meta App Review submitted |
-| **Last updated** | *(update this)* |
+| **Last updated** | 2026-09-27 — pre-mobilisation: scaffold, CI gates, §1–3 migrations on staging |
 
 ---
 
@@ -23,7 +23,8 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 
 | ID | What | Blocked on | Since | Impact |
 |---|---|---|---|---|
-| — | *(none yet)* | | | |
+| E1-S03 | Custom Access Token Hook must be switched on in the hosted dashboard (Authentication → Hooks → Custom Access Token → `public.custom_access_token_hook`) | Project owner | 2026-09-27 | Until then no JWT carries `user_role` and every staff policy denies |
+| E0-S08 | CI has never run — needs the first push to GitHub, then branch protection on `main` | Project owner | 2026-09-27 | Gates exist but are not yet enforced |
 
 > A blocker sits here until it is resolved. If something is blocked on REDUX, it also goes to
 > `../00-brief/04-assumptions-open-questions.md` §A and gets raised at the weekly call — not
@@ -41,8 +42,8 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | E0-S04 | WhatsApp number, WABA, display name | TODO | |
 | E0-S05 | DLT Principal Entity + header | TODO | REDUX, biometric |
 | E0-S06 | Razorpay KYC | TODO | REDUX |
-| E0-S07 | Repos, Supabase, VPS, Cloudflare | TODO | |
-| E0-S08 | CI gates | TODO | RLS + secret + ₹ checks |
+| E0-S07 | Repos, Supabase, VPS, Cloudflare | WIP | Next 16.3.6 scaffold, GitHub repo, Supabase **staging** done. Production project, VPS, Coolify, Cloudflare pending |
+| E0-S08 | CI gates | REVIEW | `.github/workflows/ci.yml` has all 7. Gates 1–3, 6 green locally; 4–5 green against staging via `pnpm db:test`; 7 runs only in CI (Docker) |
 | E0-S09 | Sentry, uptime, alerts | TODO | |
 | E0-S10 | Blueprint sign-off (D19) | TODO | |
 
@@ -54,12 +55,17 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 
 | ID | Status | | ID | Status |
 |---|:--:|---|---|:--:|
-| E1-S01 | TODO | | E1-S07 | TODO |
-| E1-S02 | TODO | | E1-S08 | TODO |
-| E1-S03 | TODO | | E1-S09 | TODO |
-| E1-S04 | TODO | | E1-S10 | TODO |
-| E1-S05 | TODO | | E1-S11 | TODO |
-| E1-S06 | TODO | | E1-S12 | TODO |
+| E1-S01 | REVIEW | | E1-S07 | TODO |
+| E1-S02 | REVIEW | | E1-S08 | TODO |
+| E1-S03 | BLOCKED | | E1-S09 | TODO |
+| E1-S04 | WIP | | E1-S10 | TODO |
+| E1-S05 | REVIEW | | E1-S11 | REVIEW |
+| E1-S06 | WIP | | E1-S12 | WIP |
+
+- E1-S04: `my_customer_id()` ships with `customer_contacts` (§7) — its body references that table.
+- E1-S06: bare scaffold only; `@theme` tokens and shadcn/ui wait for the DS1 designs.
+- E1-S12: P4 + hook tests (25 pgTAP assertions). P1–P3 and P7 arrive with their tables.
+- REVIEW = built and tested, waiting for review by someone who did not write it (DoD).
 </details>
 
 <details><summary>E2 · Website (W3–W4) — 16 stories</summary>
@@ -121,7 +127,13 @@ Anything decided that is not already in an ADR. If it contradicts an ADR, **writ
 
 | Date | Decision | Why | Story |
 |---|---|---|---|
-| | | | |
+| 2026-09-27 | **ADR-013**: no Docker on dev PCs; Docker only in CI; local dev uses hosted staging | Team does not want Docker locally | E0-S07/08 |
+| 2026-09-27 | pnpm is the package manager | Blueprint names none; pnpm already installed | E0-S07 |
+| 2026-09-27 | Reference data (work types, condition flags, lost reasons, settings) seeded in **migrations**; `seed.sql` is CI fixtures only | `seed.sql` never runs on hosted projects, but the app depends on these codes | E1-S02 |
+| 2026-09-27 | Kept Next's generated `AGENTS.md`; `CLAUDE.md` references it | It points agents at the Next 16.3 docs in `node_modules` | E0-S07 |
+| 2026-09-27 | Gate 6 builds with `ci-canary-*` values in secret env vars and scans `.next/static` for names **and** values | Catches a leaked value even without the variable name | E0-S08 |
+| 2026-09-27 | Local dev on Node 22; CI and images on Node 24 per ADR | Next 16 supports both | E0-S07 |
+| 2026-09-27 | `pnpm db:test` runs pgTAP over a plain connection (`scripts/db-test.mjs`) | `supabase test db` needs Docker | E1-S12 |
 
 ---
 
@@ -132,7 +144,37 @@ blueprint that silently stops matching the code is worse than no blueprint.
 
 | Date | What changed | Why | Docs updated |
 |---|---|---|---|
-| | | | |
+| 2026-09-27 | Access token hook: `supabase_auth_admin` grants + RLS policy on `user_roles`; execute revoked from other roles | Without them the hook reads no rows and stamps every staff user `customer` (review item 1) | migration 000200 |
+| 2026-09-27 | Hook picks the role by enum order, not an unordered `limit 1` | `unique(user_id, role)` allows several roles | migration 000200 |
+| 2026-09-27 | RLS enabled per table in each migration, not by the trailing loop | A loop only covers tables that exist when it runs | migrations |
+| 2026-09-27 | `is_staff()` helper; policies call helpers as `(select fn())` | One definition of "staff"; ADR-004 rule 1 | migration 000200 |
+| 2026-09-27 | `profiles` policies + `guard_profile_self_edit` trigger | schema.sql had none; self-edit must not change is_active/city/email | migration 000200 |
+| 2026-09-27 | `write_audit()` reads id via jsonb (works on `settings`); attached to cities, profiles, role_permissions, masters, settings | schema.sql version fails on tables without uuid `id`; BR-X4 | migrations 000200/000300 |
+| 2026-09-27 | `uuid-ossp` dropped; `pg_cron`/`pgmq` deferred to first use (E4) | Unused now | migration 000100 |
+| 2026-09-27 | `lost_reasons.sort_order`; setting `gps_accuracy_flag_m = 50` | Ordered picker; BR-S3's 50 m must not be hardcoded | migration 000300 |
+| 2026-09-27 | Environments: local = hosted staging, no Docker | ADR-013 | architecture §6, ADR doc |
+
+### Open review items (27 Sep 2026) — each fixed in the migration for its section
+
+| # | Item | Fix in | Needs a decision? |
+|---|---|---|---|
+| 2 | ~40 tables in schema.sql have no policy; surveyors can't read `rate_cards` / `market_prices` | each section | no |
+| 3 | UPDATE policies without WITH CHECK (`quotations_update` can never reach `sent`) → state changes via SECURITY DEFINER RPCs | §10 | no |
+| 4 | `on delete cascade` + `FOR ALL` lets a delete wipe `fitting_photos` / warranties | §8, §11 | no |
+| 5 | `fitting_photos_select` lets every surveyor read every photo (breaks P2); `v_incomplete_fittings` bypasses RLS (gate now catches it) | §8 | no |
+| 6 | **No survey address / location** anywhere; property needs a customer, which exists only after approval → "nearest surveyor", geofence and job_units all break | §5–8 | **yes — REDUX / PM** |
+| 7 | Webhook idempotency `(source, external_id)` collides for WhatsApp statuses (same wamid) and Razorpay events (same payment.id) | §15 | no |
+| 8 | BR-L3 trigger misses `campaign_id` (+ leadgen / google ids, utm) | §5 | no |
+| 9 | BR-J2: clock keeps running while currently blocked; one block per unit | §11 | no |
+| 10 | BR-S5 can't be enforced at fitting insert (photos FK the fitting) → enforce at submit / quote | §8, BR doc | no |
+| 11 | **BR-L1**: a repeat enquiry from a Won/Lost customer becomes a touch, never a new lead | §5 | **yes — REDUX / PM** |
+| 12 | Customers can read their own draft quotes | §10 | no |
+| 13 | `my_customer_id()` `limit 1` breaks when one phone is a contact for several customers | §7 | no |
+| 14 | BR-S2 double-book index only catches identical start times | §8 | no |
+| 15 | **Invoicing has no D-number**, yet D12 (Phase 2) promises "handover with invoice" | PRD / timeline | **yes — contract** |
+| 16 | D2-10 (Won → customer + job) sits under Phase-1 D2 but depends on D10 | PRD | yes — minor |
+| 17 | Source count: "six channels" / "7 sources" / 8 codes | PRD, D3 | yes — minor |
+| 19 | Two repos + CI-checked copy of `lib/services` vs one repo with `mobile/` | repo structure | **yes — tech lead** |
 
 ---
 
@@ -141,6 +183,11 @@ blueprint that silently stops matching the code is worse than no blueprint.
 Append one line per working session. This is how the next session (or the next person) picks up.
 
 ```
-2026-10-05  Started W0. Meta app created; App Review submitted with screencast.
-            Blocked: waiting on REDUX Business Verification (E0-S01).
+2026-09-27  Pre-mobilisation. Blueprint moved under blueprint/, git init. Read the blueprint and
+            raised 19 review items (Deviations). ADR-013: no local Docker. Scaffolded Next 16.3.6 +
+            React 19.3 (pnpm). CI workflow with all 7 gates. Migrations 000100–000300 (enums,
+            identity/org + auth hook + audit, masters + settings) pushed to staging
+            bkygjdzljfkkbkomujav; 25/25 pgTAP green via pnpm db:test; types generated.
+            Next: owner enables the hook in the dashboard; CI's first run; decisions on items 6, 11,
+            15, 19; then §5 leads (E3-S01) or E1-S06+ once DS1 lands.
 ```

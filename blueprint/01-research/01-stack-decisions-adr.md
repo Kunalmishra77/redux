@@ -325,3 +325,31 @@ templates never carry an offer, a discount or a "book another service" CTA. This
 rule enforced in `../05-content/02-whatsapp-templates.md`.
 
 **What would change this.** REDUX running SMS marketing campaigns → full DLT template registration.
+
+---
+
+## ADR-013 — No Docker on developer machines; Docker runs only in CI
+
+*Added 27 Sep 2026. Supersedes the "Local — Supabase local (Docker)" row of
+`../03-architecture/01-system-architecture.md` §6.*
+
+**Decision.** Developer PCs do not run Docker. Local development points at the hosted **staging**
+Supabase project (ap-south-1). Migrations are applied with the Supabase CLI
+(`supabase db push --db-url …`), which needs no Docker. pgTAP tests run against staging through
+`scripts/db-test.mjs` (every test file is wrapped in `begin … rollback`, so it leaves no trace).
+Types are generated with `supabase gen types typescript --db-url …`.
+**CI is where Docker runs:** GitHub's runners start a throwaway Supabase stack for gates 4–5
+(`supabase start` + `supabase test db`) and build our Gotenberg image for gate 7.
+
+**Why.** The team does not want Docker Desktop on their PCs. Every gate still runs on every PR
+against a fresh database, which is the property that matters.
+
+**Costs we accept.**
+- Developers share one staging database. Destructive experiments go in a transaction or a
+  Supabase branch, never straight into staging.
+- `supabase db reset` is not available locally; a migration is proved on a fresh DB only in CI.
+  Push to staging only after CI is green on the PR.
+- Staging must never hold real customer data (already a rule in §6 of the architecture doc).
+
+**What would change this.** A second developer joining who needs an isolated DB → Supabase
+branching, or Docker/Podman on that machine.

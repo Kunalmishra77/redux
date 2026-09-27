@@ -39,7 +39,15 @@ shadcn/ui CLI v4 · TanStack Table v9 · TanStack Query v5 · react-hook-form + 
 **Gotenberg** for PDFs · **Expo SDK 57** Android-only for the surveyor app ·
 **Razorpay** · **Meta Cloud API direct** (no BSP) · MSG91 for OTP SMS only.
 
+### Dev loop (no Docker locally — ADR-013)
+`pnpm lint` · `pnpm typecheck` · `pnpm test` · `pnpm db:test` (pgTAP against staging, rolls back).
+Migrations: `supabase db push --db-url "$SUPABASE_DB_URL"` — only after CI is green on the PR.
+Types: `supabase gen types typescript --db-url "$SUPABASE_DB_URL" --schema public > types/database.ts`.
+Secrets live in `.env.local` (gitignored). Docker runs only in CI.
+
 ### Next 16 specifics that will bite
+Read the bundled docs before using a Next API: see `AGENTS.md` → `node_modules/next/dist/docs/`.
+
 - `proxy.ts`, **not** `middleware.ts`
 - `params`, `searchParams`, `cookies()`, `headers()` are **async**
 - `cacheComponents: true` **only** for `(marketing)`; portals are per-request

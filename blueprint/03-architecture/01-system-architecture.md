@@ -176,7 +176,7 @@ never queued.
 
 | Env | Purpose | Database | Notes |
 |---|---|---|---|
-| **Local** | Development | Supabase local (Docker) | Seed script with realistic fixtures |
+| **Local** | Development | Hosted staging project — no local Docker (ADR-013) | Fixtures in `supabase/seed.sql` run only in CI |
 | **Staging** | UAT, client demos | Separate Supabase project | **Meta test numbers, Razorpay test mode, no real customer data** |
 | **Production** | Live | Supabase Pro ap-south-1 | PITR backups on |
 
