@@ -1,0 +1,17 @@
+fitting_type_code,fitting_type_name,work_type_code,finish_code,price_inr,market_replacement_inr,gst_rate,hsn_sac
+basin_mixer,Basin mixer,restore_finish,chrome,,,18,998719
+basin_mixer,Basin mixer,restore_finish,pvd_brushed_gold,,,18,998719
+basin_mixer,Basin mixer,repair_function,,,,18,998719
+basin_mixer,Basin mixer,replace_eurobrass,chrome,,,18,
+shower_mixer,Shower mixer,restore_finish,chrome,,,18,998719
+shower_mixer,Shower mixer,repair_function,,,,18,998719
+shower_mixer,Shower mixer,replace_eurobrass,chrome,,,18,
+diverter,Diverter,restore_finish,chrome,,,18,998719
+diverter,Diverter,repair_function,,,,18,998719
+diverter,Diverter,replace_eurobrass,chrome,,,18,
+health_faucet,Health faucet,repair_function,,,,18,998719
+health_faucet,Health faucet,replace_eurobrass,chrome,,,18,
+aerator,Aerator (water-saving),replace_eurobrass,,,,18,
+spout,Bath spout,restore_finish,chrome,,,18,998719
+angle_valve,Angle valve,repair_function,,,,18,998719
+shower_head,Shower head,restore_finish,chrome,,,18,998719
