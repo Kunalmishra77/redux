@@ -15,7 +15,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | **Phase** | Phase 0 — Mobilisation |
 | **Week** | W0 (5–9 Oct 2026) |
 | **Sprint goal** | Accounts, approvals and infrastructure. Meta App Review submitted |
-| **Last updated** | 2026-09-28 — §6 calls + §7 customers/properties/prospects (BR-S8) |
+| **Last updated** | 2026-09-28 — §8 surveys: booking, check-in integrity, fittings, photos, submit |
 
 ---
 
@@ -102,7 +102,7 @@ E5-S01 … E5-S08 — all `TODO`
 |---|:--:|---|
 | E6-S01 | WIP | Data layer done: `calls` + `log_call()` (migration 000600). Click-to-call provider not chosen yet; UI waits for DS1 |
 | E6-S02 | REVIEW | `call_outcomes` master (admin-editable); required note enforced (D4-03) |
-| E6-S03 | WIP | BR-S8 `ensure_prospect()` done (migration 000500); survey booking itself needs §8 surveys |
+| E6-S03 | REVIEW | `book_survey()` + `available_surveyors()` (migration 000700) + `lib/surveys/book.ts`; UI waits for DS1. WhatsApp "survey booked" (E5) and CAPI `survey_booked` (E4-S10) hook in when those queues exist |
 | E6-S04 … E6-S09 | TODO | |
 </details>
 
@@ -152,6 +152,11 @@ Anything decided that is not already in an ADR. If it contradicts an ADR, **writ
 | 2026-09-27 | **Item 19 → ADR-014**: one repo, surveyor app in `mobile/` | Shared pricing logic identical by construction | E8 |
 | 2026-09-27 | Leads enter only via `ingest_lead()` (SECURITY DEFINER), for every source | Dedup + assignment + SLA must be atomic and identical for web, webhooks and manual entry | E3-S03 |
 | 2026-09-27 | Manual entry (call / walk-in) by a cc_exec is assigned to that executive, not round-robin | "With source and who took it" (PRD D3); the taker is already on the call | E3-S05 |
+| 2026-09-28 | Survey slot = `settings.survey_slot_minutes` (120, from screen B6) | No hardcoded durations | E6-S03 |
+| 2026-09-28 | Impossible travel threshold = `settings.impossible_travel_kmh` (150) — **placeholder, REDUX to confirm** | BR-S4 names no number | E9 |
+| 2026-09-28 | "Nearest surveyor" = same city first, then least-loaded that day | Surveyors have no base location in the schema — open item below | E6-S03 |
+| 2026-09-28 | Check-in flags (accuracy, mock, geofence, impossible travel) are computed by a BEFORE INSERT trigger; client values are overwritten | BR-S3/S4 "never silently trusted" | E9 |
+| 2026-09-28 | Customers read their own surveys → fittings → photos (not prospects) | D13-03 before/after photos | E14 |
 | 2026-09-28 | Calls are written only via `log_call()`; an outcome that reaches a person moves `new` → `contacted` | D2-07 pipeline stays truthful without a second click | E6-S01 |
 | 2026-09-28 | Call outcomes seeded: interested, call back later, not interested (J3) + no answer + other | J3 names three; "no answer" is needed for any calling queue; admin-editable | E6-S02 |
 | 2026-09-28 | cc_exec reads every **converted** customer (roles matrix: track job status) but a prospect only via their own lead | Keeps P3 intact for pre-sale data | E6-S03 |
@@ -187,6 +192,12 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | `calls.outcome` text → `outcome_id` FK to `call_outcomes`; `duration_sec` generated | No hardcoded lists; one source for duration | migration 000600 |
 | 2026-09-28 | Seed data in migrations, not `seed.sql` | Hosted projects never run seed.sql | schema guide §5 |
 | 2026-09-28 | Schema guide §2.1 "one lead per phone forever" → one open lead per phone | BR-L1 amendment | schema guide §2.1 |
+| 2026-09-28 | BR-S2 via exclusion constraint on `tstzrange(scheduled_at, slot_end_at)`; `slot_end_at` NOT NULL; `property_id` NOT NULL | Item 14; BR-S8 | migration 000700 |
+| 2026-09-28 | No cascade under surveys; no delete policy on fittings / photos | Item 4, rule 8/9 | migration 000700 |
+| 2026-09-28 | Photo visibility follows the survey (owner surveyor, lead's executive, admin, customer) | Item 5 / P2 | migration 000700 |
+| 2026-09-28 | `survey_checkins` + `idem_key`, `received_at`; `fittings` must have a unit (id or label); photo sha256 format check | Offline outbox (ADR-006); data integrity | migration 000700 |
+| 2026-09-28 | `guard_lead_status` now checks BR-L6 fully: survey_booked needs a live survey, surveyed a submitted one | BR-L6 | migration 000700 |
+| 2026-09-28 | BR-S5 server-side enforcement moved to survey submit | Item 10 | BR doc |
 
 ### Open review items (27 Sep 2026) — each fixed in the migration for its section
 
@@ -194,21 +205,23 @@ blueprint that silently stops matching the code is worse than no blueprint.
 |---|---|---|---|
 | 2 | ~40 tables in schema.sql have no policy; surveyors can't read `rate_cards` / `market_prices` | each section | no |
 | 3 | UPDATE policies without WITH CHECK (`quotations_update` can never reach `sent`) → state changes via SECURITY DEFINER RPCs | §10 | no |
-| 4 | `on delete cascade` + `FOR ALL` lets a delete wipe `fitting_photos` / warranties | §8, §11 | no |
-| 5 | `fitting_photos_select` lets every surveyor read every photo (breaks P2); `v_incomplete_fittings` bypasses RLS (gate now catches it) | §8 | no |
+| 4 | ~~Fixed in 000700~~ `on delete cascade` + `FOR ALL` lets a delete wipe `fitting_photos` / warranties | §8, §11 | no |
+| 5 | ~~Fixed in 000700~~ `fitting_photos_select` lets every surveyor read every photo (breaks P2); `v_incomplete_fittings` bypasses RLS (gate now catches it) | §8 | no |
 | 6 | ~~No survey address / location~~ **Decided → BR-S8**, implement in §7–8. anywhere; property needs a customer, which exists only after approval → "nearest surveyor", geofence and job_units all break | §5–8 | **yes — REDUX / PM** |
 | 7 | Webhook idempotency `(source, external_id)` collides for WhatsApp statuses (same wamid) and Razorpay events (same payment.id) | §15 | no |
 | 8 | ~~Fixed in 000400~~ BR-L3 trigger misses `campaign_id` (+ leadgen / google ids, utm) | §5 | no |
 | 9 | BR-J2: clock keeps running while currently blocked; one block per unit | §11 | no |
-| 10 | BR-S5 can't be enforced at fitting insert (photos FK the fitting) → enforce at submit / quote | §8, BR doc | no |
+| 10 | ~~Fixed in 000700 + BR doc~~ BR-S5 can't be enforced at fitting insert (photos FK the fitting) → enforce at submit / quote | §8, BR doc | no |
 | 11 | ~~Decided + implemented in 000400~~ BR-L1: a repeat enquiry from a Won/Lost customer becomes a touch, never a new lead | §5 | **yes — REDUX / PM** |
 | 12 | Customers can read their own draft quotes | §10 | no |
 | 13 | ~~Fixed in 000500~~ `my_customer_id()` `limit 1` breaks when one phone is a contact for several customers | §7 | no |
-| 14 | BR-S2 double-book index only catches identical start times | §8 | no |
+| 14 | ~~Fixed in 000700~~ BR-S2 double-book index only catches identical start times | §8 | no |
 | 15 | **Invoicing has no D-number**, yet D12 (Phase 2) promises "handover with invoice" | PRD / timeline | **yes — contract** |
 | 16 | D2-10 (Won → customer + job) sits under Phase-1 D2 but depends on D10 | PRD | yes — minor |
 | 17 | Source count: "six channels" / "7 sources" / 8 codes | PRD, D3 | yes — minor |
 | 19 | ~~Decided → ADR-014~~ Two repos + CI-checked copy of `lib/services` vs one repo with `mobile/` | repo structure | **yes — tech lead** |
+| 20 | **Surveyors have no base location** — "nearest surveyor" (D4-04) is approximated by city + load | profiles | **yes — REDUX / PM**: add a base pin per surveyor? |
+| 21 | `impossible_travel_kmh` = 150 is a placeholder | settings | yes — REDUX |
 
 ---
 
@@ -234,5 +247,12 @@ Append one line per working session. This is how the next session (or the next p
             fn()))` parses as ANY(subquery) → uuid = uuid[]; fixed with an explicit ::uuid[] cast.
             Added pnpm db:dry-run --tests; 82/82 pgTAP green in a rolled-back transaction.
             Next: §8 surveys + survey booking (E6-S03) — completes BR-L6 and the surveyor side of RLS.
+
+2026-09-28  Migration 000700 (§8 surveys): book_survey, available_surveyors, check-in integrity
+            trigger, submit_survey; items 4, 5, 10, 14 closed; BR-L6 complete. Broke a leads ↔
+            surveys policy cycle with a SECURITY DEFINER helper. CI green first, then staging;
+            114/114 pgTAP. lib/surveys/book.ts + validator. Two new open items (20, 21).
+            Next: §9 assessments + §4 rate cards are Phase 2 (need REDUX's rate card, A9) — so
+            either E1-S06…S09 app shell/login (needs DS1) or E4-S01 queue + webhooks (pgmq/pg_cron).
 
 ```

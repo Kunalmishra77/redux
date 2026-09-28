@@ -26,7 +26,7 @@ If a rule here conflicts with a screen mock or a convenient shortcut, **this fil
 | BR-S2 | A surveyor can hold only one survey per time slot | Double-book → rejected with the clash shown |
 | BR-S3 | Check-in requires GPS. Accuracy >50 m is recorded and **flagged**, not blocked — a basement with no GPS must not stop work | Check in at 120 m accuracy → allowed, flagged |
 | BR-S4 | Server-side integrity: check-in outside a 500 m geofence of the property, or implying impossible travel from the previous check-in, is flagged for admin review | Both cases → flag raised, work continues |
-| BR-S5 | **A fitting cannot be saved without all four photo slots filled** | Save with 3 → rejected in the app, and rejected server-side |
+| BR-S5 | **A fitting cannot be saved without all four photo slots filled** — in the app at save; on the server at **survey submit** (photo rows reference the fitting, so the server cannot refuse the fitting itself) *(clarified 28 Sep 2026)* | Save with 3 → rejected in the app; submit with 3 → rejected server-side |
 | BR-S6 | A survey cannot be submitted while any attachment is unsynced | Submit with 1 pending → blocked, "needs attention" shown |
 | BR-S8 | **A survey is always booked against a property** with an address and location. If the lead has no customer yet, booking creates a *prospect* customer + property; OTP approval later **converts** that customer, never recreates it *(added 27 Sep 2026)* | Book a survey for a new lead → customer (prospect) + property exist with lat/lng; approve the quote → same customer id |
 | BR-S7 | Photos are immutable once synced. A correction adds a new photo; it never overwrites | Re-upload same slot → new row, old retained |

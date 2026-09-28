@@ -208,6 +208,62 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"fitting_conditions": {
+                  Row: {
+                    "condition_flag_id": string,"fitting_id": string
+                  }
+                  Insert: {
+                    "condition_flag_id": string,"fitting_id": string
+                  }
+                  Update: {
+                    "condition_flag_id"?: string,"fitting_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "fitting_conditions_condition_flag_id_fkey"
+      columns: ["condition_flag_id"]
+isOneToOne: false
+      referencedRelation: "condition_flags"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fitting_conditions_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "fittings"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fitting_conditions_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "v_incomplete_fittings"
+      referencedColumns: ["fitting_id"]
+    }
+                  ]
+                },"fitting_photos": {
+                  Row: {
+                    "accuracy_m": number | null,"bytes": number | null,"captured_at": string,"device_id": string | null,"fitting_id": string,"height": number | null,"id": string,"lat": number | null,"lng": number | null,"marketing_use_consented": boolean,"sha256": string,"slot": string,"storage_path": string,"uploaded_at": string,"width": number | null
+                  }
+                  Insert: {
+                    "accuracy_m"?: number | null,"bytes"?: number | null,"captured_at": string,"device_id"?: string | null,"fitting_id": string,"height"?: number | null,"id"?: string,"lat"?: number | null,"lng"?: number | null,"marketing_use_consented"?: boolean,"sha256": string,"slot": string,"storage_path": string,"uploaded_at"?: string,"width"?: number | null
+                  }
+                  Update: {
+                    "accuracy_m"?: number | null,"bytes"?: number | null,"captured_at"?: string,"device_id"?: string | null,"fitting_id"?: string,"height"?: number | null,"id"?: string,"lat"?: number | null,"lng"?: number | null,"marketing_use_consented"?: boolean,"sha256"?: string,"slot"?: string,"storage_path"?: string,"uploaded_at"?: string,"width"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "fitting_photos_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "fittings"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fitting_photos_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "v_incomplete_fittings"
+      referencedColumns: ["fitting_id"]
+    }
+                  ]
                 },"fitting_types": {
                   Row: {
                     "code": string,"id": string,"is_active": boolean,"name": string,"sort_order": number
@@ -220,6 +276,49 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"fittings": {
+                  Row: {
+                    "brand_id": string | null,"captured_at": string,"created_at": string,"current_finish_id": string | null,"fitting_type_id": string,"id": string,"idem_key": string,"model": string | null,"notes": string | null,"property_unit_id": string | null,"survey_id": string,"unit_label": string | null
+                  }
+                  Insert: {
+                    "brand_id"?: string | null,"captured_at": string,"created_at"?: string,"current_finish_id"?: string | null,"fitting_type_id": string,"id"?: string,"idem_key": string,"model"?: string | null,"notes"?: string | null,"property_unit_id"?: string | null,"survey_id": string,"unit_label"?: string | null
+                  }
+                  Update: {
+                    "brand_id"?: string | null,"captured_at"?: string,"created_at"?: string,"current_finish_id"?: string | null,"fitting_type_id"?: string,"id"?: string,"idem_key"?: string,"model"?: string | null,"notes"?: string | null,"property_unit_id"?: string | null,"survey_id"?: string,"unit_label"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "fittings_brand_id_fkey"
+      columns: ["brand_id"]
+isOneToOne: false
+      referencedRelation: "brands"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fittings_current_finish_id_fkey"
+      columns: ["current_finish_id"]
+isOneToOne: false
+      referencedRelation: "finishes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fittings_fitting_type_id_fkey"
+      columns: ["fitting_type_id"]
+isOneToOne: false
+      referencedRelation: "fitting_types"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fittings_property_unit_id_fkey"
+      columns: ["property_unit_id"]
+isOneToOne: false
+      referencedRelation: "property_units"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fittings_survey_id_fkey"
+      columns: ["survey_id"]
+isOneToOne: false
+      referencedRelation: "surveys"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"follow_ups": {
                   Row: {
@@ -497,6 +596,68 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"survey_checkins": {
+                  Row: {
+                    "accuracy_m": number | null,"checked_in_at": string,"device_id": string | null,"distance_m": number | null,"flag_reason": string | null,"flagged": boolean,"geofence_ok": boolean | null,"id": string,"idem_key": string,"is_mocked": boolean,"lat": number,"lng": number,"received_at": string,"survey_id": string,"surveyor_id": string
+                  }
+                  Insert: {
+                    "accuracy_m"?: number | null,"checked_in_at": string,"device_id"?: string | null,"distance_m"?: number | null,"flag_reason"?: string | null,"flagged"?: boolean,"geofence_ok"?: boolean | null,"id"?: string,"idem_key": string,"is_mocked"?: boolean,"lat": number,"lng": number,"received_at"?: string,"survey_id": string,"surveyor_id": string
+                  }
+                  Update: {
+                    "accuracy_m"?: number | null,"checked_in_at"?: string,"device_id"?: string | null,"distance_m"?: number | null,"flag_reason"?: string | null,"flagged"?: boolean,"geofence_ok"?: boolean | null,"id"?: string,"idem_key"?: string,"is_mocked"?: boolean,"lat"?: number,"lng"?: number,"received_at"?: string,"survey_id"?: string,"surveyor_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "survey_checkins_survey_id_fkey"
+      columns: ["survey_id"]
+isOneToOne: false
+      referencedRelation: "surveys"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "survey_checkins_surveyor_id_fkey"
+      columns: ["surveyor_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"surveys": {
+                  Row: {
+                    "booked_by": string | null,"cancel_reason": string | null,"created_at": string,"id": string,"lead_id": string | null,"property_id": string,"scheduled_at": string,"slot_end_at": string,"status": Database["public"]['Enums']["survey_status"],"submitted_at": string | null,"surveyor_id": string,"updated_at": string
+                  }
+                  Insert: {
+                    "booked_by"?: string | null,"cancel_reason"?: string | null,"created_at"?: string,"id"?: string,"lead_id"?: string | null,"property_id": string,"scheduled_at": string,"slot_end_at": string,"status"?: Database["public"]['Enums']["survey_status"],"submitted_at"?: string | null,"surveyor_id": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "booked_by"?: string | null,"cancel_reason"?: string | null,"created_at"?: string,"id"?: string,"lead_id"?: string | null,"property_id"?: string,"scheduled_at"?: string,"slot_end_at"?: string,"status"?: Database["public"]['Enums']["survey_status"],"submitted_at"?: string | null,"surveyor_id"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "surveys_booked_by_fkey"
+      columns: ["booked_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "surveys_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "surveys_property_id_fkey"
+      columns: ["property_id"]
+isOneToOne: false
+      referencedRelation: "properties"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "surveys_surveyor_id_fkey"
+      columns: ["surveyor_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"user_roles": {
                   Row: {
                     "id": string,"role": Database["public"]['Enums']["app_role"],"user_id": string
@@ -526,7 +687,20 @@ isOneToOne: false
                 }
           }
           Views: {
-            [_ in never]: never
+            "v_incomplete_fittings": {
+                  Row: {
+                    "fitting_id": string | null,"slots_filled": number | null,"survey_id": string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "fittings_survey_id_fkey"
+      columns: ["survey_id"]
+isOneToOne: false
+      referencedRelation: "surveys"
+      referencedColumns: ["id"]
+    }
+                  ]
+                }
           }
           Functions: {
             "assign_lead":
@@ -535,17 +709,31 @@ isOneToOne: false
 "authorize":
 { Args: { "requested": string }; Returns: boolean
                            },
+"available_surveyors":
+{ Args: { "p_property_id": string,"p_start": string }; Returns: {
+              "full_name": string,"same_city": boolean,"surveyor_id": string,"surveys_that_day": number
+            }[]
+                           },
+"book_survey":
+{ Args: { "p": Json }; Returns: Json
+                           },
 "current_role_is":
 { Args: { "target": Database["public"]['Enums']["app_role"] }; Returns: boolean
                            },
 "custom_access_token_hook":
 { Args: { "event": Json }; Returns: Json
                            },
+"distance_m":
+{ Args: { "lat1": number,"lat2": number,"lng1": number,"lng2": number }; Returns: number
+                           },
 "ensure_prospect":
 { Args: { "p_lead_id": string,"p_property": Json }; Returns: Json
                            },
 "ingest_lead":
 { Args: { "p_lead": Json }; Returns: Json
+                           },
+"is_my_survey_lead":
+{ Args: { "p_lead_id": string }; Returns: boolean
                            },
 "is_staff":
 { Args: Record<PropertyKey, never>; Returns: boolean
@@ -558,6 +746,9 @@ isOneToOne: false
                            },
 "staff_can_see_customer":
 { Args: { "p_customer_id": string }; Returns: boolean
+                           },
+"submit_survey":
+{ Args: { "p_survey_id": string }; Returns: undefined
                            }
           }
           Enums: {
