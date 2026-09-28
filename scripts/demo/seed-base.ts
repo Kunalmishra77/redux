@@ -93,6 +93,9 @@ export async function seedBase(db: pg.Client, ids: Record<string, string>) {
     await q(`update public.settings set value = to_jsonb($2::text) where key = $1`, [k, v])
   }
 
+  // D14-08 needs a cost per free-survey visit — REDUX to set the real figure
+  await q(`insert into public.settings (key, value, description) values ('survey_visit_cost_inr', '1500', 'D14-08: field cost of one free survey (surveyor time + travel) — used for free-survey cost per won job') on conflict (key) do nothing`)
+
   // Privacy notice (the version web forms record consent against)
   await q(`insert into public.privacy_notices (version, body, effective_from, is_active)
            values ('v1.0', $1, current_date - 60, true) on conflict (version, language) do nothing`,
