@@ -15,7 +15,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | **Phase** | Phase 0 — Mobilisation |
 | **Week** | W0 (5–9 Oct 2026) |
 | **Sprint goal** | Accounts, approvals and infrastructure. Meta App Review submitted |
-| **Last updated** | 2026-09-28 — §16 DPDP. **Build-order Step 1 (data foundation) complete: 15 migrations, 370 pgTAP assertions** |
+| **Last updated** | 2026-09-28 — webhook routes + queue worker (E4) on top of the completed Step 1 |
 
 ---
 
@@ -94,11 +94,17 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 
 | ID | Status | Notes |
 |---|:--:|---|
-| E4-S01 | REVIEW | Migration 001400: `webhook_events` + pgmq queues; `record_webhook` / `webhook_processed` / `webhook_failed` (backoff, dead-letter + TN5). The Node worker itself is still to build |
-| E4-S02…S09 | TODO | Route handlers (raw-body HMAC, Google `google_key`, never 4XX) + worker mappers into `ingest_lead()` |
+| E4-S01 | REVIEW | Migration 001400 + `worker/`: pgmq drained one transaction per message; dead-letter + TN5. Container (Dockerfile.worker) with the VPS work (E0-S07) |
+| E4-S02 | REVIEW | `/api/webhooks/meta`: handshake + raw-body HMAC + record; worker fetches the lead from Graph |
+| E4-S03 | REVIEW | `mapMetaLead()`; custom questions only via `lead_form_field_map` |
+| E4-S04 | REVIEW | `reconcileMetaLeads()` (forms from integration_accounts.config.form_ids); scheduled by `install_schedules()` |
+| E4-S05, S06 | REVIEW | `/api/webhooks/whatsapp`; conversations + inbox; CTWA referral / ctwa_clid on the lead at creation |
+| E4-S07 | REVIEW | A reply to one of our templates → `whatsapp_campaign` source |
+| E4-S08 | REVIEW | `/api/webhooks/google-ads`: never 4XX, key never stored, test data dropped |
+| E4-S09 | REVIEW | Manual entry via `ingest_lead()` (E3) |
 | E4-S10 | WIP | `capi_events` fire once per lead on survey_booked / job_won (queued on q_capi); the Graph API call is the worker's |
 | E4-S11 | WIP | `integration_accounts.last_event_at` + `check_integration_health()` (TN5); screen B10 later |
-| E4-S12 | WIP | Idempotency proven in SQL (item 7); replay tests on the route handlers come with them |
+| E4-S12 | REVIEW | Idempotency: SQL tests (item 7), handler unit tests, `pnpm worker:smoke` on staging (rolled back) |
 </details>
 
 <details><summary>E5 · Notifications (W6) — 8 stories</summary>
@@ -106,7 +112,8 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | ID | Status | Notes |
 |---|:--:|---|
 | E5-S01 | REVIEW | `messages` outbox, `message_templates`, `notification_rules` (CN1–18, TN1–15 seeded), `team_notifications` |
-| E5-S02, S03 | TODO | WhatsApp sender + MSG91 hook — in the worker |
+| E5-S02 | REVIEW | Worker sends approved templates via Graph; retries/backoff; outbound joins the inbox thread |
+| E5-S03 | TODO | MSG91 SMS via the Supabase Send SMS Hook (needs DLT) |
 | E5-S04 | REVIEW | Dedup keys, quiet hours (held to 09:00 IST), rule toggles; retry policy set (3) — applied by the worker |
 | E5-S05 | TODO | Template bodies + Meta submission (copy in 05-content) |
 | E5-S06 | REVIEW | CN1 on lead creation; CN2 on survey booking (DB side) |
@@ -220,6 +227,11 @@ Anything decided that is not already in an ADR. If it contradicts an ADR, **writ
 | 2026-09-27 | **Item 19 → ADR-014**: one repo, surveyor app in `mobile/` | Shared pricing logic identical by construction | E8 |
 | 2026-09-27 | Leads enter only via `ingest_lead()` (SECURITY DEFINER), for every source | Dedup + assignment + SLA must be atomic and identical for web, webhooks and manual entry | E3-S03 |
 | 2026-09-27 | Manual entry (call / walk-in) by a cc_exec is assigned to that executive, not round-robin | "With source and who took it" (PRD D3); the taker is already on the call | E3-S05 |
+| 2026-09-28 | Worker = Node + `pg` directly (not PostgREST): pgmq is its own schema and a claim-less session is the system for `is_system_caller()`. Runs with `tsx` (path aliases shared with the app) | One copy of the mappers/validators for app and worker | E4-S01 |
+| 2026-09-28 | Provider contracts are pure functions (`lib/webhooks/handlers.ts`), routes only adapt Request/Response | Unit-testable without HTTP or a DB | E4-S02 |
+| 2026-09-28 | Meta/WhatsApp bad signature → 401, nothing stored; Google wrong key → 200 and stored unverified | Google never gets a 4XX; Meta forgeries aren't worth storing | E4-S02/S08 |
+| 2026-09-28 | Unusable events (no phone, no invoice note, unknown source) dead-letter at once with TN5 | Retrying cannot fix them | E4-S01 |
+| 2026-09-28 | `pnpm worker:smoke`: real worker against staging in one rolled-back transaction | End-to-end proof without Docker or test data left behind | E4-S12 |
 | 2026-09-28 | Consent ledger: one append-only row per purpose, pointing at the notice row shown; only withdrawn_at ever changes | BR-P1/P2 | E2-S10 |
 | 2026-09-28 | Web/dealer enquiries without service consent are rejected in the DB | D1-06 required checkbox — not just a UI rule | E2-S10 |
 | 2026-09-28 | Recording purge queues the file in `storage_deletions`; the worker deletes via the Storage API | Never raw SQL on storage.objects | E6-S08 |
@@ -304,6 +316,7 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | `market_prices` + optional `finish_id` (lookup falls back to the finish-less row) | The CSV template carries a market price per finish; schema.sql keyed by fitting type only | migration 000800 |
 | 2026-09-28 | **SECURITY FIX**: `move_unit_stage()` and `link_to_pilot()` (001000, on staging for a few hours, no real data) accepted any logged-in user — the check `current_user = 'authenticated'` never fires inside SECURITY DEFINER. Re-issued with `is_system_caller()`; test 11 makes the pattern structurally impossible | Found by the invoice test calling as cc_exec | migration 001100 |
 | 2026-09-28 | `invoices.invoice_no` nullable until issue; supplier fields filled at issue; `payment_route`; issued-completeness + cancelled-consistency checks | BR-I1, BR-I3, BR-I6 | migration 001100 |
+| 2026-09-28 | Webhook routes do **not** export `dynamic = 'force-dynamic'` (ADR-008 said to) | Next 16 removes `dynamic` when Cache Components is on; POST handlers are dynamic anyway | app/api/webhooks |
 | 2026-09-28 | `privacy_notices` + language, one active per language, immutable once published; `consent_records` + notice_id, call_id, recorded_by, granted_at = clock_timestamp() | BR-P1; ordering within one transaction | migration 001500 |
 | 2026-09-28 | `calls` + recording_hold_until, recording_deleted_at; new `storage_deletions` | BR-P4 dispute hold; deletion outbox | migration 001500 |
 | 2026-09-28 | `dsr_requests` + requested_by, retained_explanation; `incidents.created_by` → auth.users | BR-P5 "what is retained and why" | migration 001500 |
@@ -350,6 +363,8 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 23 | Invoice payment terms — implemented as due on issue | invoices | yes — REDUX |
 | 24 | TN2 "call-back SLA due" needs a lead-time (e.g. 10 min before due) — only the breach (TN3) is built | notifications | yes — REDUX / PM |
 | 25 | **Erasure vs BR-L3**: anonymising an erased person's lead means changing attribution fields BR-L3 makes immutable. Options: (a) erase PII columns (name, email, raw_payload) but keep attribution ids; (b) allow the erasure function to bypass BR-L3 with an audit entry | leads, BR doc | **yes — REDUX / PM + counsel** |
+| 26 | **ADR-001 wording**: `cacheComponents` is one app-wide flag in Next 16 — it cannot be "on only for marketing". Intent still holds (caching is opt-in via `use cache`; portals never opt in). Proposed: amend ADR-001 when the marketing site is built | ADR doc | tech lead — no client input |
+| 27 | Meta CAPI for **lead-ad** leads (CRM conversions keyed on leadgen_id) is not built; only click-to-WhatsApp conversions (ctwa_clid) are sent | worker/capi | yes — confirm REDUX wants it (D3-06 wording covers both?) |
 
 ---
 
@@ -424,5 +439,11 @@ Append one line per working session. This is how the next session (or the next p
             ── BUILD-ORDER STEP 1 COMPLETE ── schema §1–16 as 15 migrations, all on staging.
             Next: Step 2 (auth UI, proxy route protection, role sidebar) and Step 3 (design system)
             — both need DS1 designs for UI; or the queue worker (E4) which is pure server code.
+
+2026-09-28  Webhook routes (Meta, WhatsApp, Google Ads, Razorpay) + queue worker (webhooks → leads /
+            inbox / payments; notifications; CAPI). 79 unit tests; pnpm worker:smoke (9 checks,
+            staging, rolled back) caught pgmq.send() ambiguity with untyped params. CI green.
+            Open items 26, 27. Next: go-live plumbing (Dockerfile.worker, Coolify, install_schedules)
+            with the VPS, or E5-S05 template bodies — or Step 2/3 once DS1 designs land.
 
 ```
