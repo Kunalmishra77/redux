@@ -56,6 +56,56 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"call_outcomes": {
+                  Row: {
+                    "code": string,"id": string,"is_active": boolean,"marks_contacted": boolean,"name": string,"requires_note": boolean,"sort_order": number
+                  }
+                  Insert: {
+                    "code": string,"id"?: string,"is_active"?: boolean,"marks_contacted"?: boolean,"name": string,"requires_note"?: boolean,"sort_order"?: number
+                  }
+                  Update: {
+                    "code"?: string,"id"?: string,"is_active"?: boolean,"marks_contacted"?: boolean,"name"?: string,"requires_note"?: boolean,"sort_order"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"calls": {
+                  Row: {
+                    "agent_id": string,"created_at": string,"customer_id": string | null,"direction": string,"duration_sec": number | null,"ended_at": string | null,"id": string,"lead_id": string | null,"outcome_id": string | null,"outcome_note": string | null,"provider_call_id": string | null,"recording_consent": boolean,"recording_expires_at": string | null,"recording_path": string | null,"started_at": string
+                  }
+                  Insert: {
+                    "agent_id": string,"created_at"?: string,"customer_id"?: string | null,"direction": string,"duration_sec"?: never,"ended_at"?: string | null,"id"?: string,"lead_id"?: string | null,"outcome_id"?: string | null,"outcome_note"?: string | null,"provider_call_id"?: string | null,"recording_consent"?: boolean,"recording_expires_at"?: string | null,"recording_path"?: string | null,"started_at": string
+                  }
+                  Update: {
+                    "agent_id"?: string,"created_at"?: string,"customer_id"?: string | null,"direction"?: string,"duration_sec"?: never,"ended_at"?: string | null,"id"?: string,"lead_id"?: string | null,"outcome_id"?: string | null,"outcome_note"?: string | null,"provider_call_id"?: string | null,"recording_consent"?: boolean,"recording_expires_at"?: string | null,"recording_path"?: string | null,"started_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "calls_agent_id_fkey"
+      columns: ["agent_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "calls_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "calls_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "calls_outcome_id_fkey"
+      columns: ["outcome_id"]
+isOneToOne: false
+      referencedRelation: "call_outcomes"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"campaigns": {
                   Row: {
                     "ended_on": string | null,"external_id": string | null,"id": string,"name": string,"source_id": string,"spend_to_date": number | null,"started_on": string | null
@@ -100,6 +150,50 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"customer_contacts": {
+                  Row: {
+                    "customer_id": string,"email": string | null,"id": string,"is_active": boolean,"is_primary": boolean,"name": string,"notify_prefs": NonNullable<Json>,"phone": string,"role_title": string | null,"user_id": string | null
+                  }
+                  Insert: {
+                    "customer_id": string,"email"?: string | null,"id"?: string,"is_active"?: boolean,"is_primary"?: boolean,"name": string,"notify_prefs"?: NonNullable<Json>,"phone": string,"role_title"?: string | null,"user_id"?: string | null
+                  }
+                  Update: {
+                    "customer_id"?: string,"email"?: string | null,"id"?: string,"is_active"?: boolean,"is_primary"?: boolean,"name"?: string,"notify_prefs"?: NonNullable<Json>,"phone"?: string,"role_title"?: string | null,"user_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "customer_contacts_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"customers": {
+                  Row: {
+                    "billing_address": string | null,"billing_city_id": string | null,"billing_state_code": string | null,"converted_at": string | null,"created_at": string,"gstin": string | null,"id": string,"is_prospect": boolean,"lead_id": string | null,"name": string,"type": string,"updated_at": string
+                  }
+                  Insert: {
+                    "billing_address"?: string | null,"billing_city_id"?: string | null,"billing_state_code"?: string | null,"converted_at"?: string | null,"created_at"?: string,"gstin"?: string | null,"id"?: string,"is_prospect"?: boolean,"lead_id"?: string | null,"name": string,"type": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "billing_address"?: string | null,"billing_city_id"?: string | null,"billing_state_code"?: string | null,"converted_at"?: string | null,"created_at"?: string,"gstin"?: string | null,"id"?: string,"is_prospect"?: boolean,"lead_id"?: string | null,"name"?: string,"type"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "customers_billing_city_id_fkey"
+      columns: ["billing_city_id"]
+isOneToOne: false
+      referencedRelation: "cities"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "customers_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"finishes": {
                   Row: {
@@ -327,6 +421,50 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"properties": {
+                  Row: {
+                    "address": string,"city_id": string | null,"created_at": string,"customer_id": string,"id": string,"lat": number | null,"lng": number | null,"name": string,"unit_label": string,"updated_at": string
+                  }
+                  Insert: {
+                    "address": string,"city_id"?: string | null,"created_at"?: string,"customer_id": string,"id"?: string,"lat"?: number | null,"lng"?: number | null,"name": string,"unit_label"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "address"?: string,"city_id"?: string | null,"created_at"?: string,"customer_id"?: string,"id"?: string,"lat"?: number | null,"lng"?: number | null,"name"?: string,"unit_label"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "properties_city_id_fkey"
+      columns: ["city_id"]
+isOneToOne: false
+      referencedRelation: "cities"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "properties_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"property_units": {
+                  Row: {
+                    "created_at": string,"floor": string | null,"id": string,"label": string,"notes": string | null,"property_id": string,"wing": string | null
+                  }
+                  Insert: {
+                    "created_at"?: string,"floor"?: string | null,"id"?: string,"label": string,"notes"?: string | null,"property_id": string,"wing"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"floor"?: string | null,"id"?: string,"label"?: string,"notes"?: string | null,"property_id"?: string,"wing"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "property_units_property_id_fkey"
+      columns: ["property_id"]
+isOneToOne: false
+      referencedRelation: "properties"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"role_permissions": {
                   Row: {
                     "id": string,"permission": string,"role": Database["public"]['Enums']["app_role"]
@@ -403,11 +541,23 @@ isOneToOne: false
 "custom_access_token_hook":
 { Args: { "event": Json }; Returns: Json
                            },
+"ensure_prospect":
+{ Args: { "p_lead_id": string,"p_property": Json }; Returns: Json
+                           },
 "ingest_lead":
 { Args: { "p_lead": Json }; Returns: Json
                            },
 "is_staff":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"log_call":
+{ Args: { "p_call": Json }; Returns: string
+                           },
+"my_customer_ids":
+{ Args: Record<PropertyKey, never>; Returns: (string)[]
+                           },
+"staff_can_see_customer":
+{ Args: { "p_customer_id": string }; Returns: boolean
                            }
           }
           Enums: {
