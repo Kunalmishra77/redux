@@ -27,3 +27,13 @@ export const BLOCK_REASONS: Record<string, { label: string; on: string }> = {
   parts: { label: 'Waiting for parts', on: 'REDUX' },
   other: { label: 'Other', on: 'see note' },
 }
+
+export const INVOICE_STATUS: Record<string, { label: string; tone: PillTone }> = {
+  draft: { label: 'Draft', tone: 'neutral' }, issued: { label: 'Awaiting payment', tone: 'waiting' }, part_paid: { label: 'Part paid', tone: 'progress' },
+  paid: { label: 'Paid', tone: 'positive' }, cancelled: { label: 'Cancelled', tone: 'failed' },
+}
+
+export const SR_STATUS: Record<string, { label: string; tone: PillTone }> = {
+  open: { label: 'New', tone: 'waiting' }, acknowledged: { label: 'Acknowledged', tone: 'progress' }, in_progress: { label: 'In progress', tone: 'progress' },
+  resolved: { label: 'Resolved', tone: 'positive' }, closed: { label: 'Closed', tone: 'done' },
+}
