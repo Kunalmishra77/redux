@@ -9,7 +9,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: ["**"]   # every branch, so CI is green before anything reaches staging (ADR-013)
 
 concurrency:
   group: ci-${{ github.ref }}
