@@ -144,7 +144,7 @@ export default async function DashboardPage() {
                     <Link href={`/staff/jobs/${j.id}`} className="block">
                       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                         <span>
-                          <span className="font-semibold text-ink hover:text-redux-blue">{(j.properties as { name: string } | null)?.name}</span>
+                          <span className="font-semibold text-ink hover:text-redux-blue">{(j.properties as unknown as { name: string } | null)?.name}</span>
                           <span className="ml-2 text-xs text-muted-ink">{j.job_no} · {js.length} {js.length === 1 ? 'room' : 'rooms'}</span>
                         </span>
                         <span className="flex gap-1.5">

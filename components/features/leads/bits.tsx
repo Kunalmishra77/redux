@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useNow } from '@/lib/hooks/use-now'
 import { cn } from 'cn'
 import { SOURCES } from '@/lib/constants/sources'
 
@@ -26,12 +26,7 @@ function fmt(ms: number) {
 
 /** BR-L5: the call-back clock runs from creation. Ticks live; red once breached. */
 export function SlaTimer({ due, done }: { due: string | null; done?: boolean }) {
-  const [now, setNow] = useState<number | null>(null)
-  useEffect(() => {
-    setNow(Date.now())
-    const t = setInterval(() => setNow(Date.now()), 30_000)
-    return () => clearInterval(t)
-  }, [])
+  const now = useNow()
   if (!due || done) return null
   if (now === null) return <span className="num text-xs text-faint">—</span>
   const left = new Date(due).getTime() - now

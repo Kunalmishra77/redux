@@ -2,7 +2,7 @@
 // (scripts/demo/README.md). Safe to re-run: the story is only written once.
 import pg from 'pg'
 import { assertStaging, ensureUsers, hookIsOn, seedBase } from './seed-base'
-import { backdate, seedFlows } from './seed-flows'
+import { backdate, seedFlows, spreadJobTimelines } from './seed-flows'
 
 async function main() {
   assertStaging()
@@ -19,6 +19,7 @@ async function main() {
     const seeded = (await db.query(`select 1 from public.settings where key = 'demo_seeded_at'`)).rowCount
     if (seeded) {
       console.log('• the demo story is already on staging — reset staging to re-seed it')
+      await spreadJobTimelines(db)
     } else {
       const leadIds = await seedFlows(db, ids)
       await backdate(db, leadIds)

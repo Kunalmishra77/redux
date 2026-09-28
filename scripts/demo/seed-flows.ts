@@ -335,11 +335,24 @@ export async function backdate(db: pg.Client, leadIds: Record<string, string>) {
   }
   await q(`alter table public.leads enable trigger trg_lead_attribution`)
   await q(`alter table public.consent_records enable trigger trg_consent_guard`)
-  // Stage events and team alerts: spread over the job's life so timelines read naturally
-  await q(`update public.job_stage_events e set occurred_at = now() - ((10 - s.n) * 30) * interval '1 hour'
-           from (select id, row_number() over (partition by job_unit_id order by occurred_at) as n from public.job_stage_events) s
-           where e.id = s.id`)
-  await q(`update public.job_units set downtime_from = now() - interval '5 days' where downtime_from is not null`)
-  await q(`update public.unit_blocks set blocked_from = now() - interval '2 days'`)
+  await spreadJobTimelines(db)
   await q(`update public.team_notifications set created_at = now() - (abs(hashtext(id::text)) % 4000) * interval '1 minute'`)
+}
+
+/**
+ * Spread each room's stage events over the job's life, in stage order (they were all written in one
+ * transaction, so they share a timestamp). Removal was ~5 days ago; each later stage ~20 h apart.
+ * Deterministic relative to now(), so it is safe to re-run.
+ */
+export async function spreadJobTimelines(db: pg.Client) {
+  await db.query(`update public.job_stage_events e set occurred_at = now() - (7 - s.n) * interval '20 hours'
+    from (select id, case when job_unit_id is null then 0 else
+            row_number() over (partition by job_unit_id order by array_position(enum_range(null::public.job_stage), to_stage), is_backward) end as n
+          from public.job_stage_events) s
+    where e.id = s.id`)
+  await db.query(`update public.job_units u set downtime_from = e.occurred_at
+    from public.job_stage_events e where e.job_unit_id = u.id and e.to_stage = 'removal_pickup' and not e.is_backward`)
+  await db.query(`update public.job_units u set back_in_service_at = e.occurred_at, downtime_to = e.occurred_at
+    from public.job_stage_events e where e.job_unit_id = u.id and e.to_stage = 'handover'`)
+  await db.query(`update public.unit_blocks set blocked_from = now() - interval '2 days' where blocked_to is null`)
 }

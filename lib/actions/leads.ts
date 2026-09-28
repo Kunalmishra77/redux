@@ -34,7 +34,7 @@ export async function logCallAction(input: { leadId: string; outcome: string; no
 export async function availableSurveyorsAction(scheduledAt: string, propertyId?: string) {
   const supabase = await createClient()
   const { data } = await supabase.rpc('available_surveyors', { p_property_id: propertyId ?? null as unknown as string, p_start: scheduledAt })
-  return (data ?? []).map((s) => ({ id: s.surveyor_id, name: s.full_name, sameCity: s.same_city, load: s.surveys_that_day }))
+  return (data ?? []).map((s: { surveyor_id: string; full_name: string; same_city: boolean; surveys_that_day: number }) => ({ id: s.surveyor_id, name: s.full_name, sameCity: s.same_city, load: s.surveys_that_day }))
 }
 
 // D4-04: book the free survey without leaving the lead (BR-S8 prospect, BR-S2, BR-L6)

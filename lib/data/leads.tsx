@@ -60,22 +60,22 @@ export async function loadLeadTimeline(leadId: string): Promise<TimelineItem[]> 
       title: <>Moved to <strong>{LABEL[h.to_status]}</strong></>, body: h.note ?? undefined })
   }
   for (const t of touches.data ?? []) {
-    const src = t.source as { name: string } | null
+    const src = t.source as unknown as { name: string } | null
     items.push({ id: `t-${t.id}`, icon: UserPlus, at: t.occurred_at, title: <>Enquiry via <strong>{src?.name}</strong></> })
   }
   for (const c of calls.data ?? []) {
-    const oc = c.outcome as { name: string; marks_contacted: boolean } | null
+    const oc = c.outcome as unknown as { name: string; marks_contacted: boolean } | null
     const mins = c.duration_sec ? `${Math.floor(c.duration_sec / 60)}m ${c.duration_sec % 60}s` : null
     items.push({ id: `c-${c.id}`, icon: oc?.marks_contacted ? Phone : PhoneMissed, at: c.started_at,
-      actor: (c.agent as { full_name: string } | null)?.full_name,
+      actor: (c.agent as unknown as { full_name: string } | null)?.full_name,
       title: <>Call — {oc?.name ?? 'logged'}{mins ? <span className="font-normal text-muted-ink"> · {mins}</span> : null}</>, body: c.outcome_note ?? undefined })
   }
   for (const n of notes.data ?? []) {
-    items.push({ id: `n-${n.id}`, icon: StickyNote, at: n.created_at, actor: (n.author as { full_name: string } | null)?.full_name, title: 'Note', body: n.body })
+    items.push({ id: `n-${n.id}`, icon: StickyNote, at: n.created_at, actor: (n.author as unknown as { full_name: string } | null)?.full_name, title: 'Note', body: n.body })
   }
   for (const s of surveys.data ?? []) {
     items.push({ id: `s-${s.id}`, icon: CalendarCheck, at: s.submitted_at ?? s.scheduled_at,
-      actor: (s.surveyor as { full_name: string } | null)?.full_name,
+      actor: (s.surveyor as unknown as { full_name: string } | null)?.full_name,
       title: s.status === 'submitted' ? 'Free survey completed' : s.status === 'cancelled' ? 'Survey cancelled' : `Free survey booked for ${new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(s.scheduled_at))}` })
   }
   for (const q of quotes.data ?? []) {

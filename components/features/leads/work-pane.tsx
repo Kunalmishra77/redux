@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { BellPlus, CalendarCheck, Check, Loader2, MapPin, MessageCircle, Phone, PhoneOff, StickyNote, XCircle } from 'lucide-react'
@@ -140,10 +140,7 @@ export function LeadWorkPane({ lead, outcomes, lostReasons, cities }: {
 }
 
 function BookSurvey({ lead, cities, onDone }: { lead: WorkLead; cities: { id: string; name: string }[]; onDone: () => void }) {
-  const tomorrow = useMemo(() => {
-    const d = new Date(Date.now() + 86_400_000)
-    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(d)
-  }, [])
+  const [tomorrow] = useState(() => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date(Date.now() + 86_400_000)))
   const [date, setDate] = useState(tomorrow)
   const [slot, setSlot] = useState('11:00')
   const [surveyors, setSurveyors] = useState<{ id: string; name: string; sameCity: boolean; load: number }[] | null>(null)

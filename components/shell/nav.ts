@@ -24,16 +24,18 @@ export const NAV: Record<Exclude<AppRole, 'customer'>, NavItem[]> = {
     { href: '/staff/admin', label: 'Admin', icon: Settings, match: '^/staff/admin(?!/(invoices|stock|reports))' },
   ],
   cc_exec: [
-    { href: '/staff/leads/mine', label: 'My leads', icon: Users },
+    { href: '/staff/leads/mine', label: 'My leads', icon: Users, match: '^/staff/leads' },
     { href: '/staff/follow-ups', label: 'Follow-ups', icon: ListChecks },
     { href: '/staff/inbox', label: 'Inbox', icon: Inbox },
     { href: '/staff/surveys', label: 'Surveys', icon: CalendarCheck },
+    { href: '/staff/jobs', label: 'Jobs', icon: Hammer },
     { href: '/staff/service-requests', label: 'Service requests', icon: LifeBuoy },
     { href: '/staff/me/stats', label: 'My stats', icon: BarChart3 },
   ],
   surveyor: [
     { href: '/staff/surveys', label: 'My surveys', icon: ClipboardList },
     { href: '/staff/quotes', label: 'My quotes', icon: FileText },
+    { href: '/staff/jobs', label: 'Handovers', icon: Hammer },
   ],
 }
 

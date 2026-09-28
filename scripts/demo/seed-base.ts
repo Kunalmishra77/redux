@@ -3,6 +3,7 @@
 import pg from 'pg'
 import { createClient } from '@supabase/supabase-js'
 import { DEMO_CUSTOMERS, DEMO_PASSWORD, DEMO_STAFF } from './users'
+import { seedTemplates } from './templates'
 
 const STAGING_REF = 'bkygjdzljfkkbkomujav'
 
@@ -131,6 +132,9 @@ export async function seedBase(db: pg.Client, ids: Record<string, string>) {
     }
     await q(`select public.activate_rate_card($1)`, [card])
   }
+
+  // WhatsApp templates, word for word from 05-content
+  await seedTemplates(db)
 
   // Integration accounts for the health screen
   await q(`insert into public.integration_accounts (provider, external_id, display_name, last_event_at, config) values
