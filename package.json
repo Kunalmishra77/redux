@@ -11,12 +11,15 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "db:test": "node --env-file=.env.local scripts/db-test.mjs",
-    "db:dry-run": "node --env-file=.env.local scripts/migration-dry-run.mjs"
+    "db:dry-run": "node --env-file=.env.local scripts/migration-dry-run.mjs",
+    "worker": "tsx worker/index.ts",
+    "worker:smoke": "tsx --env-file=.env.local scripts/worker-smoke.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
     "next": "16.3.6",
+    "pg": "^8.23.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "^0.0.1",
@@ -30,8 +33,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
-    "pg": "^8.23.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.0.2"
   },
