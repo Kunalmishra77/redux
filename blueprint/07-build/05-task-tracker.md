@@ -15,7 +15,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | **Phase** | Phase 0 — Mobilisation |
 | **Week** | W0 (5–9 Oct 2026) |
 | **Sprint goal** | Accounts, approvals and infrastructure. Meta App Review submitted |
-| **Last updated** | 2026-09-28 — §12 invoices/payments/credit notes + SECURITY DEFINER permission fix |
+| **Last updated** | 2026-09-28 — §13 stock + §14 service requests |
 
 ---
 
@@ -171,6 +171,10 @@ E11 quotation & OTP (15) · E12 job tracking (11) · E13 QA & go-live (6) — al
 | E14-S12 | WIP | DB half: `record_payment()` server-only, idempotent. Route handler + signature check with E4 |
 | E14-S18 | REVIEW | `cancel_invoice()` → full credit note from its own series; partial credit notes not built |
 | E14-S10, S11 | TODO | Razorpay Payment Link / Smart Collect calls — `payment_route` is already decided per invoice |
+| E14-S15 | REVIEW | Migration 001300: `raise_service_request()` (ownership-checked), `progress_service_request()` forward-only, 48 h / 1 month clock, overdue view. Screens later |
+| E15-S06 | REVIEW | Migration 001200: stock items, append-only movements, `record_stock_movement()`; screens B31/B32 later |
+| E15-S07 | REVIEW | Never negative; once-per-crossing alert into `stock_alerts` (TN13 outbox), re-arms |
+| E15-S08 | REVIEW | Consumption must name a job; usage per job queryable |
 
 E14 customer portal (18) · E15 super admin & stock (8) · E16 admin & reports (9) ·
 E17 QA, go-live, handover (9) — all `TODO`
@@ -197,6 +201,10 @@ Anything decided that is not already in an ADR. If it contradicts an ADR, **writ
 | 2026-09-27 | **Item 19 → ADR-014**: one repo, surveyor app in `mobile/` | Shared pricing logic identical by construction | E8 |
 | 2026-09-27 | Leads enter only via `ingest_lead()` (SECURITY DEFINER), for every source | Dedup + assignment + SLA must be atomic and identical for web, webhooks and manual entry | E3-S03 |
 | 2026-09-27 | Manual entry (call / walk-in) by a cc_exec is assigned to that executive, not round-robin | "With source and who took it" (PRD D3); the taker is already on the call | E3-S05 |
+| 2026-09-28 | Stock alerts written to `stock_alerts` (an outbox) until the notification queue (E5) exists | BR-ST3 "fires once" must be provable now, delivered later | E15-S07 |
+| 2026-09-28 | Stock quantity only via movements; opening stock = an 'in' movement | One ledger; BR-ST2 actor on every change | E15-S06 |
+| 2026-09-28 | Service requests: one shared care queue (TN12 → cc_exec); taker is recorded as `assigned_to` | Notifications matrix TN12 | E14-S15 |
+| 2026-09-28 | SR clock from settings: 48 h acknowledge, 30 days resolve | E-Commerce Rules (compliance §5) | E14-S15 |
 | 2026-09-28 | **Caller identity in SECURITY DEFINER functions comes from the JWT (`is_system_caller()`), never `current_user`** | Inside a definer function `current_user` is the owner — see Deviations | all |
 | 2026-09-28 | Invoice number allocated at issue, not at draft | A draft can be abandoned without leaving a gap (BR-I1) | E14-S09 |
 | 2026-09-28 | Supplier GSTIN / legal name / address / series codes in `settings`, empty until A11; issue refuses without them | Nothing invented | E14-S08 |
@@ -268,6 +276,8 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | `market_prices` + optional `finish_id` (lookup falls back to the finish-less row) | The CSV template carries a market price per finish; schema.sql keyed by fitting type only | migration 000800 |
 | 2026-09-28 | **SECURITY FIX**: `move_unit_stage()` and `link_to_pilot()` (001000, on staging for a few hours, no real data) accepted any logged-in user — the check `current_user = 'authenticated'` never fires inside SECURITY DEFINER. Re-issued with `is_system_caller()`; test 11 makes the pattern structurally impossible | Found by the invoice test calling as cc_exec | migration 001100 |
 | 2026-09-28 | `invoices.invoice_no` nullable until issue; supplier fields filled at issue; `payment_route`; issued-completeness + cancelled-consistency checks | BR-I1, BR-I3, BR-I6 | migration 001100 |
+| 2026-09-28 | `service_requests.ticket_no` → `request_no`; `resolution_note`; forward-only status; no user write policy | Glossary bans "ticket"; accountability | migration 001300 |
+| 2026-09-28 | `stock_items` + `created_at/updated_at`, category check; `stock_movements` sign/reason checks, append-only; new `stock_alerts` | BR-ST1…3 | migration 001200 |
 | 2026-09-28 | `credit_notes` get their own gap-free series + GST split; append-only | BR-I2 | migration 001100 |
 | 2026-09-28 | `unit_blocks` table replaces job_units.blocked_* columns | Item 9: open and repeat blocks | migration 001000 |
 | 2026-09-28 | `jobs.quotation_id` unique; handovers require all three checks (constraint); warranties unique per (fitting, job, kind); nothing cascades | One job per approval; D11-07; no duplicate cards; rule 8/9 | migration 001000 |
@@ -360,5 +370,9 @@ Append one line per working session. This is how the next session (or the next p
             is_system_caller(); test 11 guards it structurally. Also caught: a 6-char series code
             breaks the 16-char limit → codes ≤ 5. CI green → staging; 274/274 pgTAP.
             Next in Step 1: §13 stock, then §14–16 (service requests, integrations/messaging, privacy).
+
+2026-09-28  Migrations 001200 (§13 stock) + 001300 (§14 service requests). CI green → staging;
+            312/312 pgTAP. Remaining in Step 1: §15 integrations/webhooks/messaging (with pgmq +
+            pg_cron, E4-S01 / E5-S01) and §16 consent/privacy (DPDP) — both need the queue design.
 
 ```

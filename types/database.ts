@@ -1197,6 +1197,55 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"service_requests": {
+                  Row: {
+                    "ack_due_at": string,"acknowledged_at": string | null,"assigned_to": string | null,"body": string | null,"created_at": string,"customer_id": string,"id": string,"job_unit_id": string | null,"property_id": string | null,"raised_by": string | null,"request_no": string,"resolution_note": string | null,"resolve_due_at": string,"resolved_at": string | null,"status": string,"subject": string,"updated_at": string,"warranty_id": string | null
+                  }
+                  Insert: {
+                    "ack_due_at": string,"acknowledged_at"?: string | null,"assigned_to"?: string | null,"body"?: string | null,"created_at"?: string,"customer_id": string,"id"?: string,"job_unit_id"?: string | null,"property_id"?: string | null,"raised_by"?: string | null,"request_no": string,"resolution_note"?: string | null,"resolve_due_at": string,"resolved_at"?: string | null,"status"?: string,"subject": string,"updated_at"?: string,"warranty_id"?: string | null
+                  }
+                  Update: {
+                    "ack_due_at"?: string,"acknowledged_at"?: string | null,"assigned_to"?: string | null,"body"?: string | null,"created_at"?: string,"customer_id"?: string,"id"?: string,"job_unit_id"?: string | null,"property_id"?: string | null,"raised_by"?: string | null,"request_no"?: string,"resolution_note"?: string | null,"resolve_due_at"?: string,"resolved_at"?: string | null,"status"?: string,"subject"?: string,"updated_at"?: string,"warranty_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "service_requests_assigned_to_fkey"
+      columns: ["assigned_to"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "service_requests_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "service_requests_job_unit_id_fkey"
+      columns: ["job_unit_id"]
+isOneToOne: false
+      referencedRelation: "job_units"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "service_requests_job_unit_id_fkey"
+      columns: ["job_unit_id"]
+isOneToOne: false
+      referencedRelation: "v_delayed_units"
+      referencedColumns: ["job_unit_id"]
+    },{
+      foreignKeyName: "service_requests_property_id_fkey"
+      columns: ["property_id"]
+isOneToOne: false
+      referencedRelation: "properties"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "service_requests_warranty_id_fkey"
+      columns: ["warranty_id"]
+isOneToOne: false
+      referencedRelation: "warranties"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"settings": {
                   Row: {
                     "description": string | null,"key": string,"updated_at": string,"updated_by": string | null,"value": NonNullable<Json>
@@ -1214,6 +1263,81 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
+    }
+                  ]
+                },"stock_alerts": {
+                  Row: {
+                    "id": string,"item_id": string,"min_level": number,"notified_at": string | null,"quantity": number,"raised_at": string
+                  }
+                  Insert: {
+                    "id"?: string,"item_id": string,"min_level": number,"notified_at"?: string | null,"quantity": number,"raised_at"?: string
+                  }
+                  Update: {
+                    "id"?: string,"item_id"?: string,"min_level"?: number,"notified_at"?: string | null,"quantity"?: number,"raised_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "stock_alerts_item_id_fkey"
+      columns: ["item_id"]
+isOneToOne: false
+      referencedRelation: "stock_items"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_alerts_item_id_fkey"
+      columns: ["item_id"]
+isOneToOne: false
+      referencedRelation: "v_low_stock"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"stock_items": {
+                  Row: {
+                    "below_min_since": string | null,"category": string | null,"created_at": string,"id": string,"is_active": boolean,"last_alert_at": string | null,"min_level": number,"name": string,"quantity": number,"sku": string,"uom": string,"updated_at": string
+                  }
+                  Insert: {
+                    "below_min_since"?: string | null,"category"?: string | null,"created_at"?: string,"id"?: string,"is_active"?: boolean,"last_alert_at"?: string | null,"min_level"?: number,"name": string,"quantity"?: number,"sku": string,"uom"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "below_min_since"?: string | null,"category"?: string | null,"created_at"?: string,"id"?: string,"is_active"?: boolean,"last_alert_at"?: string | null,"min_level"?: number,"name"?: string,"quantity"?: number,"sku"?: string,"uom"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"stock_movements": {
+                  Row: {
+                    "actor_id": string,"id": string,"item_id": string,"job_id": string | null,"occurred_at": string,"quantity": number,"reason": string | null,"type": Database["public"]['Enums']["stock_move_type"]
+                  }
+                  Insert: {
+                    "actor_id": string,"id"?: string,"item_id": string,"job_id"?: string | null,"occurred_at"?: string,"quantity": number,"reason"?: string | null,"type": Database["public"]['Enums']["stock_move_type"]
+                  }
+                  Update: {
+                    "actor_id"?: string,"id"?: string,"item_id"?: string,"job_id"?: string | null,"occurred_at"?: string,"quantity"?: number,"reason"?: string | null,"type"?: Database["public"]['Enums']["stock_move_type"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "stock_movements_item_id_fkey"
+      columns: ["item_id"]
+isOneToOne: false
+      referencedRelation: "stock_items"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_movements_item_id_fkey"
+      columns: ["item_id"]
+isOneToOne: false
+      referencedRelation: "v_low_stock"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_movements_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "jobs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stock_movements_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "v_invoices_due"
+      referencedColumns: ["job_id"]
     }
                   ]
                 },"survey_checkins": {
@@ -1438,6 +1562,38 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"v_low_stock": {
+                  Row: {
+                    "below_min_since": string | null,"category": string | null,"id": string | null,"min_level": number | null,"name": string | null,"quantity": number | null,"sku": string | null,"uom": string | null
+                  }
+                  Insert: {
+                           "below_min_since"?: string | null,"category"?: string | null,"id"?: string | null,"min_level"?: number | null,"name"?: string | null,"quantity"?: number | null,"sku"?: string | null,"uom"?: string | null
+                         }
+                        Update: {
+                           "below_min_since"?: string | null,"category"?: string | null,"id"?: string | null,"min_level"?: number | null,"name"?: string | null,"quantity"?: number | null,"sku"?: string | null,"uom"?: string | null
+                         }
+                        Relationships: [
+                    
+                  ]
+                },"v_service_requests_overdue": {
+                  Row: {
+                    "ack_due_at": string | null,"ack_overdue": boolean | null,"customer_id": string | null,"id": string | null,"request_no": string | null,"resolve_due_at": string | null,"resolve_overdue": boolean | null,"status": string | null
+                  }
+                  Insert: {
+                           "ack_due_at"?: string | null,"ack_overdue"?: never,"customer_id"?: string | null,"id"?: string | null,"request_no"?: string | null,"resolve_due_at"?: string | null,"resolve_overdue"?: never,"status"?: string | null
+                         }
+                        Update: {
+                           "ack_due_at"?: string | null,"ack_overdue"?: never,"customer_id"?: string | null,"id"?: string | null,"request_no"?: string | null,"resolve_due_at"?: string | null,"resolve_overdue"?: never,"status"?: string | null
+                         }
+                        Relationships: [
+                    {
+      foreignKeyName: "service_requests_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Functions: {
@@ -1542,6 +1698,12 @@ isOneToOne: false
 "new_rate_card_version":
 { Args: { "p_effective_from": string,"p_from"?: string,"p_notes"?: string }; Returns: string
                            },
+"progress_service_request":
+{ Args: { "p_id": string,"p_note"?: string,"p_to": string }; Returns: undefined
+                           },
+"raise_service_request":
+{ Args: { "p": Json }; Returns: Json
+                           },
 "rate_card_price":
 { Args: { "p_finish": string,"p_fitting_type": string,"p_rate_card": string,"p_work_type_code": string }; Returns: number
                            },
@@ -1556,6 +1718,9 @@ isOneToOne: false
                            },
 "record_payment":
 { Args: { "p": Json }; Returns: Json
+                           },
+"record_stock_movement":
+{ Args: { "p": Json }; Returns: number
                            },
 "request_quote_otp":
 { Args: { "p_channel": Database["public"]['Enums']["msg_channel"],"p_phone": string,"p_quote": string }; Returns: Json
