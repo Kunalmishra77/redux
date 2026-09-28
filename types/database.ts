@@ -78,13 +78,7 @@ isOneToOne: false
                     "action"?: string,"actor_id"?: string | null,"actor_role"?: Database["public"]['Enums']["app_role"] | null,"after"?: Json | null,"before"?: Json | null,"entity_id"?: string | null,"entity_type"?: string,"id"?: number,"ip_address"?: unknown,"occurred_at"?: string
                   }
                   Relationships: [
-                    {
-      foreignKeyName: "audit_log_actor_id_fkey"
-      columns: ["actor_id"]
-isOneToOne: false
-      referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    }
+                    
                   ]
                 },"brands": {
                   Row: {
@@ -235,6 +229,37 @@ isOneToOne: false
       columns: ["lead_id"]
 isOneToOne: false
       referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"discount_approvals": {
+                  Row: {
+                    "decided_at": string | null,"decided_by": string | null,"decision": string | null,"decision_note": string | null,"id": string,"quotation_id": string,"reason": string,"requested_at": string,"requested_by": string,"requested_pct": number
+                  }
+                  Insert: {
+                    "decided_at"?: string | null,"decided_by"?: string | null,"decision"?: string | null,"decision_note"?: string | null,"id"?: string,"quotation_id": string,"reason": string,"requested_at"?: string,"requested_by": string,"requested_pct": number
+                  }
+                  Update: {
+                    "decided_at"?: string | null,"decided_by"?: string | null,"decision"?: string | null,"decision_note"?: string | null,"id"?: string,"quotation_id"?: string,"reason"?: string,"requested_at"?: string,"requested_by"?: string,"requested_pct"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "discount_approvals_decided_by_fkey"
+      columns: ["decided_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "discount_approvals_quotation_id_fkey"
+      columns: ["quotation_id"]
+isOneToOne: false
+      referencedRelation: "quotations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "discount_approvals_requested_by_fkey"
+      columns: ["requested_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
                   ]
@@ -638,6 +663,148 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"quotation_lines": {
+                  Row: {
+                    "assessment_id": string | null,"cgst": number,"description": string,"finish_id": string | null,"fitting_id": string | null,"gst_rate": number,"hsn_sac": string | null,"id": string,"igst": number,"line_total": number,"market_price": number,"price_replace_eurobrass": number | null,"qty": number,"quotation_id": string,"sgst": number,"sort_order": number,"taxable_value": number,"unit_label": string | null,"unit_price": number,"work_type_id": string | null
+                  }
+                  Insert: {
+                    "assessment_id"?: string | null,"cgst"?: number,"description": string,"finish_id"?: string | null,"fitting_id"?: string | null,"gst_rate": number,"hsn_sac"?: string | null,"id"?: string,"igst"?: number,"line_total": number,"market_price"?: number,"price_replace_eurobrass"?: number | null,"qty"?: number,"quotation_id": string,"sgst"?: number,"sort_order"?: number,"taxable_value"?: number,"unit_label"?: string | null,"unit_price": number,"work_type_id"?: string | null
+                  }
+                  Update: {
+                    "assessment_id"?: string | null,"cgst"?: number,"description"?: string,"finish_id"?: string | null,"fitting_id"?: string | null,"gst_rate"?: number,"hsn_sac"?: string | null,"id"?: string,"igst"?: number,"line_total"?: number,"market_price"?: number,"price_replace_eurobrass"?: number | null,"qty"?: number,"quotation_id"?: string,"sgst"?: number,"sort_order"?: number,"taxable_value"?: number,"unit_label"?: string | null,"unit_price"?: number,"work_type_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "quotation_lines_assessment_id_fkey"
+      columns: ["assessment_id"]
+isOneToOne: false
+      referencedRelation: "assessments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotation_lines_finish_id_fkey"
+      columns: ["finish_id"]
+isOneToOne: false
+      referencedRelation: "finishes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotation_lines_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "fittings"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotation_lines_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "v_incomplete_fittings"
+      referencedColumns: ["fitting_id"]
+    },{
+      foreignKeyName: "quotation_lines_quotation_id_fkey"
+      columns: ["quotation_id"]
+isOneToOne: false
+      referencedRelation: "quotations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotation_lines_work_type_id_fkey"
+      columns: ["work_type_id"]
+isOneToOne: false
+      referencedRelation: "work_types"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"quotations": {
+                  Row: {
+                    "cgst": number,"created_at": string,"created_by": string | null,"customer_id": string,"discount_amount": number,"discount_pct": number,"id": string,"igst": number,"issued_at": string | null,"lead_id": string | null,"market_total": number,"pdf_path": string | null,"pdf_sha256": string | null,"place_of_supply_state_code": string | null,"property_id": string,"quote_no": string,"rate_card_id": string,"sgst": number,"status": Database["public"]['Enums']["quote_status"],"subtotal": number,"supersedes_id": string | null,"supplier_state_code": string | null,"survey_id": string,"taxable_value": number,"terms_text": string | null,"terms_version": string | null,"total": number,"updated_at": string,"valid_until": string | null,"version": number,"warranty_finish_days": number | null,"warranty_mechanical_days": number | null,"you_save": number
+                  }
+                  Insert: {
+                    "cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id": string,"discount_amount"?: number,"discount_pct"?: number,"id"?: string,"igst"?: number,"issued_at"?: string | null,"lead_id"?: string | null,"market_total"?: number,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code"?: string | null,"property_id": string,"quote_no": string,"rate_card_id": string,"sgst"?: number,"status"?: Database["public"]['Enums']["quote_status"],"subtotal"?: number,"supersedes_id"?: string | null,"supplier_state_code"?: string | null,"survey_id": string,"taxable_value"?: number,"terms_text"?: string | null,"terms_version"?: string | null,"total"?: number,"updated_at"?: string,"valid_until"?: string | null,"version"?: number,"warranty_finish_days"?: number | null,"warranty_mechanical_days"?: number | null,"you_save"?: number
+                  }
+                  Update: {
+                    "cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id"?: string,"discount_amount"?: number,"discount_pct"?: number,"id"?: string,"igst"?: number,"issued_at"?: string | null,"lead_id"?: string | null,"market_total"?: number,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code"?: string | null,"property_id"?: string,"quote_no"?: string,"rate_card_id"?: string,"sgst"?: number,"status"?: Database["public"]['Enums']["quote_status"],"subtotal"?: number,"supersedes_id"?: string | null,"supplier_state_code"?: string | null,"survey_id"?: string,"taxable_value"?: number,"terms_text"?: string | null,"terms_version"?: string | null,"total"?: number,"updated_at"?: string,"valid_until"?: string | null,"version"?: number,"warranty_finish_days"?: number | null,"warranty_mechanical_days"?: number | null,"you_save"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "quotations_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotations_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotations_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotations_property_id_fkey"
+      columns: ["property_id"]
+isOneToOne: false
+      referencedRelation: "properties"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotations_rate_card_id_fkey"
+      columns: ["rate_card_id"]
+isOneToOne: false
+      referencedRelation: "rate_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotations_supersedes_id_fkey"
+      columns: ["supersedes_id"]
+isOneToOne: false
+      referencedRelation: "quotations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotations_survey_id_fkey"
+      columns: ["survey_id"]
+isOneToOne: false
+      referencedRelation: "surveys"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"quote_approvals": {
+                  Row: {
+                    "approver_name": string,"approver_phone": string,"attempt_count": number,"created_at": string,"delivery_channel": Database["public"]['Enums']["msg_channel"],"dlt_template_id": string | null,"failed_attempts": number,"gateway_message_id": string | null,"geolocation": Json | null,"id": string,"ip_address": unknown,"otp_delivered_at": string | null,"otp_generated_at": string,"otp_hash": string,"otp_verified_at": string,"pdf_sha256": string,"quotation_id": string,"quotation_version": number,"terms_text": string,"user_agent": string | null
+                  }
+                  Insert: {
+                    "approver_name": string,"approver_phone": string,"attempt_count"?: number,"created_at"?: string,"delivery_channel": Database["public"]['Enums']["msg_channel"],"dlt_template_id"?: string | null,"failed_attempts"?: number,"gateway_message_id"?: string | null,"geolocation"?: Json | null,"id"?: string,"ip_address"?: unknown,"otp_delivered_at"?: string | null,"otp_generated_at": string,"otp_hash": string,"otp_verified_at": string,"pdf_sha256": string,"quotation_id": string,"quotation_version": number,"terms_text": string,"user_agent"?: string | null
+                  }
+                  Update: {
+                    "approver_name"?: string,"approver_phone"?: string,"attempt_count"?: number,"created_at"?: string,"delivery_channel"?: Database["public"]['Enums']["msg_channel"],"dlt_template_id"?: string | null,"failed_attempts"?: number,"gateway_message_id"?: string | null,"geolocation"?: Json | null,"id"?: string,"ip_address"?: unknown,"otp_delivered_at"?: string | null,"otp_generated_at"?: string,"otp_hash"?: string,"otp_verified_at"?: string,"pdf_sha256"?: string,"quotation_id"?: string,"quotation_version"?: number,"terms_text"?: string,"user_agent"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "quote_approvals_quotation_id_fkey"
+      columns: ["quotation_id"]
+isOneToOne: false
+      referencedRelation: "quotations"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"quote_otps": {
+                  Row: {
+                    "attempts": number,"channel": Database["public"]['Enums']["msg_channel"],"delivered_at": string | null,"dlt_template_id": string | null,"expires_at": string,"failed_attempts": number,"gateway_message_id": string | null,"generated_at": string,"id": string,"locked_at": string | null,"otp_hash": string,"phone": string,"quotation_id": string,"verified_at": string | null
+                  }
+                  Insert: {
+                    "attempts"?: number,"channel": Database["public"]['Enums']["msg_channel"],"delivered_at"?: string | null,"dlt_template_id"?: string | null,"expires_at": string,"failed_attempts"?: number,"gateway_message_id"?: string | null,"generated_at"?: string,"id"?: string,"locked_at"?: string | null,"otp_hash": string,"phone": string,"quotation_id": string,"verified_at"?: string | null
+                  }
+                  Update: {
+                    "attempts"?: number,"channel"?: Database["public"]['Enums']["msg_channel"],"delivered_at"?: string | null,"dlt_template_id"?: string | null,"expires_at"?: string,"failed_attempts"?: number,"gateway_message_id"?: string | null,"generated_at"?: string,"id"?: string,"locked_at"?: string | null,"otp_hash"?: string,"phone"?: string,"quotation_id"?: string,"verified_at"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "quote_otps_quotation_id_fkey"
+      columns: ["quotation_id"]
+isOneToOne: false
+      referencedRelation: "quotations"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"rate_card_items": {
                   Row: {
                     "finish_id": string | null,"fitting_type_id": string,"gst_rate": number,"hsn_sac": string | null,"id": string,"price": number,"rate_card_id": string,"work_type_id": string
@@ -850,17 +1017,35 @@ isOneToOne: false
 "book_survey":
 { Args: { "p": Json }; Returns: Json
                            },
+"can_edit_quote":
+{ Args: { "p_quote": string }; Returns: boolean
+                           },
+"create_quote_from_survey":
+{ Args: { "p_survey": string }; Returns: string
+                           },
+"create_quote_version":
+{ Args: { "p_quote": string }; Returns: string
+                           },
 "current_role_is":
 { Args: { "target": Database["public"]['Enums']["app_role"] }; Returns: boolean
                            },
 "custom_access_token_hook":
 { Args: { "event": Json }; Returns: Json
                            },
+"decide_discount":
+{ Args: { "p_approval": string,"p_approve": boolean,"p_note"?: string }; Returns: undefined
+                           },
 "distance_m":
 { Args: { "lat1": number,"lat2": number,"lng1": number,"lng2": number }; Returns: number
                            },
 "ensure_prospect":
 { Args: { "p_lead_id": string,"p_property": Json }; Returns: Json
+                           },
+"expire_quotes":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"freeze_quote_for_issue":
+{ Args: { "p_quote": string }; Returns: Json
                            },
 "ingest_lead":
 { Args: { "p_lead": Json }; Returns: Json
@@ -874,6 +1059,9 @@ isOneToOne: false
 "log_call":
 { Args: { "p_call": Json }; Returns: string
                            },
+"mark_quote_sent":
+{ Args: { "p_pdf_path": string,"p_pdf_sha256": string,"p_quote": string }; Returns: undefined
+                           },
 "market_price":
 { Args: { "p_finish": string,"p_fitting_type": string,"p_rate_card": string }; Returns: number
                            },
@@ -885,6 +1073,18 @@ isOneToOne: false
                            },
 "rate_card_price":
 { Args: { "p_finish": string,"p_fitting_type": string,"p_rate_card": string,"p_work_type_code": string }; Returns: number
+                           },
+"recompute_quote":
+{ Args: { "p_quote": string }; Returns: undefined
+                           },
+"record_otp_delivery":
+{ Args: { "p_dlt_template_id"?: string,"p_gateway_message_id": string,"p_otp": string }; Returns: undefined
+                           },
+"request_quote_otp":
+{ Args: { "p_channel": Database["public"]['Enums']["msg_channel"],"p_phone": string,"p_quote": string }; Returns: Json
+                           },
+"set_quote_discount":
+{ Args: { "p_pct": number,"p_quote": string,"p_reason"?: string }; Returns: Database["public"]['Enums']["quote_status"]
                            },
 "staff_can_see_customer":
 { Args: { "p_customer_id": string }; Returns: boolean
