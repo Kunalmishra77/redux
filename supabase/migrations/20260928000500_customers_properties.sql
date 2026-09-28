@@ -211,21 +211,21 @@ grant execute on function public.ensure_prospect(uuid, jsonb) to authenticated, 
 -- Policies (ADR-004). Creation goes through ensure_prospect(); edits are staff-side.
 -- ---------------------------------------------------------------------------
 create policy customers_select on public.customers for select to authenticated
-  using (public.staff_can_see_customer(id) or id = any ((select public.my_customer_ids())));
+  using (public.staff_can_see_customer(id) or id = any ((select public.my_customer_ids())::uuid[]));
 create policy customers_write_admin on public.customers for all to authenticated
   using ((select public.current_role_is('super_admin')))
   with check ((select public.current_role_is('super_admin')));
 
 create policy customer_contacts_select on public.customer_contacts for select to authenticated
   using (public.staff_can_see_customer(customer_id)
-         or customer_id = any ((select public.my_customer_ids())));
+         or customer_id = any ((select public.my_customer_ids())::uuid[]));
 create policy customer_contacts_write_admin on public.customer_contacts for all to authenticated
   using ((select public.current_role_is('super_admin')))
   with check ((select public.current_role_is('super_admin')));
 
 create policy properties_select on public.properties for select to authenticated
   using (public.staff_can_see_customer(customer_id)
-         or customer_id = any ((select public.my_customer_ids())));
+         or customer_id = any ((select public.my_customer_ids())::uuid[]));
 -- The executive booking the survey can correct the address / pin of their own prospect
 create policy properties_update_staff on public.properties for update to authenticated
   using (public.staff_can_see_customer(customer_id)

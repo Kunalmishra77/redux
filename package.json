@@ -10,7 +10,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:test": "node --env-file=.env.local scripts/db-test.mjs"
+    "db:test": "node --env-file=.env.local scripts/db-test.mjs",
+    "db:dry-run": "node --env-file=.env.local scripts/migration-dry-run.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

@@ -15,7 +15,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | **Phase** | Phase 0 — Mobilisation |
 | **Week** | W0 (5–9 Oct 2026) |
 | **Sprint goal** | Accounts, approvals and infrastructure. Meta App Review submitted |
-| **Last updated** | 2026-09-27 — §5 leads data layer (E3-S01…S05) on staging; decisions on items 6, 11, 19 |
+| **Last updated** | 2026-09-28 — §6 calls + §7 customers/properties/prospects (BR-S8) |
 
 ---
 
@@ -98,7 +98,12 @@ E5-S01 … E5-S08 — all `TODO`
 
 <details><summary>E6 · Care portal (W7) — 9 stories</summary>
 
-E6-S01 … E6-S09 — all `TODO`
+| ID | Status | Notes |
+|---|:--:|---|
+| E6-S01 | WIP | Data layer done: `calls` + `log_call()` (migration 000600). Click-to-call provider not chosen yet; UI waits for DS1 |
+| E6-S02 | REVIEW | `call_outcomes` master (admin-editable); required note enforced (D4-03) |
+| E6-S03 | WIP | BR-S8 `ensure_prospect()` done (migration 000500); survey booking itself needs §8 surveys |
+| E6-S04 … E6-S09 | TODO | |
 </details>
 
 <details><summary>E7 · QA & go-live (W8–W9) — 9 stories</summary>
@@ -147,6 +152,11 @@ Anything decided that is not already in an ADR. If it contradicts an ADR, **writ
 | 2026-09-27 | **Item 19 → ADR-014**: one repo, surveyor app in `mobile/` | Shared pricing logic identical by construction | E8 |
 | 2026-09-27 | Leads enter only via `ingest_lead()` (SECURITY DEFINER), for every source | Dedup + assignment + SLA must be atomic and identical for web, webhooks and manual entry | E3-S03 |
 | 2026-09-27 | Manual entry (call / walk-in) by a cc_exec is assigned to that executive, not round-robin | "With source and who took it" (PRD D3); the taker is already on the call | E3-S05 |
+| 2026-09-28 | Calls are written only via `log_call()`; an outcome that reaches a person moves `new` → `contacted` | D2-07 pipeline stays truthful without a second click | E6-S01 |
+| 2026-09-28 | Call outcomes seeded: interested, call back later, not interested (J3) + no answer + other | J3 names three; "no answer" is needed for any calling queue; admin-editable | E6-S02 |
+| 2026-09-28 | cc_exec reads every **converted** customer (roles matrix: track job status) but a prospect only via their own lead | Keeps P3 intact for pre-sale data | E6-S03 |
+| 2026-09-28 | `pnpm db:dry-run … --tests`: unpushed migrations + all pgTAP in one rolled-back transaction on staging | No Docker locally; CI logs are not readable without GitHub auth | ADR-013 |
+| 2026-09-28 | CI runs on every branch push (was: PRs + main) | PRs cannot be opened from this machine; CI must be green before staging | E0-S08 |
 | 2026-09-27 | survey_booked / surveyed / quoted / won are set only by system functions | BR-L6 and the Phase-2 flow own those transitions; a user UPDATE is rejected | E3-S01 |
 
 ---
@@ -172,6 +182,11 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-27 | Executives cannot change `sla_due_at`, `assigned_at`, `previous_lead_id` | Otherwise an SLA breach can be hidden by hand | migration 000400 |
 | 2026-09-27 | Child tables of leads no longer `on delete cascade` | Leads are never deleted; a cascade would silently erase the timeline | migration 000400 |
 | 2026-09-27 | Repo layout: one repo, `mobile/` | ADR-014 | repo-structure doc, ADR doc |
+| 2026-09-28 | `customers.is_prospect` + `converted_at`; `properties.address` NOT NULL, lat/lng range + pair checks | BR-S8 | migration 000500 |
+| 2026-09-28 | `my_customer_ids()` (array, prospects excluded) replaces `my_customer_id()` | Review item 13 | migration 000500 |
+| 2026-09-28 | `calls.outcome` text → `outcome_id` FK to `call_outcomes`; `duration_sec` generated | No hardcoded lists; one source for duration | migration 000600 |
+| 2026-09-28 | Seed data in migrations, not `seed.sql` | Hosted projects never run seed.sql | schema guide §5 |
+| 2026-09-28 | Schema guide §2.1 "one lead per phone forever" → one open lead per phone | BR-L1 amendment | schema guide §2.1 |
 
 ### Open review items (27 Sep 2026) — each fixed in the migration for its section
 
@@ -188,7 +203,7 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 10 | BR-S5 can't be enforced at fitting insert (photos FK the fitting) → enforce at submit / quote | §8, BR doc | no |
 | 11 | ~~Decided + implemented in 000400~~ BR-L1: a repeat enquiry from a Won/Lost customer becomes a touch, never a new lead | §5 | **yes — REDUX / PM** |
 | 12 | Customers can read their own draft quotes | §10 | no |
-| 13 | `my_customer_id()` `limit 1` breaks when one phone is a contact for several customers | §7 | no |
+| 13 | ~~Fixed in 000500~~ `my_customer_id()` `limit 1` breaks when one phone is a contact for several customers | §7 | no |
 | 14 | BR-S2 double-book index only catches identical start times | §8 | no |
 | 15 | **Invoicing has no D-number**, yet D12 (Phase 2) promises "handover with invoice" | PRD / timeline | **yes — contract** |
 | 16 | D2-10 (Won → customer + job) sits under Phase-1 D2 but depends on D10 | PRD | yes — minor |
@@ -214,4 +229,10 @@ Append one line per working session. This is how the next session (or the next p
             lead validator + ingestLead() with 33 unit tests. Pushed to staging before CI ran —
             tests were green, but next time CI first (ADR-013).
             Next: §6 calls + §7 customers/properties (prospects, BR-S8), or E1-S06…S09 once DS1 lands.
+2026-09-28  Migrations 000500 (customers/properties/units, prospects BR-S8, my_customer_ids) and
+            000600 (call_outcomes, calls, log_call). First CI run failed gate 4: `= any ((select
+            fn()))` parses as ANY(subquery) → uuid = uuid[]; fixed with an explicit ::uuid[] cast.
+            Added pnpm db:dry-run --tests; 82/82 pgTAP green in a rolled-back transaction.
+            Next: §8 surveys + survey booking (E6-S03) — completes BR-L6 and the surveyor side of RLS.
+
 ```

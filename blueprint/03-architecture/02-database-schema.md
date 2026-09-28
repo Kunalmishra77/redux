@@ -34,9 +34,10 @@ execution (see the header of `schema.sql`).
 
 ## 2. The eight design decisions worth knowing
 
-### 2.1 A lead is one row per phone number, forever
-`leads.phone` is unique. A second enquiry from the same number becomes a **`lead_touches`** row, not
-a second lead (BR-L1). This is the difference between "we have 500 leads" and "we have 500 people".
+### 2.1 A lead is one OPEN row per phone number
+`leads.phone` is unique among open leads (partial unique index). A second enquiry from the same
+number becomes a **`lead_touches`** row, not a second lead (BR-L1). Once that lead is won or lost,
+a new enquiry starts a new lead linked by `previous_lead_id` *(amended 27 Sep 2026)*. This is the difference between "we have 500 leads" and "we have 500 people".
 
 ### 2.2 Attribution is immutable and cannot be backfilled
 `source_id`, `ctwa_clid`, `meta_ad_id`, `meta_form_id` are locked by the `guard_lead_attribution`
@@ -134,8 +135,10 @@ supabase/migrations/
 3. Every migration is reversible in principle; write the down-path in a comment.
 4. **No manual changes in the Supabase dashboard, ever.** A hand-edit in production is the single
    easiest way to lose a weekend and desync every environment.
-5. Seed data (master lists, `settings`, `lead_sources`, notification rules) lives in
-   `supabase/seed.sql` and is idempotent.
+5. Reference data the code depends on (work types, condition flags, lost reasons, call outcomes,
+   `lead_sources`, `settings`) is seeded **in the migration that creates the table**, idempotently —
+   `seed.sql` never runs on hosted projects. `supabase/seed.sql` holds CI fixtures only.
+   *(Amended 27 Sep 2026.)*
 
 ---
 

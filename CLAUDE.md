@@ -41,7 +41,9 @@ shadcn/ui CLI v4 · TanStack Table v9 · TanStack Query v5 · react-hook-form + 
 
 ### Dev loop (no Docker locally — ADR-013)
 `pnpm lint` · `pnpm typecheck` · `pnpm test` · `pnpm db:test` (pgTAP against staging, rolls back).
-Migrations: `supabase db push --db-url "$SUPABASE_DB_URL"` — only after CI is green on the PR.
+`pnpm db:dry-run <new migrations…> --tests` — applies unpushed migrations + runs every pgTAP file
+in one transaction on staging, then rolls back. Use it before pushing a branch.
+Migrations: `supabase db push --db-url "$SUPABASE_DB_URL"` — only after CI is green on the branch.
 Types: `supabase gen types typescript --db-url "$SUPABASE_DB_URL" --schema public > types/database.ts`.
 Secrets live in `.env.local` (gitignored). Docker runs only in CI.
 

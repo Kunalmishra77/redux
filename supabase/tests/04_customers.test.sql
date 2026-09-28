@@ -36,7 +36,7 @@ grant select on t to authenticated;
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-0000000000c2","user_role":"cc_exec"}';
 select throws_ok(
-  $ select public.ensure_prospect((select lead_id from t), '{"address":"1 MG Road"}') $,
+  $$ select public.ensure_prospect((select lead_id from t), '{"address":"1 MG Road"}') $$,
   '42501', null, 'P3: another executive cannot book for this lead');
 
 set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-0000000000c1","user_role":"cc_exec"}';
