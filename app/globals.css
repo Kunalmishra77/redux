@@ -1,26 +1,133 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ─────────────────────────────────────────────────────────────────────────────
+   REDUX design system — blueprint/04-design/01-design-system.md
+   Tailwind v4 CSS-first tokens (no tailwind.config). shadcn variables are mapped
+   onto the REDUX palette below, so every primitive speaks the brand.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@theme {
+  /* Brand — blue carries 60–70% of the weight; lime marks the ONE action (≤10%) */
+  --color-redux-blue: #0047ab;
+  --color-redux-blue-2: #0340a0;
+  --color-redux-lime: #72f20d;
+
+  /* Neutrals */
+  --color-ink: #141b2d;
+  --color-muted-ink: #5b6577;
+  --color-faint: #8a94a6;
+  --color-line: #c9d6ee;
+  --color-surface: #eef3fb;
+  --color-select: #e3ecfb;
+  --color-pale: #d6e2f7;
+
+  /* Status */
+  --color-success: #128c4a;
+  --color-warning: #8a5a00;
+  --color-warning-bg: #fff1c2;
+  --color-danger: #b3261e;
+  --color-danger-bg: #fbe9e7;
+  --color-whatsapp: #25d366;
+
+  /* One shadow depth only */
+  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  /* 6 · 8 · 10 · 14 px — chips/inputs · controls · cards · panels */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 10px;
+  --background: #ffffff;
+  --foreground: #141b2d;             /* ink */
+  --card: #ffffff;
+  --card-foreground: #141b2d;
+  --popover: #ffffff;
+  --popover-foreground: #141b2d;
+  --primary: #0047ab;                /* REDUX blue: links, focus, selection */
+  --primary-foreground: #ffffff;
+  --secondary: #eef3fb;              /* surface */
+  --secondary-foreground: #0047ab;
+  --muted: #eef3fb;
+  --muted-foreground: #5b6577;
+  --accent: #e3ecfb;                 /* select */
+  --accent-foreground: #0047ab;
+  --destructive: #b3261e;
+  --border: #c9d6ee;                 /* line */
+  --input: #c9d6ee;
+  --ring: #0047ab;                   /* §9: 2 px blue focus ring */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    @apply font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  /* §9 visible focus: 2 px REDUX blue, 2 px offset — on everything keyboard-reachable */
+  :focus-visible {
+    outline: 2px solid var(--color-redux-blue);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Section eyebrow: 11 / 600, +2 tracking, uppercase */
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  /* Money, counts and dates always line up */
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
 }
