@@ -15,7 +15,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | **Phase** | Phase 0 — Mobilisation |
 | **Week** | W0 (5–9 Oct 2026) |
 | **Sprint goal** | Accounts, approvals and infrastructure. Meta App Review submitted |
-| **Last updated** | 2026-09-28 — §13 stock + §14 service requests |
+| **Last updated** | 2026-09-28 — §15 webhooks on pgmq, notification outbox, CAPI, sweeps |
 
 ---
 
@@ -88,12 +88,26 @@ E2-S01 … E2-S16 — all `TODO`
 
 <details><summary>E4 · Integrations (W5–W6) — 12 stories</summary>
 
-E4-S01 … E4-S12 — all `TODO`
+| ID | Status | Notes |
+|---|:--:|---|
+| E4-S01 | REVIEW | Migration 001400: `webhook_events` + pgmq queues; `record_webhook` / `webhook_processed` / `webhook_failed` (backoff, dead-letter + TN5). The Node worker itself is still to build |
+| E4-S02…S09 | TODO | Route handlers (raw-body HMAC, Google `google_key`, never 4XX) + worker mappers into `ingest_lead()` |
+| E4-S10 | WIP | `capi_events` fire once per lead on survey_booked / job_won (queued on q_capi); the Graph API call is the worker's |
+| E4-S11 | WIP | `integration_accounts.last_event_at` + `check_integration_health()` (TN5); screen B10 later |
+| E4-S12 | WIP | Idempotency proven in SQL (item 7); replay tests on the route handlers come with them |
 </details>
 
 <details><summary>E5 · Notifications (W6) — 8 stories</summary>
 
-E5-S01 … E5-S08 — all `TODO`
+| ID | Status | Notes |
+|---|:--:|---|
+| E5-S01 | REVIEW | `messages` outbox, `message_templates`, `notification_rules` (CN1–18, TN1–15 seeded), `team_notifications` |
+| E5-S02, S03 | TODO | WhatsApp sender + MSG91 hook — in the worker |
+| E5-S04 | REVIEW | Dedup keys, quiet hours (held to 09:00 IST), rule toggles; retry policy set (3) — applied by the worker |
+| E5-S05 | TODO | Template bodies + Meta submission (copy in 05-content) |
+| E5-S06 | REVIEW | CN1 on lead creation; CN2 on survey booking (DB side) |
+| E5-S07 | REVIEW | TN1 (assign/reassign), TN3 breach + TN4 follow-ups via `sweep_sla()`, TN5 health; TN2 "due soon" needs a threshold — open item 24 |
+| E5-S08 | REVIEW | `notification_rules.is_active` honoured; admin screen later |
 </details>
 
 <details><summary>E6 · Care portal (W7) — 9 stories</summary>
@@ -201,6 +215,11 @@ Anything decided that is not already in an ADR. If it contradicts an ADR, **writ
 | 2026-09-27 | **Item 19 → ADR-014**: one repo, surveyor app in `mobile/` | Shared pricing logic identical by construction | E8 |
 | 2026-09-27 | Leads enter only via `ingest_lead()` (SECURITY DEFINER), for every source | Dedup + assignment + SLA must be atomic and identical for web, webhooks and manual entry | E3-S03 |
 | 2026-09-27 | Manual entry (call / walk-in) by a cc_exec is assigned to that executive, not round-robin | "With source and who took it" (PRD D3); the taker is already on the call | E3-S05 |
+| 2026-09-28 | **pg_cron schedules are NOT installed by migration** — `install_schedules()` is called when the worker is deployed | With no worker, queued customer messages would go out days late | E4-S01 |
+| 2026-09-28 | Cron work that needs HTTP (Meta reconcile) is a queue message for the worker; no pg_net | One place does HTTP; retries and logging stay in the worker | E4-S04 |
+| 2026-09-28 | webhook_events.external_id = provider event id (Razorpay event id, Google lead_id) else sha256(raw body) | Item 7 | E4-S12 |
+| 2026-09-28 | Unsigned webhooks stored as `dead` for audit, never queued | Audit trail without processing; Google still gets 200 | E4-S08 |
+| 2026-09-28 | Webhook retries: 6 attempts, exponential backoff 30 s → 30 min cap, then dead-letter + TN5 | ADR-008 "dead-letters after N" — N was unspecified | E4-S01 |
 | 2026-09-28 | Stock alerts written to `stock_alerts` (an outbox) until the notification queue (E5) exists | BR-ST3 "fires once" must be provable now, delivered later | E15-S07 |
 | 2026-09-28 | Stock quantity only via movements; opening stock = an 'in' movement | One ledger; BR-ST2 actor on every change | E15-S06 |
 | 2026-09-28 | Service requests: one shared care queue (TN12 → cc_exec); taker is recorded as `assigned_to` | Notifications matrix TN12 | E14-S15 |
@@ -276,6 +295,9 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | `market_prices` + optional `finish_id` (lookup falls back to the finish-less row) | The CSV template carries a market price per finish; schema.sql keyed by fitting type only | migration 000800 |
 | 2026-09-28 | **SECURITY FIX**: `move_unit_stage()` and `link_to_pilot()` (001000, on staging for a few hours, no real data) accepted any logged-in user — the check `current_user = 'authenticated'` never fires inside SECURITY DEFINER. Re-issued with `is_system_caller()`; test 11 makes the pattern structurally impossible | Found by the invoice test calling as cc_exec | migration 001100 |
 | 2026-09-28 | `invoices.invoice_no` nullable until issue; supplier fields filled at issue; `payment_route`; issued-completeness + cancelled-consistency checks | BR-I1, BR-I3, BR-I6 | migration 001100 |
+| 2026-09-28 | New `whatsapp_messages` (inbox, both directions) and `team_notifications` (TN* in-app) | schema.sql had nowhere for D4-08 or in-app alerts | migration 001400 |
+| 2026-09-28 | `notification_rules`: + channel, category, template_code; seeded from the matrix. `messages`: + send_after, attempts, variables | Quiet hours, retries, toggles | migration 001400 |
+| 2026-09-28 | `capi_events` unique (event_name, lead_id) | Each conversion once per lead | migration 001400 |
 | 2026-09-28 | `service_requests.ticket_no` → `request_no`; `resolution_note`; forward-only status; no user write policy | Glossary bans "ticket"; accountability | migration 001300 |
 | 2026-09-28 | `stock_items` + `created_at/updated_at`, category check; `stock_movements` sign/reason checks, append-only; new `stock_alerts` | BR-ST1…3 | migration 001200 |
 | 2026-09-28 | `credit_notes` get their own gap-free series + GST split; append-only | BR-I2 | migration 001100 |
@@ -297,7 +319,7 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 4 | ~~Fixed in 000700~~ `on delete cascade` + `FOR ALL` lets a delete wipe `fitting_photos` / warranties | §8, §11 | no |
 | 5 | ~~Fixed in 000700~~ `fitting_photos_select` lets every surveyor read every photo (breaks P2); `v_incomplete_fittings` bypasses RLS (gate now catches it) | §8 | no |
 | 6 | ~~No survey address / location~~ **Decided → BR-S8**, implement in §7–8. anywhere; property needs a customer, which exists only after approval → "nearest surveyor", geofence and job_units all break | §5–8 | **yes — REDUX / PM** |
-| 7 | Webhook idempotency `(source, external_id)` collides for WhatsApp statuses (same wamid) and Razorpay events (same payment.id) | §15 | no |
+| 7 | ~~Fixed in 001400~~ Webhook idempotency `(source, external_id)` collides for WhatsApp statuses (same wamid) and Razorpay events (same payment.id) | §15 | no |
 | 8 | ~~Fixed in 000400~~ BR-L3 trigger misses `campaign_id` (+ leadgen / google ids, utm) | §5 | no |
 | 9 | ~~Fixed in 001000~~ BR-J2: clock keeps running while currently blocked; one block per unit | §11 | no |
 | 10 | ~~Fixed in 000700 + BR doc~~ BR-S5 can't be enforced at fitting insert (photos FK the fitting) → enforce at submit / quote | §8, BR doc | no |
@@ -313,6 +335,7 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 21 | `impossible_travel_kmh` = 150 is a placeholder | settings | yes — REDUX |
 | 22 | Which warranty (mechanical / finish) each work type earns — implemented as repair → mechanical, restore finish → finish, replacement → both | warranties | yes — REDUX |
 | 23 | Invoice payment terms — implemented as due on issue | invoices | yes — REDUX |
+| 24 | TN2 "call-back SLA due" needs a lead-time (e.g. 10 min before due) — only the breach (TN3) is built | notifications | yes — REDUX / PM |
 
 ---
 
@@ -374,5 +397,10 @@ Append one line per working session. This is how the next session (or the next p
 2026-09-28  Migrations 001200 (§13 stock) + 001300 (§14 service requests). CI green → staging;
             312/312 pgTAP. Remaining in Step 1: §15 integrations/webhooks/messaging (with pgmq +
             pg_cron, E4-S01 / E5-S01) and §16 consent/privacy (DPDP) — both need the queue design.
+
+2026-09-28  Migration 001400 (§15): pgmq queues, webhook recording + dead-letter, notification
+            outbox with dedup/quiet hours/toggles, CAPI once-per-lead, sweeps; pg_cron jobs defined
+            but deliberately not installed until the worker exists. Item 7 closed. CI green →
+            staging; 342/342 pgTAP. Remaining in Step 1: §16 consent/privacy (DPDP).
 
 ```

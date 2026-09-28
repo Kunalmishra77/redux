@@ -162,6 +162,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"capi_events": {
+                  Row: {
+                    "created_at": string,"ctwa_clid": string | null,"currency": string,"event_name": string,"id": string,"lead_id": string,"response": Json | null,"sent_at": string | null,"status": string,"value": number | null
+                  }
+                  Insert: {
+                    "created_at"?: string,"ctwa_clid"?: string | null,"currency"?: string,"event_name": string,"id"?: string,"lead_id": string,"response"?: Json | null,"sent_at"?: string | null,"status"?: string,"value"?: number | null
+                  }
+                  Update: {
+                    "created_at"?: string,"ctwa_clid"?: string | null,"currency"?: string,"event_name"?: string,"id"?: string,"lead_id"?: string,"response"?: Json | null,"sent_at"?: string | null,"status"?: string,"value"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "capi_events_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"cities": {
                   Row: {
                     "id": string,"is_active": boolean,"name": string,"state_code": string
@@ -500,6 +519,19 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"integration_accounts": {
+                  Row: {
+                    "config": NonNullable<Json>,"display_name": string | null,"external_id": string | null,"id": string,"is_active": boolean,"last_event_at": string | null,"provider": string
+                  }
+                  Insert: {
+                    "config"?: NonNullable<Json>,"display_name"?: string | null,"external_id"?: string | null,"id"?: string,"is_active"?: boolean,"last_event_at"?: string | null,"provider": string
+                  }
+                  Update: {
+                    "config"?: NonNullable<Json>,"display_name"?: string | null,"external_id"?: string | null,"id"?: string,"is_active"?: boolean,"last_event_at"?: string | null,"provider"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"invoice_lines": {
                   Row: {
                     "cgst": number,"description": string,"gst_rate": number,"hsn_sac": string | null,"id": string,"igst": number,"invoice_id": string,"line_total": number,"qty": number,"sgst": number,"sort_order": number,"taxable_value": number,"unit_price": number,"uom": string
@@ -717,6 +749,19 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"lead_form_field_map": {
+                  Row: {
+                    "field_name": string,"form_id": string,"id": string,"maps_to": string,"provider": string
+                  }
+                  Insert: {
+                    "field_name": string,"form_id": string,"id"?: string,"maps_to": string,"provider": string
+                  }
+                  Update: {
+                    "field_name"?: string,"form_id"?: string,"id"?: string,"maps_to"?: string,"provider"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"lead_notes": {
                   Row: {
                     "author_id": string | null,"body": string,"created_at": string,"id": string,"lead_id": string
@@ -903,6 +948,57 @@ isOneToOne: false
       referencedRelation: "rate_cards"
       referencedColumns: ["id"]
     }
+                  ]
+                },"message_templates": {
+                  Row: {
+                    "approved_at": string | null,"body": string,"category": Database["public"]['Enums']["msg_category"],"channel": Database["public"]['Enums']["msg_channel"],"code": string,"dlt_template_id": string | null,"id": string,"is_active": boolean,"language": string,"provider_template_name": string | null,"variables": NonNullable<Json>
+                  }
+                  Insert: {
+                    "approved_at"?: string | null,"body": string,"category": Database["public"]['Enums']["msg_category"],"channel": Database["public"]['Enums']["msg_channel"],"code": string,"dlt_template_id"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"provider_template_name"?: string | null,"variables"?: NonNullable<Json>
+                  }
+                  Update: {
+                    "approved_at"?: string | null,"body"?: string,"category"?: Database["public"]['Enums']["msg_category"],"channel"?: Database["public"]['Enums']["msg_channel"],"code"?: string,"dlt_template_id"?: string | null,"id"?: string,"is_active"?: boolean,"language"?: string,"provider_template_name"?: string | null,"variables"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"messages": {
+                  Row: {
+                    "attempts": number,"body": string | null,"category": Database["public"]['Enums']["msg_category"] | null,"channel": Database["public"]['Enums']["msg_channel"],"cost_inr": number | null,"customer_id": string | null,"dedup_key": string | null,"delivered_at": string | null,"entity_id": string | null,"entity_type": string | null,"error": string | null,"id": string,"lead_id": string | null,"provider_message_id": string | null,"queued_at": string,"rule_code": string | null,"send_after": string,"sent_at": string | null,"status": Database["public"]['Enums']["msg_status"],"template_code": string | null,"to_address": string,"variables": NonNullable<Json>
+                  }
+                  Insert: {
+                    "attempts"?: number,"body"?: string | null,"category"?: Database["public"]['Enums']["msg_category"] | null,"channel": Database["public"]['Enums']["msg_channel"],"cost_inr"?: number | null,"customer_id"?: string | null,"dedup_key"?: string | null,"delivered_at"?: string | null,"entity_id"?: string | null,"entity_type"?: string | null,"error"?: string | null,"id"?: string,"lead_id"?: string | null,"provider_message_id"?: string | null,"queued_at"?: string,"rule_code"?: string | null,"send_after"?: string,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["msg_status"],"template_code"?: string | null,"to_address": string,"variables"?: NonNullable<Json>
+                  }
+                  Update: {
+                    "attempts"?: number,"body"?: string | null,"category"?: Database["public"]['Enums']["msg_category"] | null,"channel"?: Database["public"]['Enums']["msg_channel"],"cost_inr"?: number | null,"customer_id"?: string | null,"dedup_key"?: string | null,"delivered_at"?: string | null,"entity_id"?: string | null,"entity_type"?: string | null,"error"?: string | null,"id"?: string,"lead_id"?: string | null,"provider_message_id"?: string | null,"queued_at"?: string,"rule_code"?: string | null,"send_after"?: string,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["msg_status"],"template_code"?: string | null,"to_address"?: string,"variables"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "messages_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "messages_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"notification_rules": {
+                  Row: {
+                    "audience": string,"category": Database["public"]['Enums']["msg_category"] | null,"channel": Database["public"]['Enums']["msg_channel"],"code": string,"id": string,"is_active": boolean,"quiet_hours": boolean,"template_code": string | null,"trigger_event": string
+                  }
+                  Insert: {
+                    "audience": string,"category"?: Database["public"]['Enums']["msg_category"] | null,"channel": Database["public"]['Enums']["msg_channel"],"code": string,"id"?: string,"is_active"?: boolean,"quiet_hours"?: boolean,"template_code"?: string | null,"trigger_event": string
+                  }
+                  Update: {
+                    "audience"?: string,"category"?: Database["public"]['Enums']["msg_category"] | null,"channel"?: Database["public"]['Enums']["msg_channel"],"code"?: string,"id"?: string,"is_active"?: boolean,"quiet_hours"?: boolean,"template_code"?: string | null,"trigger_event"?: string
+                  }
+                  Relationships: [
+                    
                   ]
                 },"payments": {
                   Row: {
@@ -1402,6 +1498,19 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"team_notifications": {
+                  Row: {
+                    "body": string | null,"created_at": string,"dedup_key": string | null,"entity_id": string | null,"entity_type": string | null,"id": string,"read_at": string | null,"rule_code": string,"title": string,"user_id": string
+                  }
+                  Insert: {
+                    "body"?: string | null,"created_at"?: string,"dedup_key"?: string | null,"entity_id"?: string | null,"entity_type"?: string | null,"id"?: string,"read_at"?: string | null,"rule_code": string,"title": string,"user_id": string
+                  }
+                  Update: {
+                    "body"?: string | null,"created_at"?: string,"dedup_key"?: string | null,"entity_id"?: string | null,"entity_type"?: string | null,"id"?: string,"read_at"?: string | null,"rule_code"?: string,"title"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"unit_blocks": {
                   Row: {
                     "blocked_from": string,"blocked_to": string | null,"created_by": string | null,"id": string,"job_unit_id": string,"note": string | null,"reason": string
@@ -1487,6 +1596,63 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "v_delayed_units"
       referencedColumns: ["job_unit_id"]
+    }
+                  ]
+                },"webhook_events": {
+                  Row: {
+                    "event_type": string | null,"external_id": string,"id": string,"last_error": string | null,"payload": NonNullable<Json>,"processed_at": string | null,"received_at": string,"retry_count": number,"signature_ok": boolean,"source": Database["public"]['Enums']["webhook_source"],"status": Database["public"]['Enums']["webhook_status"]
+                  }
+                  Insert: {
+                    "event_type"?: string | null,"external_id": string,"id"?: string,"last_error"?: string | null,"payload": NonNullable<Json>,"processed_at"?: string | null,"received_at"?: string,"retry_count"?: number,"signature_ok": boolean,"source": Database["public"]['Enums']["webhook_source"],"status"?: Database["public"]['Enums']["webhook_status"]
+                  }
+                  Update: {
+                    "event_type"?: string | null,"external_id"?: string,"id"?: string,"last_error"?: string | null,"payload"?: NonNullable<Json>,"processed_at"?: string | null,"received_at"?: string,"retry_count"?: number,"signature_ok"?: boolean,"source"?: Database["public"]['Enums']["webhook_source"],"status"?: Database["public"]['Enums']["webhook_status"]
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"whatsapp_conversations": {
+                  Row: {
+                    "created_at": string,"ctwa_clid": string | null,"customer_id": string | null,"id": string,"last_message_at": string | null,"lead_id": string | null,"profile_name": string | null,"referral_source_id": string | null,"referral_source_type": string | null,"wa_id": string,"window_expires_at": string | null
+                  }
+                  Insert: {
+                    "created_at"?: string,"ctwa_clid"?: string | null,"customer_id"?: string | null,"id"?: string,"last_message_at"?: string | null,"lead_id"?: string | null,"profile_name"?: string | null,"referral_source_id"?: string | null,"referral_source_type"?: string | null,"wa_id": string,"window_expires_at"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"ctwa_clid"?: string | null,"customer_id"?: string | null,"id"?: string,"last_message_at"?: string | null,"lead_id"?: string | null,"profile_name"?: string | null,"referral_source_id"?: string | null,"referral_source_type"?: string | null,"wa_id"?: string,"window_expires_at"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "whatsapp_conversations_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "whatsapp_conversations_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"whatsapp_messages": {
+                  Row: {
+                    "body": string | null,"conversation_id": string,"direction": string,"id": string,"kind": string,"media": Json | null,"occurred_at": string,"sent_by": string | null,"status": string | null,"template_code": string | null,"wamid": string | null
+                  }
+                  Insert: {
+                    "body"?: string | null,"conversation_id": string,"direction": string,"id"?: string,"kind"?: string,"media"?: Json | null,"occurred_at"?: string,"sent_by"?: string | null,"status"?: string | null,"template_code"?: string | null,"wamid"?: string | null
+                  }
+                  Update: {
+                    "body"?: string | null,"conversation_id"?: string,"direction"?: string,"id"?: string,"kind"?: string,"media"?: Json | null,"occurred_at"?: string,"sent_by"?: string | null,"status"?: string | null,"template_code"?: string | null,"wamid"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "whatsapp_messages_conversation_id_fkey"
+      columns: ["conversation_id"]
+isOneToOne: false
+      referencedRelation: "whatsapp_conversations"
+      referencedColumns: ["id"]
     }
                   ]
                 },"work_types": {
@@ -1629,6 +1795,9 @@ isOneToOne: false
 "cancel_invoice":
 { Args: { "p_invoice": string,"p_reason": string }; Returns: string
                            },
+"check_integration_health":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "create_invoice_from_job":
 { Args: { "p_job": string }; Returns: string
                            },
@@ -1650,6 +1819,12 @@ isOneToOne: false
 "distance_m":
 { Args: { "lat1": number,"lat2": number,"lng1": number,"lng2": number }; Returns: number
                            },
+"enqueue_capi":
+{ Args: { "p_event": string,"p_lead": string,"p_value"?: number }; Returns: undefined
+                           },
+"enqueue_meta_reconcile":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           },
 "ensure_prospect":
 { Args: { "p_lead_id": string,"p_property": Json }; Returns: Json
                            },
@@ -1664,6 +1839,9 @@ isOneToOne: false
                            },
 "ingest_lead":
 { Args: { "p_lead": Json }; Returns: Json
+                           },
+"install_schedules":
+{ Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "is_my_survey_lead":
 { Args: { "p_lead_id": string }; Returns: boolean
@@ -1698,6 +1876,15 @@ isOneToOne: false
 "new_rate_card_version":
 { Args: { "p_effective_from": string,"p_from"?: string,"p_notes"?: string }; Returns: string
                            },
+"next_send_time":
+{ Args: { "p_at": string }; Returns: string
+                           },
+"notify_customer":
+{ Args: { "p_customer": string,"p_dedup": string,"p_entity_id": string,"p_entity_type": string,"p_lead": string,"p_rule": string,"p_to": string,"p_variables": Json }; Returns: string
+                           },
+"notify_team":
+{ Args: { "p_body": string,"p_dedup": string,"p_entity_id": string,"p_entity_type": string,"p_rule": string,"p_title": string,"p_user"?: string }; Returns: number
+                           },
 "progress_service_request":
 { Args: { "p_id": string,"p_note"?: string,"p_to": string }; Returns: undefined
                            },
@@ -1722,6 +1909,9 @@ isOneToOne: false
 "record_stock_movement":
 { Args: { "p": Json }; Returns: number
                            },
+"record_webhook":
+{ Args: { "p_event_type": string,"p_external_id": string,"p_payload": Json,"p_signature_ok": boolean,"p_source": Database["public"]['Enums']["webhook_source"] }; Returns: Json
+                           },
 "request_quote_otp":
 { Args: { "p_channel": Database["public"]['Enums']["msg_channel"],"p_phone": string,"p_quote": string }; Returns: Json
                            },
@@ -1740,6 +1930,12 @@ isOneToOne: false
 "submit_survey":
 { Args: { "p_survey_id": string }; Returns: undefined
                            },
+"sweep_job_delays":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"sweep_sla":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "unblock_unit":
 { Args: { "p_unit": string }; Returns: undefined
                            },
@@ -1751,6 +1947,12 @@ isOneToOne: false
                            },
 "verify_quote_otp":
 { Args: { "p"?: Json,"p_code": string,"p_otp": string }; Returns: Json
+                           },
+"webhook_failed":
+{ Args: { "p_error": string,"p_id": string }; Returns: Database["public"]['Enums']["webhook_status"]
+                           },
+"webhook_processed":
+{ Args: { "p_id": string }; Returns: undefined
                            }
           }
           Enums: {
