@@ -15,7 +15,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | **Phase** | Phase 0 — Mobilisation |
 | **Week** | W0 (5–9 Oct 2026) |
 | **Sprint goal** | Accounts, approvals and infrastructure. Meta App Review submitted |
-| **Last updated** | 2026-09-28 — §15 webhooks on pgmq, notification outbox, CAPI, sweeps |
+| **Last updated** | 2026-09-28 — §16 DPDP. **Build-order Step 1 (data foundation) complete: 15 migrations, 370 pgTAP assertions** |
 
 ---
 
@@ -70,7 +70,11 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 
 <details><summary>E2 · Website (W3–W4) — 16 stories</summary>
 
-E2-S01 … E2-S16 — all `TODO`
+| ID | Status | Notes |
+|---|:--:|---|
+| E2-S10 | REVIEW | DB + server: `ingest_lead_with_consent()` (atomic), `consentSchema`, `ingestLead(…, consent)`. Form UI with the website |
+| E2-S06 | WIP | `v_marketing_photos` + `set_photo_marketing_use()` enforce BR-P3; gallery page later |
+| others | TODO | Website pages — need DS1 designs |
 </details>
 
 <details><summary>E3 · Lead CRM (W4–W5) — 14 stories</summary>
@@ -185,6 +189,7 @@ E11 quotation & OTP (15) · E12 job tracking (11) · E13 QA & go-live (6) — al
 | E14-S12 | WIP | DB half: `record_payment()` server-only, idempotent. Route handler + signature check with E4 |
 | E14-S18 | REVIEW | `cancel_invoice()` → full credit note from its own series; partial credit notes not built |
 | E14-S10, S11 | TODO | Razorpay Payment Link / Smart Collect calls — `payment_route` is already decided per invoice |
+| E14-S16 | WIP | DSR queue + 30-day clock + `erasure_blockers()`; **erasure execution blocked on item 25**; export/correct screens later |
 | E14-S15 | REVIEW | Migration 001300: `raise_service_request()` (ownership-checked), `progress_service_request()` forward-only, 48 h / 1 month clock, overdue view. Screens later |
 | E15-S06 | REVIEW | Migration 001200: stock items, append-only movements, `record_stock_movement()`; screens B31/B32 later |
 | E15-S07 | REVIEW | Never negative; once-per-crossing alert into `stock_alerts` (TN13 outbox), re-arms |
@@ -215,6 +220,10 @@ Anything decided that is not already in an ADR. If it contradicts an ADR, **writ
 | 2026-09-27 | **Item 19 → ADR-014**: one repo, surveyor app in `mobile/` | Shared pricing logic identical by construction | E8 |
 | 2026-09-27 | Leads enter only via `ingest_lead()` (SECURITY DEFINER), for every source | Dedup + assignment + SLA must be atomic and identical for web, webhooks and manual entry | E3-S03 |
 | 2026-09-27 | Manual entry (call / walk-in) by a cc_exec is assigned to that executive, not round-robin | "With source and who took it" (PRD D3); the taker is already on the call | E3-S05 |
+| 2026-09-28 | Consent ledger: one append-only row per purpose, pointing at the notice row shown; only withdrawn_at ever changes | BR-P1/P2 | E2-S10 |
+| 2026-09-28 | Web/dealer enquiries without service consent are rejected in the DB | D1-06 required checkbox — not just a UI rule | E2-S10 |
+| 2026-09-28 | Recording purge queues the file in `storage_deletions`; the worker deletes via the Storage API | Never raw SQL on storage.objects | E6-S08 |
+| 2026-09-28 | DSR response clock 30 days; GST retention setting 8 years (72 months from annual-return due date, CGST s.36) — **CA to confirm** | Blueprint: "an SLA clock", "GST 6 years+" | E14-S16 |
 | 2026-09-28 | **pg_cron schedules are NOT installed by migration** — `install_schedules()` is called when the worker is deployed | With no worker, queued customer messages would go out days late | E4-S01 |
 | 2026-09-28 | Cron work that needs HTTP (Meta reconcile) is a queue message for the worker; no pg_net | One place does HTTP; retries and logging stay in the worker | E4-S04 |
 | 2026-09-28 | webhook_events.external_id = provider event id (Razorpay event id, Google lead_id) else sha256(raw body) | Item 7 | E4-S12 |
@@ -295,6 +304,10 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | `market_prices` + optional `finish_id` (lookup falls back to the finish-less row) | The CSV template carries a market price per finish; schema.sql keyed by fitting type only | migration 000800 |
 | 2026-09-28 | **SECURITY FIX**: `move_unit_stage()` and `link_to_pilot()` (001000, on staging for a few hours, no real data) accepted any logged-in user — the check `current_user = 'authenticated'` never fires inside SECURITY DEFINER. Re-issued with `is_system_caller()`; test 11 makes the pattern structurally impossible | Found by the invoice test calling as cc_exec | migration 001100 |
 | 2026-09-28 | `invoices.invoice_no` nullable until issue; supplier fields filled at issue; `payment_route`; issued-completeness + cancelled-consistency checks | BR-I1, BR-I3, BR-I6 | migration 001100 |
+| 2026-09-28 | `privacy_notices` + language, one active per language, immutable once published; `consent_records` + notice_id, call_id, recorded_by, granted_at = clock_timestamp() | BR-P1; ordering within one transaction | migration 001500 |
+| 2026-09-28 | `calls` + recording_hold_until, recording_deleted_at; new `storage_deletions` | BR-P4 dispute hold; deletion outbox | migration 001500 |
+| 2026-09-28 | `dsr_requests` + requested_by, retained_explanation; `incidents.created_by` → auth.users | BR-P5 "what is retained and why" | migration 001500 |
+| 2026-09-28 | `lead_status_history.actor_id` → auth.users | Same reason as audit_log | migration 001500 |
 | 2026-09-28 | New `whatsapp_messages` (inbox, both directions) and `team_notifications` (TN* in-app) | schema.sql had nowhere for D4-08 or in-app alerts | migration 001400 |
 | 2026-09-28 | `notification_rules`: + channel, category, template_code; seeded from the matrix. `messages`: + send_after, attempts, variables | Quiet hours, retries, toggles | migration 001400 |
 | 2026-09-28 | `capi_events` unique (event_name, lead_id) | Each conversion once per lead | migration 001400 |
@@ -336,6 +349,7 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 22 | Which warranty (mechanical / finish) each work type earns — implemented as repair → mechanical, restore finish → finish, replacement → both | warranties | yes — REDUX |
 | 23 | Invoice payment terms — implemented as due on issue | invoices | yes — REDUX |
 | 24 | TN2 "call-back SLA due" needs a lead-time (e.g. 10 min before due) — only the breach (TN3) is built | notifications | yes — REDUX / PM |
+| 25 | **Erasure vs BR-L3**: anonymising an erased person's lead means changing attribution fields BR-L3 makes immutable. Options: (a) erase PII columns (name, email, raw_payload) but keep attribution ids; (b) allow the erasure function to bypass BR-L3 with an audit entry | leads, BR doc | **yes — REDUX / PM + counsel** |
 
 ---
 
@@ -402,5 +416,13 @@ Append one line per working session. This is how the next session (or the next p
             outbox with dedup/quiet hours/toggles, CAPI once-per-lead, sweeps; pg_cron jobs defined
             but deliberately not installed until the worker exists. Item 7 closed. CI green →
             staging; 342/342 pgTAP. Remaining in Step 1: §16 consent/privacy (DPDP).
+
+2026-09-28  Migration 001500 (§16 DPDP): notices, consent ledger, atomic lead+consent, photo marketing
+            consent, recording purge, DSR queue with blockers, 72-hour incident clock. Tests found:
+            now() ties inside one transaction (→ clock_timestamp), phone-only consent not linked to
+            the lead, another profiles-FK on an actor column. CI green → staging; 370/370 pgTAP.
+            ── BUILD-ORDER STEP 1 COMPLETE ── schema §1–16 as 15 migrations, all on staging.
+            Next: Step 2 (auth UI, proxy route protection, role sidebar) and Step 3 (design system)
+            — both need DS1 designs for UI; or the queue worker (E4) which is pure server code.
 
 ```

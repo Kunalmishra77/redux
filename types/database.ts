@@ -108,13 +108,13 @@ isOneToOne: false
                   ]
                 },"calls": {
                   Row: {
-                    "agent_id": string,"created_at": string,"customer_id": string | null,"direction": string,"duration_sec": number | null,"ended_at": string | null,"id": string,"lead_id": string | null,"outcome_id": string | null,"outcome_note": string | null,"provider_call_id": string | null,"recording_consent": boolean,"recording_expires_at": string | null,"recording_path": string | null,"started_at": string
+                    "agent_id": string,"created_at": string,"customer_id": string | null,"direction": string,"duration_sec": number | null,"ended_at": string | null,"id": string,"lead_id": string | null,"outcome_id": string | null,"outcome_note": string | null,"provider_call_id": string | null,"recording_consent": boolean,"recording_deleted_at": string | null,"recording_expires_at": string | null,"recording_hold_until": string | null,"recording_path": string | null,"started_at": string
                   }
                   Insert: {
-                    "agent_id": string,"created_at"?: string,"customer_id"?: string | null,"direction": string,"duration_sec"?: never,"ended_at"?: string | null,"id"?: string,"lead_id"?: string | null,"outcome_id"?: string | null,"outcome_note"?: string | null,"provider_call_id"?: string | null,"recording_consent"?: boolean,"recording_expires_at"?: string | null,"recording_path"?: string | null,"started_at": string
+                    "agent_id": string,"created_at"?: string,"customer_id"?: string | null,"direction": string,"duration_sec"?: never,"ended_at"?: string | null,"id"?: string,"lead_id"?: string | null,"outcome_id"?: string | null,"outcome_note"?: string | null,"provider_call_id"?: string | null,"recording_consent"?: boolean,"recording_deleted_at"?: string | null,"recording_expires_at"?: string | null,"recording_hold_until"?: string | null,"recording_path"?: string | null,"started_at": string
                   }
                   Update: {
-                    "agent_id"?: string,"created_at"?: string,"customer_id"?: string | null,"direction"?: string,"duration_sec"?: never,"ended_at"?: string | null,"id"?: string,"lead_id"?: string | null,"outcome_id"?: string | null,"outcome_note"?: string | null,"provider_call_id"?: string | null,"recording_consent"?: boolean,"recording_expires_at"?: string | null,"recording_path"?: string | null,"started_at"?: string
+                    "agent_id"?: string,"created_at"?: string,"customer_id"?: string | null,"direction"?: string,"duration_sec"?: never,"ended_at"?: string | null,"id"?: string,"lead_id"?: string | null,"outcome_id"?: string | null,"outcome_note"?: string | null,"provider_call_id"?: string | null,"recording_consent"?: boolean,"recording_deleted_at"?: string | null,"recording_expires_at"?: string | null,"recording_hold_until"?: string | null,"recording_path"?: string | null,"started_at"?: string
                   }
                   Relationships: [
                     {
@@ -206,6 +206,43 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"consent_records": {
+                  Row: {
+                    "call_id": string | null,"customer_id": string | null,"granted": boolean,"granted_at": string,"id": string,"ip_address": unknown,"lead_id": string | null,"method": string,"notice_id": string,"notice_version": string,"purpose": Database["public"]['Enums']["consent_purpose"],"recorded_by": string | null,"subject_email": string | null,"subject_phone": string | null,"user_agent": string | null,"withdrawn_at": string | null
+                  }
+                  Insert: {
+                    "call_id"?: string | null,"customer_id"?: string | null,"granted": boolean,"granted_at"?: string,"id"?: string,"ip_address"?: unknown,"lead_id"?: string | null,"method": string,"notice_id": string,"notice_version": string,"purpose": Database["public"]['Enums']["consent_purpose"],"recorded_by"?: string | null,"subject_email"?: string | null,"subject_phone"?: string | null,"user_agent"?: string | null,"withdrawn_at"?: string | null
+                  }
+                  Update: {
+                    "call_id"?: string | null,"customer_id"?: string | null,"granted"?: boolean,"granted_at"?: string,"id"?: string,"ip_address"?: unknown,"lead_id"?: string | null,"method"?: string,"notice_id"?: string,"notice_version"?: string,"purpose"?: Database["public"]['Enums']["consent_purpose"],"recorded_by"?: string | null,"subject_email"?: string | null,"subject_phone"?: string | null,"user_agent"?: string | null,"withdrawn_at"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "consent_records_call_id_fkey"
+      columns: ["call_id"]
+isOneToOne: false
+      referencedRelation: "calls"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "consent_records_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "consent_records_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "consent_records_notice_id_fkey"
+      columns: ["notice_id"]
+isOneToOne: false
+      referencedRelation: "privacy_notices"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"credit_notes": {
                   Row: {
@@ -304,6 +341,25 @@ isOneToOne: false
       columns: ["requested_by"]
 isOneToOne: false
       referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"dsr_requests": {
+                  Row: {
+                    "completed_at": string | null,"created_at": string,"customer_id": string | null,"details": string | null,"due_at": string,"handled_by": string | null,"id": string,"requested_by": string | null,"response": string | null,"retained_explanation": Json | null,"status": Database["public"]['Enums']["dsr_status"],"subject_phone": string | null,"type": Database["public"]['Enums']["dsr_type"]
+                  }
+                  Insert: {
+                    "completed_at"?: string | null,"created_at"?: string,"customer_id"?: string | null,"details"?: string | null,"due_at": string,"handled_by"?: string | null,"id"?: string,"requested_by"?: string | null,"response"?: string | null,"retained_explanation"?: Json | null,"status"?: Database["public"]['Enums']["dsr_status"],"subject_phone"?: string | null,"type": Database["public"]['Enums']["dsr_type"]
+                  }
+                  Update: {
+                    "completed_at"?: string | null,"created_at"?: string,"customer_id"?: string | null,"details"?: string | null,"due_at"?: string,"handled_by"?: string | null,"id"?: string,"requested_by"?: string | null,"response"?: string | null,"retained_explanation"?: Json | null,"status"?: Database["public"]['Enums']["dsr_status"],"subject_phone"?: string | null,"type"?: Database["public"]['Enums']["dsr_type"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "dsr_requests_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
       referencedColumns: ["id"]
     }
                   ]
@@ -518,6 +574,19 @@ isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
+                  ]
+                },"incidents": {
+                  Row: {
+                    "board_notified_at": string | null,"closed_at": string | null,"created_at": string,"created_by": string | null,"description": string,"detailed_report_at": string | null,"discovered_at": string,"extent": string | null,"id": string,"likely_impact": string | null,"mitigation": string | null,"nature": string | null,"principals_notified_at": string | null,"report_due_at": string,"title": string
+                  }
+                  Insert: {
+                    "board_notified_at"?: string | null,"closed_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"description": string,"detailed_report_at"?: string | null,"discovered_at": string,"extent"?: string | null,"id"?: string,"likely_impact"?: string | null,"mitigation"?: string | null,"nature"?: string | null,"principals_notified_at"?: string | null,"report_due_at": string,"title": string
+                  }
+                  Update: {
+                    "board_notified_at"?: string | null,"closed_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"description"?: string,"detailed_report_at"?: string | null,"discovered_at"?: string,"extent"?: string | null,"id"?: string,"likely_impact"?: string | null,"mitigation"?: string | null,"nature"?: string | null,"principals_notified_at"?: string | null,"report_due_at"?: string,"title"?: string
+                  }
+                  Relationships: [
+                    
                   ]
                 },"integration_accounts": {
                   Row: {
@@ -812,12 +881,6 @@ isOneToOne: false
                   }
                   Relationships: [
                     {
-      foreignKeyName: "lead_status_history_actor_id_fkey"
-      columns: ["actor_id"]
-isOneToOne: false
-      referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    },{
       foreignKeyName: "lead_status_history_lead_id_fkey"
       columns: ["lead_id"]
 isOneToOne: false
@@ -1018,6 +1081,19 @@ isOneToOne: false
       referencedRelation: "invoices"
       referencedColumns: ["id"]
     }
+                  ]
+                },"privacy_notices": {
+                  Row: {
+                    "body": string,"created_at": string,"effective_from": string,"id": string,"is_active": boolean,"language": string,"version": string
+                  }
+                  Insert: {
+                    "body": string,"created_at"?: string,"effective_from": string,"id"?: string,"is_active"?: boolean,"language"?: string,"version": string
+                  }
+                  Update: {
+                    "body"?: string,"created_at"?: string,"effective_from"?: string,"id"?: string,"is_active"?: boolean,"language"?: string,"version"?: string
+                  }
+                  Relationships: [
+                    
                   ]
                 },"profiles": {
                   Row: {
@@ -1436,6 +1512,19 @@ isOneToOne: false
       referencedColumns: ["job_id"]
     }
                   ]
+                },"storage_deletions": {
+                  Row: {
+                    "bucket": string,"deleted_at": string | null,"entity_id": string | null,"entity_type": string | null,"id": string,"path": string,"queued_at": string,"reason": string
+                  }
+                  Insert: {
+                    "bucket": string,"deleted_at"?: string | null,"entity_id"?: string | null,"entity_type"?: string | null,"id"?: string,"path": string,"queued_at"?: string,"reason": string
+                  }
+                  Update: {
+                    "bucket"?: string,"deleted_at"?: string | null,"entity_id"?: string | null,"entity_type"?: string | null,"id"?: string,"path"?: string,"queued_at"?: string,"reason"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"survey_checkins": {
                   Row: {
                     "accuracy_m": number | null,"checked_in_at": string,"device_id": string | null,"distance_m": number | null,"flag_reason": string | null,"flagged": boolean,"geofence_ok": boolean | null,"id": string,"idem_key": string,"is_mocked": boolean,"lat": number,"lng": number,"received_at": string,"survey_id": string,"surveyor_id": string
@@ -1741,6 +1830,31 @@ isOneToOne: false
                         Relationships: [
                     
                   ]
+                },"v_marketing_photos": {
+                  Row: {
+                    "customer_id": string | null,"fitting_id": string | null,"id": string | null,"slot": string | null,"storage_path": string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "fitting_photos_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "fittings"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fitting_photos_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "v_incomplete_fittings"
+      referencedColumns: ["fitting_id"]
+    },{
+      foreignKeyName: "properties_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"v_service_requests_overdue": {
                   Row: {
                     "ack_due_at": string | null,"ack_overdue": boolean | null,"customer_id": string | null,"id": string | null,"request_no": string | null,"resolve_due_at": string | null,"resolve_overdue": boolean | null,"status": string | null
@@ -1798,6 +1912,9 @@ isOneToOne: false
 "check_integration_health":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
+"create_dsr_request":
+{ Args: { "p_customer": string,"p_details": string,"p_phone": string,"p_type": Database["public"]['Enums']["dsr_type"] }; Returns: string
+                           },
 "create_invoice_from_job":
 { Args: { "p_job": string }; Returns: string
                            },
@@ -1828,6 +1945,9 @@ isOneToOne: false
 "ensure_prospect":
 { Args: { "p_lead_id": string,"p_property": Json }; Returns: Json
                            },
+"erasure_blockers":
+{ Args: { "p_customer": string }; Returns: Json
+                           },
 "expire_quotes":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
@@ -1837,8 +1957,14 @@ isOneToOne: false
 "fy_start_of":
 { Args: { "p_date": string }; Returns: string
                            },
+"has_consent":
+{ Args: { "p_customer": string,"p_phone": string,"p_purpose": Database["public"]['Enums']["consent_purpose"] }; Returns: boolean
+                           },
 "ingest_lead":
 { Args: { "p_lead": Json }; Returns: Json
+                           },
+"ingest_lead_with_consent":
+{ Args: { "p_consent": Json,"p_lead": Json }; Returns: Json
                            },
 "install_schedules":
 { Args: Record<PropertyKey, never>; Returns: undefined
@@ -1888,6 +2014,9 @@ isOneToOne: false
 "progress_service_request":
 { Args: { "p_id": string,"p_note"?: string,"p_to": string }; Returns: undefined
                            },
+"purge_expired_recordings":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "raise_service_request":
 { Args: { "p": Json }; Returns: Json
                            },
@@ -1896,6 +2025,9 @@ isOneToOne: false
                            },
 "recompute_quote":
 { Args: { "p_quote": string }; Returns: undefined
+                           },
+"record_consent":
+{ Args: { "p": Json }; Returns: number
                            },
 "record_handover":
 { Args: { "p": Json }; Returns: string
@@ -1920,6 +2052,9 @@ isOneToOne: false
                            },
 "set_invoice_pdf":
 { Args: { "p_invoice": string,"p_path": string,"p_sha256": string }; Returns: undefined
+                           },
+"set_photo_marketing_use":
+{ Args: { "p_photo": string,"p_use": boolean }; Returns: undefined
                            },
 "set_quote_discount":
 { Args: { "p_pct": number,"p_quote": string,"p_reason"?: string }; Returns: Database["public"]['Enums']["quote_status"]
@@ -1953,6 +2088,9 @@ isOneToOne: false
                            },
 "webhook_processed":
 { Args: { "p_id": string }; Returns: undefined
+                           },
+"withdraw_consent":
+{ Args: { "p_customer": string,"p_phone": string,"p_purpose": Database["public"]['Enums']["consent_purpose"] }; Returns: number
                            }
           }
           Enums: {

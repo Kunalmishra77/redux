@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { leadIntakeSchema } from '@/lib/validators/leads'
+import { consentSchema, leadIntakeSchema } from '@/lib/validators/leads'
 
 describe('lead intake validation', () => {
   it('BR-L1: normalises the phone to E.164 before it reaches the database', () => {
@@ -23,5 +23,28 @@ describe('lead intake validation', () => {
     expect(
       leadIntakeSchema.safeParse({ phone: '9810000001', source: 'dealer', firm_gstin: 'NOT-A-GSTIN' }).success,
     ).toBe(false)
+  })
+})
+
+describe('consent captured with the enquiry (BR-P1/P2, D1-06)', () => {
+  it('accepts one flag per purpose against a notice version', () => {
+    const r = consentSchema.safeParse({
+      notice_version: 'v1.0',
+      method: 'web_form',
+      ip_address: '198.51.100.4',
+      purposes: { service: true, marketing: false },
+    })
+    expect(r.success).toBe(true)
+  })
+
+  it('rejects an empty purpose set and an unknown purpose', () => {
+    expect(consentSchema.safeParse({ notice_version: 'v1.0', method: 'web_form', purposes: {} }).success).toBe(false)
+    expect(
+      consentSchema.safeParse({ notice_version: 'v1.0', method: 'web_form', purposes: { newsletter: true } }).success,
+    ).toBe(false)
+  })
+
+  it('rejects consent that does not say which notice was shown', () => {
+    expect(consentSchema.safeParse({ method: 'web_form', purposes: { service: true } }).success).toBe(false)
   })
 })

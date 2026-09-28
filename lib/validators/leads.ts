@@ -54,3 +54,20 @@ export const leadIntakeSchema = z.object({
 })
 
 export type LeadIntake = z.infer<typeof leadIntakeSchema>
+
+// BR-P1/P2 · D1-06: consent captured with the enquiry — one flag per purpose, against the notice
+// version the person was actually shown. Marketing is optional and must default to false.
+export const CONSENT_PURPOSES = ['service', 'marketing', 'call_recording', 'photo_marketing'] as const
+
+export const consentSchema = z.object({
+  notice_version: z.string().trim().min(1),
+  language: z.string().trim().min(2).max(5).optional(),
+  method: z.enum(['web_form', 'whatsapp', 'verbal_call', 'portal', 'staff_entry']),
+  ip_address: z.union([z.ipv4(), z.ipv6()]).optional(),
+  user_agent: z.string().max(500).optional(),
+  purposes: z.partialRecord(z.enum(CONSENT_PURPOSES), z.boolean()).refine((p) => Object.keys(p).length > 0, {
+    message: 'Record at least one consent purpose',
+  }),
+})
+
+export type Consent = z.infer<typeof consentSchema>
