@@ -188,6 +188,31 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"credit_notes": {
+                  Row: {
+                    "amount": number,"cgst": number,"created_at": string,"created_by": string | null,"credit_no": string,"id": string,"igst": number,"invoice_id": string,"issue_date": string,"pdf_path": string | null,"reason": string,"series_id": string,"sgst": number,"taxable_value": number
+                  }
+                  Insert: {
+                    "amount": number,"cgst"?: number,"created_at"?: string,"created_by"?: string | null,"credit_no": string,"id"?: string,"igst"?: number,"invoice_id": string,"issue_date": string,"pdf_path"?: string | null,"reason": string,"series_id": string,"sgst"?: number,"taxable_value": number
+                  }
+                  Update: {
+                    "amount"?: number,"cgst"?: number,"created_at"?: string,"created_by"?: string | null,"credit_no"?: string,"id"?: string,"igst"?: number,"invoice_id"?: string,"issue_date"?: string,"pdf_path"?: string | null,"reason"?: string,"series_id"?: string,"sgst"?: number,"taxable_value"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "credit_notes_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoices"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "credit_notes_series_id_fkey"
+      columns: ["series_id"]
+isOneToOne: false
+      referencedRelation: "invoice_series"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"customer_contacts": {
                   Row: {
                     "customer_id": string,"email": string | null,"id": string,"is_active": boolean,"is_primary": boolean,"name": string,"notify_prefs": NonNullable<Json>,"phone": string,"role_title": string | null,"user_id": string | null
@@ -475,6 +500,81 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"invoice_lines": {
+                  Row: {
+                    "cgst": number,"description": string,"gst_rate": number,"hsn_sac": string | null,"id": string,"igst": number,"invoice_id": string,"line_total": number,"qty": number,"sgst": number,"sort_order": number,"taxable_value": number,"unit_price": number,"uom": string
+                  }
+                  Insert: {
+                    "cgst"?: number,"description": string,"gst_rate": number,"hsn_sac"?: string | null,"id"?: string,"igst"?: number,"invoice_id": string,"line_total": number,"qty"?: number,"sgst"?: number,"sort_order"?: number,"taxable_value": number,"unit_price": number,"uom"?: string
+                  }
+                  Update: {
+                    "cgst"?: number,"description"?: string,"gst_rate"?: number,"hsn_sac"?: string | null,"id"?: string,"igst"?: number,"invoice_id"?: string,"line_total"?: number,"qty"?: number,"sgst"?: number,"sort_order"?: number,"taxable_value"?: number,"unit_price"?: number,"uom"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "invoice_lines_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoices"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"invoice_series": {
+                  Row: {
+                    "code": string,"fy_end": string,"fy_start": string,"id": string,"next_number": number
+                  }
+                  Insert: {
+                    "code": string,"fy_end": string,"fy_start": string,"id"?: string,"next_number"?: number
+                  }
+                  Update: {
+                    "code"?: string,"fy_end"?: string,"fy_start"?: string,"id"?: string,"next_number"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"invoices": {
+                  Row: {
+                    "amount_paid": number,"cancelled_at": string | null,"cgst": number,"created_at": string,"created_by": string | null,"customer_id": string,"discount_amount": number,"due_date": string | null,"id": string,"igst": number,"invoice_no": string | null,"issue_date": string | null,"job_id": string | null,"payment_link_url": string | null,"payment_route": string | null,"pdf_path": string | null,"pdf_sha256": string | null,"place_of_supply_state_code": string,"quotation_id": string | null,"recipient_address": string,"recipient_gstin": string | null,"recipient_name": string,"reverse_charge": boolean,"series_id": string | null,"sgst": number,"status": Database["public"]['Enums']["invoice_status"],"subtotal": number,"supplier_address": string | null,"supplier_gstin": string | null,"supplier_name": string | null,"supplier_state_code": string | null,"supply_date": string | null,"taxable_value": number,"total": number,"updated_at": string,"virtual_account_details": Json | null,"virtual_account_id": string | null
+                  }
+                  Insert: {
+                    "amount_paid"?: number,"cancelled_at"?: string | null,"cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id": string,"discount_amount"?: number,"due_date"?: string | null,"id"?: string,"igst"?: number,"invoice_no"?: string | null,"issue_date"?: string | null,"job_id"?: string | null,"payment_link_url"?: string | null,"payment_route"?: string | null,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code": string,"quotation_id"?: string | null,"recipient_address": string,"recipient_gstin"?: string | null,"recipient_name": string,"reverse_charge"?: boolean,"series_id"?: string | null,"sgst"?: number,"status"?: Database["public"]['Enums']["invoice_status"],"subtotal"?: number,"supplier_address"?: string | null,"supplier_gstin"?: string | null,"supplier_name"?: string | null,"supplier_state_code"?: string | null,"supply_date"?: string | null,"taxable_value"?: number,"total"?: number,"updated_at"?: string,"virtual_account_details"?: Json | null,"virtual_account_id"?: string | null
+                  }
+                  Update: {
+                    "amount_paid"?: number,"cancelled_at"?: string | null,"cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id"?: string,"discount_amount"?: number,"due_date"?: string | null,"id"?: string,"igst"?: number,"invoice_no"?: string | null,"issue_date"?: string | null,"job_id"?: string | null,"payment_link_url"?: string | null,"payment_route"?: string | null,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code"?: string,"quotation_id"?: string | null,"recipient_address"?: string,"recipient_gstin"?: string | null,"recipient_name"?: string,"reverse_charge"?: boolean,"series_id"?: string | null,"sgst"?: number,"status"?: Database["public"]['Enums']["invoice_status"],"subtotal"?: number,"supplier_address"?: string | null,"supplier_gstin"?: string | null,"supplier_name"?: string | null,"supplier_state_code"?: string | null,"supply_date"?: string | null,"taxable_value"?: number,"total"?: number,"updated_at"?: string,"virtual_account_details"?: Json | null,"virtual_account_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "invoices_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "invoices_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "jobs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "invoices_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "v_invoices_due"
+      referencedColumns: ["job_id"]
+    },{
+      foreignKeyName: "invoices_quotation_id_fkey"
+      columns: ["quotation_id"]
+isOneToOne: false
+      referencedRelation: "quotations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "invoices_series_id_fkey"
+      columns: ["series_id"]
+isOneToOne: false
+      referencedRelation: "invoice_series"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"job_batches": {
                   Row: {
                     "id": string,"job_id": string,"name": string,"planned_from": string | null,"planned_to": string | null,"sort_order": number
@@ -492,6 +592,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "jobs"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "job_batches_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "v_invoices_due"
+      referencedColumns: ["job_id"]
     }
                   ]
                 },"job_stage_events": {
@@ -511,6 +617,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "jobs"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "job_stage_events_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "v_invoices_due"
+      referencedColumns: ["job_id"]
     },{
       foreignKeyName: "job_stage_events_job_unit_id_fkey"
       columns: ["job_unit_id"]
@@ -549,6 +661,12 @@ isOneToOne: false
       referencedRelation: "jobs"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "job_units_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "v_invoices_due"
+      referencedColumns: ["job_id"]
+    },{
       foreignKeyName: "job_units_property_unit_id_fkey"
       columns: ["property_unit_id"]
 isOneToOne: false
@@ -579,6 +697,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "jobs"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "jobs_parent_job_id_fkey"
+      columns: ["parent_job_id"]
+isOneToOne: false
+      referencedRelation: "v_invoices_due"
+      referencedColumns: ["job_id"]
     },{
       foreignKeyName: "jobs_property_id_fkey"
       columns: ["property_id"]
@@ -777,6 +901,25 @@ isOneToOne: false
       columns: ["rate_card_id"]
 isOneToOne: false
       referencedRelation: "rate_cards"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"payments": {
+                  Row: {
+                    "amount": number,"captured_at": string | null,"created_at": string,"id": string,"invoice_id": string,"method": string | null,"provider": string,"provider_payment_id": string,"raw_payload": Json | null,"status": Database["public"]['Enums']["payment_status"]
+                  }
+                  Insert: {
+                    "amount": number,"captured_at"?: string | null,"created_at"?: string,"id"?: string,"invoice_id": string,"method"?: string | null,"provider"?: string,"provider_payment_id": string,"raw_payload"?: Json | null,"status": Database["public"]['Enums']["payment_status"]
+                  }
+                  Update: {
+                    "amount"?: number,"captured_at"?: string | null,"created_at"?: string,"id"?: string,"invoice_id"?: string,"method"?: string | null,"provider"?: string,"provider_payment_id"?: string,"raw_payload"?: Json | null,"status"?: Database["public"]['Enums']["payment_status"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "payments_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoices"
       referencedColumns: ["id"]
     }
                   ]
@@ -1203,6 +1346,12 @@ isOneToOne: false
       referencedRelation: "jobs"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "warranties_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "v_invoices_due"
+      referencedColumns: ["job_id"]
+    },{
       foreignKeyName: "warranties_job_unit_id_fkey"
       columns: ["job_unit_id"]
 isOneToOne: false
@@ -1249,6 +1398,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "jobs"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "job_units_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "v_invoices_due"
+      referencedColumns: ["job_id"]
     }
                   ]
                 },"v_incomplete_fittings": {
@@ -1264,11 +1419,33 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"v_invoices_due": {
+                  Row: {
+                    "customer_id": string | null,"days_since_supply": number | null,"job_id": string | null,"job_no": string | null,"supply_date": string | null
+                  }
+                  Insert: {
+                           "customer_id"?: string | null,"days_since_supply"?: never,"job_id"?: string | null,"job_no"?: string | null,"supply_date"?: string | null
+                         }
+                        Update: {
+                           "customer_id"?: string | null,"days_since_supply"?: never,"job_id"?: string | null,"job_no"?: string | null,"supply_date"?: string | null
+                         }
+                        Relationships: [
+                    {
+      foreignKeyName: "jobs_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Functions: {
             "activate_rate_card":
 { Args: { "p_id": string }; Returns: undefined
+                           },
+"allocate_document_no":
+{ Args: { "p_code": string,"p_date": string }; Returns: Json
                            },
 "assign_lead":
 { Args: { "p_city_id": string }; Returns: string
@@ -1292,6 +1469,12 @@ isOneToOne: false
                            },
 "can_run_job":
 { Args: { "p_job": string }; Returns: boolean
+                           },
+"cancel_invoice":
+{ Args: { "p_invoice": string,"p_reason": string }; Returns: string
+                           },
+"create_invoice_from_job":
+{ Args: { "p_job": string }; Returns: string
                            },
 "create_quote_from_survey":
 { Args: { "p_survey": string }; Returns: string
@@ -1320,6 +1503,9 @@ isOneToOne: false
 "freeze_quote_for_issue":
 { Args: { "p_quote": string }; Returns: Json
                            },
+"fy_start_of":
+{ Args: { "p_date": string }; Returns: string
+                           },
 "ingest_lead":
 { Args: { "p_lead": Json }; Returns: Json
                            },
@@ -1328,6 +1514,12 @@ isOneToOne: false
                            },
 "is_staff":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"is_system_caller":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"issue_invoice":
+{ Args: { "p_invoice": string }; Returns: string
                            },
 "link_to_pilot":
 { Args: { "p_job": string,"p_pilot": string }; Returns: undefined
@@ -1362,11 +1554,17 @@ isOneToOne: false
 "record_otp_delivery":
 { Args: { "p_dlt_template_id"?: string,"p_gateway_message_id": string,"p_otp": string }; Returns: undefined
                            },
+"record_payment":
+{ Args: { "p": Json }; Returns: Json
+                           },
 "request_quote_otp":
 { Args: { "p_channel": Database["public"]['Enums']["msg_channel"],"p_phone": string,"p_quote": string }; Returns: Json
                            },
 "rollup_job":
 { Args: { "p_job": string }; Returns: undefined
+                           },
+"set_invoice_pdf":
+{ Args: { "p_invoice": string,"p_path": string,"p_sha256": string }; Returns: undefined
                            },
 "set_quote_discount":
 { Args: { "p_pct": number,"p_quote": string,"p_reason"?: string }; Returns: Database["public"]['Enums']["quote_status"]

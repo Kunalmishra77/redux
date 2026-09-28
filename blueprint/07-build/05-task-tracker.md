@@ -15,7 +15,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | **Phase** | Phase 0 — Mobilisation |
 | **Week** | W0 (5–9 Oct 2026) |
 | **Sprint goal** | Accounts, approvals and infrastructure. Meta App Review submitted |
-| **Last updated** | 2026-09-28 — §11 jobs + OTP approval (BR-Q6), stages, blocked clock, handover, warranties |
+| **Last updated** | 2026-09-28 — §12 invoices/payments/credit notes + SECURITY DEFINER permission fix |
 
 ---
 
@@ -163,6 +163,15 @@ E11 quotation & OTP (15) · E12 job tracking (11) · E13 QA & go-live (6) — al
 
 <details><summary>E14–E17 — 44 stories</summary>
 
+| ID | Status | Notes |
+|---|:--:|---|
+| E14-S07 | REVIEW | Migration 001100: invoice_series, invoices, lines, payments, credit_notes |
+| E14-S08 | REVIEW | `create_invoice_from_job()` from the approved quote; Rule 46 fields stored; issue refuses until A11 loaded |
+| E14-S09 | REVIEW | `allocate_document_no()`: per series per FY, row-locked, allocated at issue — gap-free, 1 April reset. Concurrency (P8) proven by the lock; a true multi-session test is still to add |
+| E14-S12 | WIP | DB half: `record_payment()` server-only, idempotent. Route handler + signature check with E4 |
+| E14-S18 | REVIEW | `cancel_invoice()` → full credit note from its own series; partial credit notes not built |
+| E14-S10, S11 | TODO | Razorpay Payment Link / Smart Collect calls — `payment_route` is already decided per invoice |
+
 E14 customer portal (18) · E15 super admin & stock (8) · E16 admin & reports (9) ·
 E17 QA, go-live, handover (9) — all `TODO`
 </details>
@@ -188,6 +197,13 @@ Anything decided that is not already in an ADR. If it contradicts an ADR, **writ
 | 2026-09-27 | **Item 19 → ADR-014**: one repo, surveyor app in `mobile/` | Shared pricing logic identical by construction | E8 |
 | 2026-09-27 | Leads enter only via `ingest_lead()` (SECURITY DEFINER), for every source | Dedup + assignment + SLA must be atomic and identical for web, webhooks and manual entry | E3-S03 |
 | 2026-09-27 | Manual entry (call / walk-in) by a cc_exec is assigned to that executive, not round-robin | "With source and who took it" (PRD D3); the taker is already on the call | E3-S05 |
+| 2026-09-28 | **Caller identity in SECURITY DEFINER functions comes from the JWT (`is_system_caller()`), never `current_user`** | Inside a definer function `current_user` is the owner — see Deviations | all |
+| 2026-09-28 | Invoice number allocated at issue, not at draft | A draft can be abandoned without leaving a gap (BR-I1) | E14-S09 |
+| 2026-09-28 | Supplier GSTIN / legal name / address / series codes in `settings`, empty until A11; issue refuses without them | Nothing invented | E14-S08 |
+| 2026-09-28 | Series codes ≤ 5 characters | CODE/2627/00001 must stay ≤ 16 (Rule 46); 6 would make 17 | E14-S09 |
+| 2026-09-28 | `due_date` = issue date (due on receipt) | Blueprint names no payment terms — REDUX may set terms later (item 23) | E14-S08 |
+| 2026-09-28 | One live invoice per job; cancelling (credit note) frees the job to be re-invoiced | No partial / milestone billing (B7 out of scope) | E14-S08 |
+| 2026-09-28 | A paid invoice cannot be cancelled until refunded | A credit note must not silently strand money | E14-S18 |
 | 2026-09-28 | A wrong OTP returns `{ok:false}` instead of raising | An exception would roll back the attempt counter — BR-Q5 needs attempts kept | E11-S08 |
 | 2026-09-28 | Warranty kind per work type: repair → mechanical; restore finish → finish; Eurobrass replacement → both | Blueprint silent; open item 22 | E12-S10 |
 | 2026-09-28 | Warranty periods come from the **quote's** snapshot, not current settings | BR-Q3: the customer gets what they accepted | E12-S10 |
@@ -250,6 +266,9 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | `rate_cards.activated_at`; activated versions frozen (items, market prices, version, date) by trigger | D9-02 — schema.sql only had "one active" | migration 000800 |
 | 2026-09-28 | `unique nulls not distinct` on rate_card_items / market_prices | NULL finish could be priced twice | migration 000800 |
 | 2026-09-28 | `market_prices` + optional `finish_id` (lookup falls back to the finish-less row) | The CSV template carries a market price per finish; schema.sql keyed by fitting type only | migration 000800 |
+| 2026-09-28 | **SECURITY FIX**: `move_unit_stage()` and `link_to_pilot()` (001000, on staging for a few hours, no real data) accepted any logged-in user — the check `current_user = 'authenticated'` never fires inside SECURITY DEFINER. Re-issued with `is_system_caller()`; test 11 makes the pattern structurally impossible | Found by the invoice test calling as cc_exec | migration 001100 |
+| 2026-09-28 | `invoices.invoice_no` nullable until issue; supplier fields filled at issue; `payment_route`; issued-completeness + cancelled-consistency checks | BR-I1, BR-I3, BR-I6 | migration 001100 |
+| 2026-09-28 | `credit_notes` get their own gap-free series + GST split; append-only | BR-I2 | migration 001100 |
 | 2026-09-28 | `unit_blocks` table replaces job_units.blocked_* columns | Item 9: open and repeat blocks | migration 001000 |
 | 2026-09-28 | `jobs.quotation_id` unique; handovers require all three checks (constraint); warranties unique per (fitting, job, kind); nothing cascades | One job per approval; D11-07; no duplicate cards; rule 8/9 | migration 001000 |
 | 2026-09-28 | Actor columns on jobs tables reference auth.users | Same reason as audit_log | migration 001000 |
@@ -283,6 +302,7 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 20 | **Surveyors have no base location** — "nearest surveyor" (D4-04) is approximated by city + load | profiles | **yes — REDUX / PM**: add a base pin per surveyor? |
 | 21 | `impossible_travel_kmh` = 150 is a placeholder | settings | yes — REDUX |
 | 22 | Which warranty (mechanical / finish) each work type earns — implemented as repair → mechanical, restore finish → finish, replacement → both | warranties | yes — REDUX |
+| 23 | Invoice payment terms — implemented as due on issue | invoices | yes — REDUX |
 
 ---
 
@@ -333,5 +353,12 @@ Append one line per working session. This is how the next session (or the next p
             column — explicit casts added. BR-Q6 proven by forcing a failure mid-approval. CI green
             → staging; 227/227 pgTAP. Item 9 closed; open item 22 (warranty kind per work type).
             Next in Step 1: invoices + payments (§12) — but invoicing has no D-number (item 15).
+
+2026-09-28  Migration 001100 (§12 invoices, payments, credit notes). The invoice test caught a
+            SECURITY bug: "current_user = 'authenticated'" inside SECURITY DEFINER never fires, so
+            move_unit_stage/link_to_pilot (on staging) let any user through. Fixed via JWT-based
+            is_system_caller(); test 11 guards it structurally. Also caught: a 6-char series code
+            breaks the 16-char limit → codes ≤ 5. CI green → staging; 274/274 pgTAP.
+            Next in Step 1: §13 stock, then §14–16 (service requests, integrations/messaging, privacy).
 
 ```
