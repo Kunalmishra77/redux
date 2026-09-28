@@ -15,7 +15,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | **Phase** | Phase 0 — Mobilisation |
 | **Week** | W0 (5–9 Oct 2026) |
 | **Sprint goal** | Accounts, approvals and infrastructure. Meta App Review submitted |
-| **Last updated** | 2026-09-28 — §8 surveys: booking, check-in integrity, fittings, photos, submit |
+| **Last updated** | 2026-09-28 — §4 rate cards + §9 assessments (data layer, ahead of Phase 2 per build-order Step 1) |
 
 ---
 
@@ -117,6 +117,18 @@ E7-S01 … E7-S09 — all `TODO`
 
 <details><summary>E8–E13 — 66 stories</summary>
 
+| ID | Status | Notes |
+|---|:--:|---|
+| E10-S01 | REVIEW | Migration 000800: rate_cards, rate_card_items, market_prices + RLS |
+| E10-S02 | REVIEW | Versions freeze on activation; `new_rate_card_version()`, `activate_rate_card()`; one active |
+| E10-S03 | WIP | CSV parser/validator `lib/services/rate-card-csv.ts` done; editor UI (B27) + DB import wait for DS3 / D16 |
+| E10-S04 | REVIEW | `upsert_assessment()` prices all three options server-side, idempotent per fitting |
+| E10-S05 | REVIEW | `you_save` generated, null when not positive; `calculateYouSave()` mirrors it |
+| E10-S06 | REVIEW | Manual override needs a reason; audited with actor |
+| E10-S07, S08 | TODO | UI (C10 comparison, caveat copy) — Phase 2 screens |
+
+Built early (Step 1 data foundation) — REDUX's real prices (A9) load as data, no code change.
+
 E8 mobile foundation (9) · E9 survey capture (15) · E10 rate card & assessment (8) ·
 E11 quotation & OTP (15) · E12 job tracking (11) · E13 QA & go-live (6) — all `TODO`
 </details>
@@ -152,6 +164,10 @@ Anything decided that is not already in an ADR. If it contradicts an ADR, **writ
 | 2026-09-27 | **Item 19 → ADR-014**: one repo, surveyor app in `mobile/` | Shared pricing logic identical by construction | E8 |
 | 2026-09-27 | Leads enter only via `ingest_lead()` (SECURITY DEFINER), for every source | Dedup + assignment + SLA must be atomic and identical for web, webhooks and manual entry | E3-S03 |
 | 2026-09-27 | Manual entry (call / walk-in) by a cc_exec is assigned to that executive, not round-robin | "With source and who took it" (PRD D3); the taker is already on the call | E3-S05 |
+| 2026-09-28 | Rate cards and assessments built in Step 1 (data foundation), before Phase 2 | Build order Step 1 lists the whole schema; prices arrive later as data | E10 |
+| 2026-09-28 | Assessments are priced **on the server** from the active card; the app sends only the recommendation | api-spec "server re-prices"; a surveyor cannot mis-price | E10-S04 |
+| 2026-09-28 | `no_action` is priced at 0 with both alternatives still priced | BR-A2 "all three always priced" | E10-S04 |
+| 2026-09-28 | Executives and customers cannot read rate cards or assessments | Roles matrix: pricing only on a quote | E10-S01 |
 | 2026-09-28 | Survey slot = `settings.survey_slot_minutes` (120, from screen B6) | No hardcoded durations | E6-S03 |
 | 2026-09-28 | Impossible travel threshold = `settings.impossible_travel_kmh` (150) — **placeholder, REDUX to confirm** | BR-S4 names no number | E9 |
 | 2026-09-28 | "Nearest surveyor" = same city first, then least-loaded that day | Surveyors have no base location in the schema — open item below | E6-S03 |
@@ -198,12 +214,16 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | `survey_checkins` + `idem_key`, `received_at`; `fittings` must have a unit (id or label); photo sha256 format check | Offline outbox (ADR-006); data integrity | migration 000700 |
 | 2026-09-28 | `guard_lead_status` now checks BR-L6 fully: survey_booked needs a live survey, surveyed a submitted one | BR-L6 | migration 000700 |
 | 2026-09-28 | BR-S5 server-side enforcement moved to survey submit | Item 10 | BR doc |
+| 2026-09-28 | `rate_cards.activated_at`; activated versions frozen (items, market prices, version, date) by trigger | D9-02 — schema.sql only had "one active" | migration 000800 |
+| 2026-09-28 | `unique nulls not distinct` on rate_card_items / market_prices | NULL finish could be priced twice | migration 000800 |
+| 2026-09-28 | `market_prices` + optional `finish_id` (lookup falls back to the finish-less row) | The CSV template carries a market price per finish; schema.sql keyed by fitting type only | migration 000800 |
+| 2026-09-28 | `assessments.you_save` generated (null = hidden); `updated_at`; no cascade from fittings | BR-A4 "hidden, never negative"; rule 8 | migration 000800 |
 
 ### Open review items (27 Sep 2026) — each fixed in the migration for its section
 
 | # | Item | Fix in | Needs a decision? |
 |---|---|---|---|
-| 2 | ~40 tables in schema.sql have no policy; surveyors can't read `rate_cards` / `market_prices` | each section | no |
+| 2 | *(partly closed: §1–9 written; surveyor reads active rate card in 000800)* ~40 tables in schema.sql have no policy; surveyors can't read `rate_cards` / `market_prices` | each section | no |
 | 3 | UPDATE policies without WITH CHECK (`quotations_update` can never reach `sent`) → state changes via SECURITY DEFINER RPCs | §10 | no |
 | 4 | ~~Fixed in 000700~~ `on delete cascade` + `FOR ALL` lets a delete wipe `fitting_photos` / warranties | §8, §11 | no |
 | 5 | ~~Fixed in 000700~~ `fitting_photos_select` lets every surveyor read every photo (breaks P2); `v_incomplete_fittings` bypasses RLS (gate now catches it) | §8 | no |
@@ -254,5 +274,11 @@ Append one line per working session. This is how the next session (or the next p
             114/114 pgTAP. lib/surveys/book.ts + validator. Two new open items (20, 21).
             Next: §9 assessments + §4 rate cards are Phase 2 (need REDUX's rate card, A9) — so
             either E1-S06…S09 app shell/login (needs DS1) or E4-S01 queue + webhooks (pgmq/pg_cron).
+
+2026-09-28  Migration 000800 (§4 rate cards + §9 assessments): frozen versions, one active,
+            server-side three-price assessment, overrides audited, you_save generated. Caught two
+            test bugs (a volatile fn in WHERE reads the pre-write snapshot — one test was passing
+            for the wrong reason). CI green → staging; 145/145 pgTAP; CSV parser + 9 unit tests.
+            Next: §10 quotations + quote_approvals (BR-Q1…Q7), then §11 jobs.
 
 ```

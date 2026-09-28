@@ -5,7 +5,50 @@ export type Database = {
   
   "public": {
           Tables: {
-            "assignment_state": {
+            "assessments": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"finish_id": string | null,"fitting_id": string,"id": string,"is_manual_override": boolean,"override_reason": string | null,"part_unavailable_note": string | null,"price_market_replacement": number,"price_recommended": number,"price_replace_eurobrass": number,"rate_card_id": string,"recommended": Database["public"]['Enums']["treatment"],"surveyor_note": string | null,"updated_at": string,"you_save": number | null
+                  }
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"finish_id"?: string | null,"fitting_id": string,"id"?: string,"is_manual_override"?: boolean,"override_reason"?: string | null,"part_unavailable_note"?: string | null,"price_market_replacement": number,"price_recommended": number,"price_replace_eurobrass": number,"rate_card_id": string,"recommended": Database["public"]['Enums']["treatment"],"surveyor_note"?: string | null,"updated_at"?: string,"you_save"?: never
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"finish_id"?: string | null,"fitting_id"?: string,"id"?: string,"is_manual_override"?: boolean,"override_reason"?: string | null,"part_unavailable_note"?: string | null,"price_market_replacement"?: number,"price_recommended"?: number,"price_replace_eurobrass"?: number,"rate_card_id"?: string,"recommended"?: Database["public"]['Enums']["treatment"],"surveyor_note"?: string | null,"updated_at"?: string,"you_save"?: never
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "assessments_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "assessments_finish_id_fkey"
+      columns: ["finish_id"]
+isOneToOne: false
+      referencedRelation: "finishes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "assessments_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: true
+      referencedRelation: "fittings"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "assessments_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: true
+      referencedRelation: "v_incomplete_fittings"
+      referencedColumns: ["fitting_id"]
+    },{
+      foreignKeyName: "assessments_rate_card_id_fkey"
+      columns: ["rate_card_id"]
+isOneToOne: false
+      referencedRelation: "rate_cards"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"assignment_state": {
                   Row: {
                     "last_user_id": string | null,"scope": string,"updated_at": string
                   }
@@ -501,6 +544,37 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"market_prices": {
+                  Row: {
+                    "finish_id": string | null,"fitting_type_id": string,"id": string,"price": number,"rate_card_id": string
+                  }
+                  Insert: {
+                    "finish_id"?: string | null,"fitting_type_id": string,"id"?: string,"price": number,"rate_card_id": string
+                  }
+                  Update: {
+                    "finish_id"?: string | null,"fitting_type_id"?: string,"id"?: string,"price"?: number,"rate_card_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "market_prices_finish_id_fkey"
+      columns: ["finish_id"]
+isOneToOne: false
+      referencedRelation: "finishes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "market_prices_fitting_type_id_fkey"
+      columns: ["fitting_type_id"]
+isOneToOne: false
+      referencedRelation: "fitting_types"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "market_prices_rate_card_id_fkey"
+      columns: ["rate_card_id"]
+isOneToOne: false
+      referencedRelation: "rate_cards"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"profiles": {
                   Row: {
                     "avatar_url": string | null,"city_id": string | null,"created_at": string,"email": string | null,"full_name": string,"id": string,"is_active": boolean,"phone": string | null,"recording_consent_at": string | null,"updated_at": string
@@ -561,6 +635,62 @@ isOneToOne: false
       columns: ["property_id"]
 isOneToOne: false
       referencedRelation: "properties"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"rate_card_items": {
+                  Row: {
+                    "finish_id": string | null,"fitting_type_id": string,"gst_rate": number,"hsn_sac": string | null,"id": string,"price": number,"rate_card_id": string,"work_type_id": string
+                  }
+                  Insert: {
+                    "finish_id"?: string | null,"fitting_type_id": string,"gst_rate"?: number,"hsn_sac"?: string | null,"id"?: string,"price": number,"rate_card_id": string,"work_type_id": string
+                  }
+                  Update: {
+                    "finish_id"?: string | null,"fitting_type_id"?: string,"gst_rate"?: number,"hsn_sac"?: string | null,"id"?: string,"price"?: number,"rate_card_id"?: string,"work_type_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "rate_card_items_finish_id_fkey"
+      columns: ["finish_id"]
+isOneToOne: false
+      referencedRelation: "finishes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "rate_card_items_fitting_type_id_fkey"
+      columns: ["fitting_type_id"]
+isOneToOne: false
+      referencedRelation: "fitting_types"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "rate_card_items_rate_card_id_fkey"
+      columns: ["rate_card_id"]
+isOneToOne: false
+      referencedRelation: "rate_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "rate_card_items_work_type_id_fkey"
+      columns: ["work_type_id"]
+isOneToOne: false
+      referencedRelation: "work_types"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"rate_cards": {
+                  Row: {
+                    "activated_at": string | null,"created_at": string,"created_by": string | null,"effective_from": string,"id": string,"is_active": boolean,"notes": string | null,"version": number
+                  }
+                  Insert: {
+                    "activated_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"effective_from": string,"id"?: string,"is_active"?: boolean,"notes"?: string | null,"version": number
+                  }
+                  Update: {
+                    "activated_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"effective_from"?: string,"id"?: string,"is_active"?: boolean,"notes"?: string | null,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "rate_cards_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
                   ]
@@ -703,7 +833,10 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "assign_lead":
+            "activate_rate_card":
+{ Args: { "p_id": string }; Returns: undefined
+                           },
+"assign_lead":
 { Args: { "p_city_id": string }; Returns: string
                            },
 "authorize":
@@ -741,14 +874,26 @@ isOneToOne: false
 "log_call":
 { Args: { "p_call": Json }; Returns: string
                            },
+"market_price":
+{ Args: { "p_finish": string,"p_fitting_type": string,"p_rate_card": string }; Returns: number
+                           },
 "my_customer_ids":
 { Args: Record<PropertyKey, never>; Returns: (string)[]
+                           },
+"new_rate_card_version":
+{ Args: { "p_effective_from": string,"p_from"?: string,"p_notes"?: string }; Returns: string
+                           },
+"rate_card_price":
+{ Args: { "p_finish": string,"p_fitting_type": string,"p_rate_card": string,"p_work_type_code": string }; Returns: number
                            },
 "staff_can_see_customer":
 { Args: { "p_customer_id": string }; Returns: boolean
                            },
 "submit_survey":
 { Args: { "p_survey_id": string }; Returns: undefined
+                           },
+"upsert_assessment":
+{ Args: { "p": Json }; Returns: string
                            }
           }
           Enums: {
