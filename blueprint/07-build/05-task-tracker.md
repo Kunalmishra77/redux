@@ -15,7 +15,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | **Phase** | Phase 0 — Mobilisation |
 | **Week** | W0 (5–9 Oct 2026) |
 | **Sprint goal** | Accounts, approvals and infrastructure. Meta App Review submitted |
-| **Last updated** | 2026-09-28 — §10 quotations (build, discount gate, freeze-and-send, versions, OTP request) |
+| **Last updated** | 2026-09-28 — §11 jobs + OTP approval (BR-Q6), stages, blocked clock, handover, warranties |
 
 ---
 
@@ -135,8 +135,20 @@ Built early (Step 1 data foundation) — REDUX's real prices (A9) load as data, 
 | E11-S02 | WIP | `create_quote_from_survey()` done; builder UI (B19) is Phase 2 screens |
 | E11-S03 | REVIEW | `freeze_quote_for_issue()`: validity (IST) + terms snapshot; refuses until A10 is loaded |
 | E11-S05 | WIP | `mark_quote_sent()` stores the PDF hash; rendering waits for the Gotenberg service (E0-S07 VPS) |
-| E11-S08 | WIP | Request half done (`request_quote_otp`, `record_otp_delivery`); verify comes with §11 (BR-Q6) |
-| E11-S09, S10 | TODO | `verify_quote_otp()` — evidence + customer + job in one transaction — needs §11 jobs |
+| E11-S08 | REVIEW | `request_quote_otp`, `record_otp_delivery`, `verify_quote_otp` (attempts kept, lockout, expiry). Route handlers + sending wait for E5 |
+| E11-S09 | REVIEW | Full evidence set written by `verify_quote_otp()`; tested field by field |
+| E11-S10 | REVIEW | Approval → quote approved + customer converted + lead won + job + units, atomically (tested by forcing a mid-way failure) |
+
+| ID | Status | Notes |
+|---|:--:|---|
+| E12-S01 | REVIEW | Migration 001000: jobs, batches, units, unit_blocks, stage events, handovers, after-photos, warranties |
+| E12-S05 | REVIEW | `move_unit_stage()`: one forward, back with a reason, never by hand |
+| E12-S06 | REVIEW | `block_unit()` / `unblock_unit()`; `unit_effective_downtime_hours()` subtracts every block, open ones to now |
+| E12-S07 | WIP | `v_delayed_units` done; TN10 alert with E5 |
+| E12-S08 | REVIEW | `link_to_pilot()`. Rate inheritance for the wider project is a quote-time feature (E11 UI) — not built |
+| E12-S09 | WIP | `record_handover()` + after-photos table; capture UI (C12/B25) later |
+| E12-S10 | REVIEW | Warranty cards at handover from the quote's snapshot; kind per work type — **REDUX to confirm** (item 22) |
+| E12-S02…S04, S11 | TODO | Screens and notifications |
 | E11-S13 | WIP | `set_quote_discount()` / `decide_discount()` done; queue UI (B21) later |
 | E11-S14 | REVIEW | Versions share quote_no; approved is final (BR-Q7) |
 | E11-S15 | WIP | `expire_quotes()` done; pg_cron wiring + CN8 with E4-S01 / E5 |
@@ -176,6 +188,11 @@ Anything decided that is not already in an ADR. If it contradicts an ADR, **writ
 | 2026-09-27 | **Item 19 → ADR-014**: one repo, surveyor app in `mobile/` | Shared pricing logic identical by construction | E8 |
 | 2026-09-27 | Leads enter only via `ingest_lead()` (SECURITY DEFINER), for every source | Dedup + assignment + SLA must be atomic and identical for web, webhooks and manual entry | E3-S03 |
 | 2026-09-27 | Manual entry (call / walk-in) by a cc_exec is assigned to that executive, not round-robin | "With source and who took it" (PRD D3); the taker is already on the call | E3-S05 |
+| 2026-09-28 | A wrong OTP returns `{ok:false}` instead of raising | An exception would roll back the attempt counter — BR-Q5 needs attempts kept | E11-S08 |
+| 2026-09-28 | Warranty kind per work type: repair → mechanical; restore finish → finish; Eurobrass replacement → both | Blueprint silent; open item 22 | E12-S10 |
+| 2026-09-28 | Warranty periods come from the **quote's** snapshot, not current settings | BR-Q3: the customer gets what they accepted | E12-S10 |
+| 2026-09-28 | Handover by super_admin or the surveyor who surveyed the job; stage moves by super_admin only | J1 step 17; roles matrix | E12-S05/S09 |
+| 2026-09-28 | Portal login linked to a customer contact by phone (trigger on auth.users) | "Customer account created automatically" without a manual step | E11-S10 / E14 |
 | 2026-09-28 | Place of supply = the **property's** state; supplier state `settings.supplier_state_code` = 07 (Okhla, Delhi) | GST place of supply for services on immovable property is the property's location (IGST Act s.12(3)); BR-I4 says "recipient's state" — flag to REDUX's CA | E11-S01 |
 | 2026-09-28 | Issue = `freeze_quote_for_issue()` → render PDF from frozen values → `mark_quote_sent(pdf_sha256)`; any draft change unfreezes | The PDF must show the exact dates/terms the customer approves (BR-Q4) | E11-S03/S05 |
 | 2026-09-28 | Quotes refuse to issue until `settings.warranty_terms` (A10) exists | Don't invent warranty periods | E11-S03 |
@@ -233,6 +250,9 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | `rate_cards.activated_at`; activated versions frozen (items, market prices, version, date) by trigger | D9-02 — schema.sql only had "one active" | migration 000800 |
 | 2026-09-28 | `unique nulls not distinct` on rate_card_items / market_prices | NULL finish could be priced twice | migration 000800 |
 | 2026-09-28 | `market_prices` + optional `finish_id` (lookup falls back to the finish-less row) | The CSV template carries a market price per finish; schema.sql keyed by fitting type only | migration 000800 |
+| 2026-09-28 | `unit_blocks` table replaces job_units.blocked_* columns | Item 9: open and repeat blocks | migration 001000 |
+| 2026-09-28 | `jobs.quotation_id` unique; handovers require all three checks (constraint); warranties unique per (fitting, job, kind); nothing cascades | One job per approval; D11-07; no duplicate cards; rule 8/9 | migration 001000 |
+| 2026-09-28 | Actor columns on jobs tables reference auth.users | Same reason as audit_log | migration 001000 |
 | 2026-09-28 | `quotations`: unique (quote_no, version); `survey_id`, `customer_id`, `property_id` NOT NULL; place-of-supply + supplier state stored; completeness check once sent | Versions share a number; BR-S8; BR-I3-style reproducibility | migration 000900 |
 | 2026-09-28 | `quotation_lines` + `price_replace_eurobrass`, per-line taxable/CGST/SGST/IGST | D8-02 on the quote; exact reproduction | migration 000900 |
 | 2026-09-28 | New table `quote_otps` (OTP lifecycle, hashes only) | BR-Q5 needs attempts/expiry somewhere | migration 000900 |
@@ -250,7 +270,7 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 6 | ~~No survey address / location~~ **Decided → BR-S8**, implement in §7–8. anywhere; property needs a customer, which exists only after approval → "nearest surveyor", geofence and job_units all break | §5–8 | **yes — REDUX / PM** |
 | 7 | Webhook idempotency `(source, external_id)` collides for WhatsApp statuses (same wamid) and Razorpay events (same payment.id) | §15 | no |
 | 8 | ~~Fixed in 000400~~ BR-L3 trigger misses `campaign_id` (+ leadgen / google ids, utm) | §5 | no |
-| 9 | BR-J2: clock keeps running while currently blocked; one block per unit | §11 | no |
+| 9 | ~~Fixed in 001000~~ BR-J2: clock keeps running while currently blocked; one block per unit | §11 | no |
 | 10 | ~~Fixed in 000700 + BR doc~~ BR-S5 can't be enforced at fitting insert (photos FK the fitting) → enforce at submit / quote | §8, BR doc | no |
 | 11 | ~~Decided + implemented in 000400~~ BR-L1: a repeat enquiry from a Won/Lost customer becomes a touch, never a new lead | §5 | **yes — REDUX / PM** |
 | 12 | ~~Fixed in 000900~~ Customers can read their own draft quotes | §10 | no |
@@ -262,6 +282,7 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 19 | ~~Decided → ADR-014~~ Two repos + CI-checked copy of `lib/services` vs one repo with `mobile/` | repo structure | **yes — tech lead** |
 | 20 | **Surveyors have no base location** — "nearest surveyor" (D4-04) is approximated by city + load | profiles | **yes — REDUX / PM**: add a base pin per surveyor? |
 | 21 | `impossible_travel_kmh` = 150 is a placeholder | settings | yes — REDUX |
+| 22 | Which warranty (mechanical / finish) each work type earns — implemented as repair → mechanical, restore finish → finish, replacement → both | warranties | yes — REDUX |
 
 ---
 
@@ -306,5 +327,11 @@ Append one line per working session. This is how the next session (or the next p
             adding prices (the freeze guard was right) and showed quote immutability holds at the
             RLS layer before the trigger — both layers now tested. CI green → staging; 185/185.
             Next: §11 jobs + verify_quote_otp() (BR-Q6 atomic approval → customer + job).
+
+2026-09-28  Migration 001000 (§11 jobs + verify_quote_otp). Tests caught a real bug: CASE with only
+            literal branches resolves to text, so every stage move would have failed on the enum
+            column — explicit casts added. BR-Q6 proven by forcing a failure mid-approval. CI green
+            → staging; 227/227 pgTAP. Item 9 closed; open item 22 (warranty kind per work type).
+            Next in Step 1: invoices + payments (§12) — but invoicing has no D-number (item 15).
 
 ```

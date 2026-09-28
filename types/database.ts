@@ -413,6 +413,186 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"handover_photos": {
+                  Row: {
+                    "captured_at": string,"fitting_id": string | null,"handover_id": string,"id": string,"sha256": string,"storage_path": string
+                  }
+                  Insert: {
+                    "captured_at"?: string,"fitting_id"?: string | null,"handover_id": string,"id"?: string,"sha256": string,"storage_path": string
+                  }
+                  Update: {
+                    "captured_at"?: string,"fitting_id"?: string | null,"handover_id"?: string,"id"?: string,"sha256"?: string,"storage_path"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "handover_photos_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "fittings"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "handover_photos_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "v_incomplete_fittings"
+      referencedColumns: ["fitting_id"]
+    },{
+      foreignKeyName: "handover_photos_handover_id_fkey"
+      columns: ["handover_id"]
+isOneToOne: false
+      referencedRelation: "handovers"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"handovers": {
+                  Row: {
+                    "completed_at": string,"customer_name": string,"finish_check": boolean,"id": string,"job_unit_id": string,"leak_check": boolean,"notes": string | null,"operation_check": boolean,"signature_path": string | null,"surveyor_id": string | null
+                  }
+                  Insert: {
+                    "completed_at"?: string,"customer_name": string,"finish_check": boolean,"id"?: string,"job_unit_id": string,"leak_check": boolean,"notes"?: string | null,"operation_check": boolean,"signature_path"?: string | null,"surveyor_id"?: string | null
+                  }
+                  Update: {
+                    "completed_at"?: string,"customer_name"?: string,"finish_check"?: boolean,"id"?: string,"job_unit_id"?: string,"leak_check"?: boolean,"notes"?: string | null,"operation_check"?: boolean,"signature_path"?: string | null,"surveyor_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "handovers_job_unit_id_fkey"
+      columns: ["job_unit_id"]
+isOneToOne: true
+      referencedRelation: "job_units"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "handovers_job_unit_id_fkey"
+      columns: ["job_unit_id"]
+isOneToOne: true
+      referencedRelation: "v_delayed_units"
+      referencedColumns: ["job_unit_id"]
+    },{
+      foreignKeyName: "handovers_surveyor_id_fkey"
+      columns: ["surveyor_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"job_batches": {
+                  Row: {
+                    "id": string,"job_id": string,"name": string,"planned_from": string | null,"planned_to": string | null,"sort_order": number
+                  }
+                  Insert: {
+                    "id"?: string,"job_id": string,"name": string,"planned_from"?: string | null,"planned_to"?: string | null,"sort_order"?: number
+                  }
+                  Update: {
+                    "id"?: string,"job_id"?: string,"name"?: string,"planned_from"?: string | null,"planned_to"?: string | null,"sort_order"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "job_batches_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "jobs"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"job_stage_events": {
+                  Row: {
+                    "actor_id": string | null,"backward_reason": string | null,"from_stage": Database["public"]['Enums']["job_stage"] | null,"id": string,"is_backward": boolean,"job_id": string,"job_unit_id": string | null,"note": string | null,"occurred_at": string,"to_stage": Database["public"]['Enums']["job_stage"]
+                  }
+                  Insert: {
+                    "actor_id"?: string | null,"backward_reason"?: string | null,"from_stage"?: Database["public"]['Enums']["job_stage"] | null,"id"?: string,"is_backward"?: boolean,"job_id": string,"job_unit_id"?: string | null,"note"?: string | null,"occurred_at"?: string,"to_stage": Database["public"]['Enums']["job_stage"]
+                  }
+                  Update: {
+                    "actor_id"?: string | null,"backward_reason"?: string | null,"from_stage"?: Database["public"]['Enums']["job_stage"] | null,"id"?: string,"is_backward"?: boolean,"job_id"?: string,"job_unit_id"?: string | null,"note"?: string | null,"occurred_at"?: string,"to_stage"?: Database["public"]['Enums']["job_stage"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "job_stage_events_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "jobs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "job_stage_events_job_unit_id_fkey"
+      columns: ["job_unit_id"]
+isOneToOne: false
+      referencedRelation: "job_units"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "job_stage_events_job_unit_id_fkey"
+      columns: ["job_unit_id"]
+isOneToOne: false
+      referencedRelation: "v_delayed_units"
+      referencedColumns: ["job_unit_id"]
+    }
+                  ]
+                },"job_units": {
+                  Row: {
+                    "back_in_service_at": string | null,"batch_id": string | null,"current_stage": Database["public"]['Enums']["job_stage"],"downtime_from": string | null,"downtime_to": string | null,"id": string,"job_id": string,"planned_downtime_hours": number | null,"property_unit_id": string,"status": Database["public"]['Enums']["unit_status"]
+                  }
+                  Insert: {
+                    "back_in_service_at"?: string | null,"batch_id"?: string | null,"current_stage"?: Database["public"]['Enums']["job_stage"],"downtime_from"?: string | null,"downtime_to"?: string | null,"id"?: string,"job_id": string,"planned_downtime_hours"?: number | null,"property_unit_id": string,"status"?: Database["public"]['Enums']["unit_status"]
+                  }
+                  Update: {
+                    "back_in_service_at"?: string | null,"batch_id"?: string | null,"current_stage"?: Database["public"]['Enums']["job_stage"],"downtime_from"?: string | null,"downtime_to"?: string | null,"id"?: string,"job_id"?: string,"planned_downtime_hours"?: number | null,"property_unit_id"?: string,"status"?: Database["public"]['Enums']["unit_status"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "job_units_batch_id_fkey"
+      columns: ["batch_id"]
+isOneToOne: false
+      referencedRelation: "job_batches"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "job_units_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "jobs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "job_units_property_unit_id_fkey"
+      columns: ["property_unit_id"]
+isOneToOne: false
+      referencedRelation: "property_units"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"jobs": {
+                  Row: {
+                    "actual_end": string | null,"actual_start": string | null,"created_at": string,"current_stage": Database["public"]['Enums']["job_stage"],"customer_id": string,"id": string,"is_pilot": boolean,"job_no": string,"parent_job_id": string | null,"planned_end": string | null,"planned_start": string | null,"property_id": string,"quotation_id": string,"status": Database["public"]['Enums']["job_status"],"updated_at": string
+                  }
+                  Insert: {
+                    "actual_end"?: string | null,"actual_start"?: string | null,"created_at"?: string,"current_stage"?: Database["public"]['Enums']["job_stage"],"customer_id": string,"id"?: string,"is_pilot"?: boolean,"job_no": string,"parent_job_id"?: string | null,"planned_end"?: string | null,"planned_start"?: string | null,"property_id": string,"quotation_id": string,"status"?: Database["public"]['Enums']["job_status"],"updated_at"?: string
+                  }
+                  Update: {
+                    "actual_end"?: string | null,"actual_start"?: string | null,"created_at"?: string,"current_stage"?: Database["public"]['Enums']["job_stage"],"customer_id"?: string,"id"?: string,"is_pilot"?: boolean,"job_no"?: string,"parent_job_id"?: string | null,"planned_end"?: string | null,"planned_start"?: string | null,"property_id"?: string,"quotation_id"?: string,"status"?: Database["public"]['Enums']["job_status"],"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "jobs_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "jobs_parent_job_id_fkey"
+      columns: ["parent_job_id"]
+isOneToOne: false
+      referencedRelation: "jobs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "jobs_property_id_fkey"
+      columns: ["property_id"]
+isOneToOne: false
+      referencedRelation: "properties"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "jobs_quotation_id_fkey"
+      columns: ["quotation_id"]
+isOneToOne: true
+      referencedRelation: "quotations"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"lead_notes": {
                   Row: {
                     "author_id": string | null,"body": string,"created_at": string,"id": string,"lead_id": string
@@ -955,6 +1135,31 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"unit_blocks": {
+                  Row: {
+                    "blocked_from": string,"blocked_to": string | null,"created_by": string | null,"id": string,"job_unit_id": string,"note": string | null,"reason": string
+                  }
+                  Insert: {
+                    "blocked_from"?: string,"blocked_to"?: string | null,"created_by"?: string | null,"id"?: string,"job_unit_id": string,"note"?: string | null,"reason": string
+                  }
+                  Update: {
+                    "blocked_from"?: string,"blocked_to"?: string | null,"created_by"?: string | null,"id"?: string,"job_unit_id"?: string,"note"?: string | null,"reason"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "unit_blocks_job_unit_id_fkey"
+      columns: ["job_unit_id"]
+isOneToOne: false
+      referencedRelation: "job_units"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "unit_blocks_job_unit_id_fkey"
+      columns: ["job_unit_id"]
+isOneToOne: false
+      referencedRelation: "v_delayed_units"
+      referencedColumns: ["job_unit_id"]
+    }
+                  ]
                 },"user_roles": {
                   Row: {
                     "id": string,"role": Database["public"]['Enums']["app_role"],"user_id": string
@@ -967,6 +1172,49 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"warranties": {
+                  Row: {
+                    "card_no": string,"created_at": string,"fitting_id": string,"id": string,"job_id": string,"job_unit_id": string,"kind": string,"terms_text": string,"valid_from": string,"valid_until": string
+                  }
+                  Insert: {
+                    "card_no": string,"created_at"?: string,"fitting_id": string,"id"?: string,"job_id": string,"job_unit_id": string,"kind": string,"terms_text": string,"valid_from": string,"valid_until": string
+                  }
+                  Update: {
+                    "card_no"?: string,"created_at"?: string,"fitting_id"?: string,"id"?: string,"job_id"?: string,"job_unit_id"?: string,"kind"?: string,"terms_text"?: string,"valid_from"?: string,"valid_until"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "warranties_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "fittings"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "warranties_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "v_incomplete_fittings"
+      referencedColumns: ["fitting_id"]
+    },{
+      foreignKeyName: "warranties_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "jobs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "warranties_job_unit_id_fkey"
+      columns: ["job_unit_id"]
+isOneToOne: false
+      referencedRelation: "job_units"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "warranties_job_unit_id_fkey"
+      columns: ["job_unit_id"]
+isOneToOne: false
+      referencedRelation: "v_delayed_units"
+      referencedColumns: ["job_unit_id"]
+    }
                   ]
                 },"work_types": {
                   Row: {
@@ -984,7 +1232,26 @@ isOneToOne: false
                 }
           }
           Views: {
-            "v_incomplete_fittings": {
+            "v_delayed_units": {
+                  Row: {
+                    "effective_downtime_hours": number | null,"job_id": string | null,"job_unit_id": string | null,"planned_downtime_hours": number | null
+                  }
+                  Insert: {
+                           "effective_downtime_hours"?: never,"job_id"?: string | null,"job_unit_id"?: string | null,"planned_downtime_hours"?: number | null
+                         }
+                        Update: {
+                           "effective_downtime_hours"?: never,"job_id"?: string | null,"job_unit_id"?: string | null,"planned_downtime_hours"?: number | null
+                         }
+                        Relationships: [
+                    {
+      foreignKeyName: "job_units_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: false
+      referencedRelation: "jobs"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"v_incomplete_fittings": {
                   Row: {
                     "fitting_id": string | null,"slots_filled": number | null,"survey_id": string | null
                   }
@@ -1014,11 +1281,17 @@ isOneToOne: false
               "full_name": string,"same_city": boolean,"surveyor_id": string,"surveys_that_day": number
             }[]
                            },
+"block_unit":
+{ Args: { "p_note"?: string,"p_reason": string,"p_unit": string }; Returns: undefined
+                           },
 "book_survey":
 { Args: { "p": Json }; Returns: Json
                            },
 "can_edit_quote":
 { Args: { "p_quote": string }; Returns: boolean
+                           },
+"can_run_job":
+{ Args: { "p_job": string }; Returns: boolean
                            },
 "create_quote_from_survey":
 { Args: { "p_survey": string }; Returns: string
@@ -1056,6 +1329,9 @@ isOneToOne: false
 "is_staff":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
+"link_to_pilot":
+{ Args: { "p_job": string,"p_pilot": string }; Returns: undefined
+                           },
 "log_call":
 { Args: { "p_call": Json }; Returns: string
                            },
@@ -1064,6 +1340,9 @@ isOneToOne: false
                            },
 "market_price":
 { Args: { "p_finish": string,"p_fitting_type": string,"p_rate_card": string }; Returns: number
+                           },
+"move_unit_stage":
+{ Args: { "p_note"?: string,"p_reason"?: string,"p_to": Database["public"]['Enums']["job_stage"],"p_unit": string }; Returns: undefined
                            },
 "my_customer_ids":
 { Args: Record<PropertyKey, never>; Returns: (string)[]
@@ -1077,11 +1356,17 @@ isOneToOne: false
 "recompute_quote":
 { Args: { "p_quote": string }; Returns: undefined
                            },
+"record_handover":
+{ Args: { "p": Json }; Returns: string
+                           },
 "record_otp_delivery":
 { Args: { "p_dlt_template_id"?: string,"p_gateway_message_id": string,"p_otp": string }; Returns: undefined
                            },
 "request_quote_otp":
 { Args: { "p_channel": Database["public"]['Enums']["msg_channel"],"p_phone": string,"p_quote": string }; Returns: Json
+                           },
+"rollup_job":
+{ Args: { "p_job": string }; Returns: undefined
                            },
 "set_quote_discount":
 { Args: { "p_pct": number,"p_quote": string,"p_reason"?: string }; Returns: Database["public"]['Enums']["quote_status"]
@@ -1092,8 +1377,17 @@ isOneToOne: false
 "submit_survey":
 { Args: { "p_survey_id": string }; Returns: undefined
                            },
+"unblock_unit":
+{ Args: { "p_unit": string }; Returns: undefined
+                           },
+"unit_effective_downtime_hours":
+{ Args: { "p_unit": string }; Returns: number
+                           },
 "upsert_assessment":
 { Args: { "p": Json }; Returns: string
+                           },
+"verify_quote_otp":
+{ Args: { "p"?: Json,"p_code": string,"p_otp": string }; Returns: Json
                            }
           }
           Enums: {
