@@ -95,7 +95,7 @@ export default async function DemoOutboxPage() {
                     {/* the button a real WhatsApp template carries — here it opens the same portal page */}
                     {m.entity_id && PORTAL_LINK[m.entity_type ?? ''] && m.category !== 'authentication' && (
                       <Link href={PORTAL_LINK[m.entity_type!]!(m.entity_id)} prefetch={false} className="mt-1.5 block max-w-[92%] rounded-lg bg-white py-2 text-center text-[13px] font-semibold text-[#128C7E] shadow-sm hover:bg-[#f7f7f7]">
-                        {m.entity_type === 'quotations' ? 'View & approve quotation' : m.entity_type === 'invoices' ? 'View & pay invoice' : 'Open my REDUX portal'}
+                        {m.entity_type === 'quotations' ? 'View & approve quotation' : m.entity_type === 'invoices' ? (m.rule_code === 'CN13' ? 'View receipt' : 'View & pay invoice') : 'Open my REDUX portal'}
                       </Link>
                     )}
                   </div>

@@ -1,7 +1,7 @@
 -- Customer WhatsApp for the job and money events · CN9–CN13, CN16 · migration 001700.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(10);
+select plan(11);
 
 insert into public.customers (id, name, type, is_prospect, converted_at) values ('30000000-0000-0000-0000-0000000000e1', 'Notify Hotel', 'hotel', false, now());
 insert into public.customer_contacts (customer_id, name, phone, is_primary) values ('30000000-0000-0000-0000-0000000000e1', 'Meena Kohli', '+919800000171', true);
@@ -19,12 +19,17 @@ insert into public.quotations (id, quote_no, survey_id, customer_id, property_id
                                warranty_mechanical_days, warranty_finish_days)
 values ('60000000-0000-0000-0000-0000000000e1', 'Q-NOTIFY', '32000000-0000-0000-0000-0000000000e1', '30000000-0000-0000-0000-0000000000e1',
         '31000000-0000-0000-0000-0000000000e1', '42000000-0000-0000-0000-0000000000e1', 'approved', now(), current_date, 'T', repeat('a', 64), 365, 730);
+insert into public.messages (rule_code, template_code, channel, category, to_address, customer_id, entity_type, entity_id, variables, dedup_key)
+values ('CN7', 'quote_approved', 'whatsapp', 'utility', '+919800000171', '30000000-0000-0000-0000-0000000000e1', 'quotations',
+        '60000000-0000-0000-0000-0000000000e1', '{"quote_no":"Q-NOTIFY"}', 'CN7:60000000-0000-0000-0000-0000000000e1');
 insert into public.jobs (id, job_no, quotation_id, customer_id, property_id) values
   ('70000000-0000-0000-0000-0000000000e1', 'J-NOTIFY', '60000000-0000-0000-0000-0000000000e1', '30000000-0000-0000-0000-0000000000e1', '31000000-0000-0000-0000-0000000000e1');
 insert into public.job_units (id, job_id, property_unit_id) values
   ('71000000-0000-0000-0000-0000000000e1', '70000000-0000-0000-0000-0000000000e1', '35000000-0000-0000-0000-0000000000e1'),
   ('71000000-0000-0000-0000-0000000000e2', '70000000-0000-0000-0000-0000000000e1', '35000000-0000-0000-0000-0000000000e2');
 
+select is((select variables ->> 'job_no' from public.messages where dedup_key = 'CN7:60000000-0000-0000-0000-0000000000e1'), 'J-NOTIFY',
+  'CN7: the approval message gets the job number when the job opens');
 create or replace function pg_temp.sent(p_rule text) returns int language sql as
   $$ select count(*)::int from public.messages where to_address = '+919800000171' and rule_code = p_rule $$;
 
