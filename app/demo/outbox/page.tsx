@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { connection } from 'next/server'
 import { ArrowLeft, CheckCheck, Clock, Inbox, MessageCircle } from 'lucide-react'
 import { Logo } from '@/components/brand/logo'
 import { EmptyState, formatWhen, StatusPill } from '@/components/patterns'
@@ -29,6 +30,7 @@ type Msg = {
 // is listed here, rendered from the approved template copy, exactly as the customer would see it.
 export default async function DemoOutboxPage() {
   if (process.env.NEXT_PUBLIC_DEMO_MODE !== 'true') notFound()
+  await connection() // the outbox is live data: render per request, never at build
   const admin = createAdminClient()
   const [{ data: msgs }, { data: templates }] = await Promise.all([
     admin.from('messages')
@@ -65,7 +67,7 @@ export default async function DemoOutboxPage() {
             {list.map((m) => {
               const t = m.template_code ? tpl.get(m.template_code) : undefined
               const name = m.lead?.name ?? m.customer?.name ?? 'there'
-              const values = { name: name.split(' ')[0], reference: m.entity_id?.slice(0, 8).toUpperCase(), ...m.variables }
+              const values = { name, reference: m.entity_id?.slice(0, 8).toUpperCase(), ...m.variables }
               const text = t ? renderTemplate(t.body, (t.variables as string[]) ?? [], values) : '(template not loaded)'
               const held = new Date(m.send_after).getTime() > now
               return (
@@ -92,7 +94,7 @@ export default async function DemoOutboxPage() {
                     </div>
                     {/* the button a real WhatsApp template carries — here it opens the same portal page */}
                     {m.entity_id && PORTAL_LINK[m.entity_type ?? ''] && m.category !== 'authentication' && (
-                      <Link href={PORTAL_LINK[m.entity_type!]!(m.entity_id)} className="mt-1.5 block max-w-[92%] rounded-lg bg-white py-2 text-center text-[13px] font-semibold text-[#128C7E] shadow-sm hover:bg-[#f7f7f7]">
+                      <Link href={PORTAL_LINK[m.entity_type!]!(m.entity_id)} prefetch={false} className="mt-1.5 block max-w-[92%] rounded-lg bg-white py-2 text-center text-[13px] font-semibold text-[#128C7E] shadow-sm hover:bg-[#f7f7f7]">
                         {m.entity_type === 'quotations' ? 'View & approve quotation' : m.entity_type === 'invoices' ? 'View & pay invoice' : 'Open my REDUX portal'}
                       </Link>
                     )}
