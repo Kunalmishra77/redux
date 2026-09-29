@@ -15,7 +15,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | **Phase** | Phase 0 — Mobilisation |
 | **Week** | W0 (5–9 Oct 2026) |
 | **Sprint goal** | Accounts, approvals and infrastructure. Meta App Review submitted |
-| **Last updated** | 2026-09-28 — webhook routes + queue worker (E4) on top of the completed Step 1 |
+| **Last updated** | 2026-09-29 — full client demo on demo data: staff CRM, admin, customer portal, surveyor app (website finishing) |
 
 ---
 
@@ -23,8 +23,8 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 
 | ID | What | Blocked on | Since | Impact |
 |---|---|---|---|---|
-| E1-S03 | Custom Access Token Hook must be switched on in the hosted dashboard (Authentication → Hooks → Custom Access Token → `public.custom_access_token_hook`) | Project owner | 2026-09-27 | Until then no JWT carries `user_role` and every staff policy denies |
-| E0-S08 | CI has never run — needs the first push to GitHub, then branch protection on `main` | Project owner | 2026-09-27 | Gates exist but are not yet enforced |
+| E0-S08 | Branch protection on `main` (CI itself runs green on every push) | Project owner | 2026-09-27 | Gates run but are not yet enforced on merge |
+| — | Migration `20260929001600_storage.sql` (six buckets + object policies) is CI-green but not yet pushed to staging — the push needs the owner's go-ahead | Project owner | 2026-09-29 | Surveyor app photo upload and survey submit are blocked until it is on staging |
 
 > A blocker sits here until it is resolved. If something is blocked on REDUX, it also goes to
 > `../00-brief/04-assumptions-open-questions.md` §A and gets raised at the weekly call — not
@@ -275,6 +275,11 @@ Anything decided that is not already in an ADR. If it contradicts an ADR, **writ
 | 2026-09-28 | cc_exec reads every **converted** customer (roles matrix: track job status) but a prospect only via their own lead | Keeps P3 intact for pre-sale data | E6-S03 |
 | 2026-09-28 | `pnpm db:dry-run … --tests`: unpushed migrations + all pgTAP in one rolled-back transaction on staging | No Docker locally; CI logs are not readable without GitHub auth | ADR-013 |
 | 2026-09-28 | CI runs on every branch push (was: PRs + main) | PRs cannot be opened from this machine; CI must be green before staging | E0-S08 |
+| 2026-09-29 | Demo mode (`NEXT_PUBLIC_DEMO_MODE=true`): WhatsApp/OTP/payments simulated into `messages` and shown at `/demo/outbox`; one-click staff logins; demo data seeded through the real DB functions on staging | Client demo before integrations are approved; removal = reset staging | demo |
+| 2026-09-29 | Demo hosting on Vercel (owner's request) | A shareable link now; production stays on the Mumbai VPS (ADR-003) | demo |
+| 2026-09-29 | Portal login in demo: 6-digit code (HMAC-sealed cookie, 10 min, 5 tries) → session minted server-side from a one-time magic-link token; production path is Supabase phone OTP | No SMS provider in the demo; no customer passwords ever | E13 |
+| 2026-09-29 | Demo "Pay now" records a captured payment through `record_payment()` with the service role (demo-only guard) | Stands in for the Razorpay webhook; same function, same reconciliation | E14 |
+| 2026-09-29 | Stage events, blocks and downtime of the seeded jobs are re-spread in stage order on every `pnpm demo:seed` | Seeded events shared one timestamp, so timelines read out of order | demo |
 | 2026-09-27 | survey_booked / surveyed / quoted / won are set only by system functions | BR-L6 and the Phase-2 flow own those transitions; a user UPDATE is rejected | E3-S01 |
 
 ---
@@ -322,6 +327,11 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | `dsr_requests` + requested_by, retained_explanation; `incidents.created_by` → auth.users | BR-P5 "what is retained and why" | migration 001500 |
 | 2026-09-28 | `lead_status_history.actor_id` → auth.users | Same reason as audit_log | migration 001500 |
 | 2026-09-28 | New `whatsapp_messages` (inbox, both directions) and `team_notifications` (TN* in-app) | schema.sql had nowhere for D4-08 or in-app alerts | migration 001400 |
+| 2026-09-29 | **A prospect approves the quote in the portal**: `/portal/quotes/[id]` is released to a signed-in user whose verified phone is an active contact of the quote's customer, read server-side with the service role for that one quote | The spec sends the quote to a prospect, but `my_customer_ids()` excludes prospects (no portal access before approval) — the approval screen was unreachable | `lib/data/portal.ts` |
+| 2026-09-29 | Storage: six buckets per 05-storage-media §1 with object policies keyed to the record the path names; no update/delete policy | The schema had no storage section; the surveyor app could not upload | migration 001600 |
+| 2026-09-29 | Surveyor app writes straight to Supabase (PostgREST/RPC/Storage) under RLS instead of `/api/mobile/*` | Same rules enforced by RLS + idempotent functions; the route layer adds nothing for the demo | mobile/ |
+| 2026-09-29 | Surveyor app: image-picker camera (+ gallery for the demo); no burned-in corner stamp, onboarding screen or foreground upload service | Not possible in Expo Go; GPS/time are stored in columns. Needed for the production build | mobile/ |
+| 2026-09-29 | pgTAP 07/10/14 no longer assume an empty database | Demo data on staging broke global-state assertions | tests |
 | 2026-09-28 | `notification_rules`: + channel, category, template_code; seeded from the matrix. `messages`: + send_after, attempts, variables | Quiet hours, retries, toggles | migration 001400 |
 | 2026-09-28 | `capi_events` unique (event_name, lead_id) | Each conversion once per lead | migration 001400 |
 | 2026-09-28 | `service_requests.ticket_no` → `request_no`; `resolution_note`; forward-only status; no user write policy | Glossary bans "ticket"; accountability | migration 001300 |
@@ -446,4 +456,14 @@ Append one line per working session. This is how the next session (or the next p
             Open items 26, 27. Next: go-live plumbing (Dockerfile.worker, Coolify, install_schedules)
             with the VPS, or E5-S05 template bodies — or Step 2/3 once DS1 designs land.
 
+2026-09-29  DEMO BUILD. Staff: leads (list, board, detail, new, my leads), follow-ups, inbox, stats,
+            surveys, quotes (builder with discount gate, A4 preview, approval queue), jobs (detail,
+            per-room stages/blocks, room board, handover). Admin: hub, invoices + credit notes,
+            payments, stock + ledger, rate-card versions, masters, users, assignment, notification
+            rules/templates, integrations, settings, audit, privacy, reports; service requests.
+            Customer portal D1s–D10s incl. quote approval by OTP and pay now. Expo SDK 57 surveyor
+            app in mobile/ (outbox, photo pipeline, offline pricing). Storage migration 001600:
+            CI green, 381/381 pgTAP in dry-run; staging push pending owner go-ahead.
+            Next: website (finishing), production-build QA, Vercel deploy, then the real
+            integrations.
 ```
