@@ -14,7 +14,8 @@
     "db:dry-run": "node --env-file=.env.local scripts/migration-dry-run.mjs",
     "worker": "tsx worker/index.ts",
     "worker:smoke": "node scripts/dev/with-dns.mjs tsx --env-file=.env.local scripts/worker-smoke.ts",
-    "demo:seed": "node scripts/dev/with-dns.mjs tsx --env-file=.env.local scripts/demo/seed.ts"
+    "demo:seed": "node scripts/dev/with-dns.mjs tsx --env-file=.env.local scripts/demo/seed.ts",
+    "demo:refresh": "node scripts/dev/with-dns.mjs tsx --env-file=.env.local scripts/demo/refresh.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

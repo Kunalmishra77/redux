@@ -10,9 +10,18 @@ import { nowMs } from '@/lib/services/clock'
 
 export const metadata: Metadata = { title: 'Demo outbox' }
 
+const PORTAL_LINK: Record<string, (id: string) => string> = {
+  quotations: (id) => `/portal/quotes/${id}`,
+  invoices: (id) => `/portal/invoices/${id}`,
+  jobs: (id) => `/portal/jobs/${id}`,
+  job_units: () => '/portal',
+  warranties: () => '/portal/warranty',
+  service_requests: () => '/portal/service-requests',
+}
+
 type Msg = {
   id: string; rule_code: string | null; template_code: string | null; channel: string; category: string | null; to_address: string
-  variables: Record<string, unknown>; status: string; send_after: string; queued_at: string; entity_id: string | null
+  variables: Record<string, unknown>; status: string; send_after: string; queued_at: string; entity_type: string | null; entity_id: string | null
   lead: { name: string | null } | null; customer: { name: string } | null
 }
 
@@ -23,7 +32,7 @@ export default async function DemoOutboxPage() {
   const admin = createAdminClient()
   const [{ data: msgs }, { data: templates }] = await Promise.all([
     admin.from('messages')
-      .select('id, rule_code, template_code, channel, category, to_address, variables, status, send_after, queued_at, entity_id, lead:leads(name), customer:customers(name)')
+      .select('id, rule_code, template_code, channel, category, to_address, variables, status, send_after, queued_at, entity_type, entity_id, lead:leads(name), customer:customers(name)')
       .order('queued_at', { ascending: false }).limit(120),
     admin.from('message_templates').select('code, body, variables'),
   ])
@@ -81,6 +90,12 @@ export default async function DemoOutboxPage() {
                         {formatWhen(m.queued_at)} <CheckCheck className="size-3.5 text-[#53BDEB]" aria-hidden />
                       </span>
                     </div>
+                    {/* the button a real WhatsApp template carries — here it opens the same portal page */}
+                    {m.entity_id && PORTAL_LINK[m.entity_type ?? ''] && m.category !== 'authentication' && (
+                      <Link href={PORTAL_LINK[m.entity_type!]!(m.entity_id)} className="mt-1.5 block max-w-[92%] rounded-lg bg-white py-2 text-center text-[13px] font-semibold text-[#128C7E] shadow-sm hover:bg-[#f7f7f7]">
+                        {m.entity_type === 'quotations' ? 'View & approve quotation' : m.entity_type === 'invoices' ? 'View & pay invoice' : 'Open my REDUX portal'}
+                      </Link>
+                    )}
                   </div>
                   <p className="flex items-center gap-1.5 px-4 py-2 text-xs text-muted-ink">
                     {held ? <><Clock className="size-3.5 text-warning" aria-hidden /> Held for quiet hours — goes at {formatWhen(m.send_after)}</>

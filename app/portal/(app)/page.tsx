@@ -4,7 +4,7 @@ import { ArrowRight, FileSignature, LifeBuoy, Receipt, ShieldCheck, Sparkles } f
 import { Button } from '@/components/ui/button'
 import { BeforeAfter, formatWhen, JOB_STAGES, Money, StageTracker } from '@/components/patterns'
 import { createClient } from '@/lib/supabase/server'
-import { requirePortalUser } from '@/lib/data/portal'
+import { quotesAwaitingPhone, requirePortalUser } from '@/lib/data/portal'
 import { loadRestoredFittings } from '@/lib/data/portal-fittings'
 import { unitNoun } from '@/lib/data/jobs'
 import { nowMs } from '@/lib/services/clock'
@@ -18,7 +18,7 @@ export default async function PortalHome() {
   const supabase = await createClient()
   const [{ data: jobs }, { data: quotes }, { data: invoices }, { data: warranties }, fittings] = await Promise.all([
     supabase.from('jobs').select('id, job_no, status, current_stage, is_pilot, customer:customers(type), property:properties(name), units:job_units(status)').order('created_at', { ascending: false }),
-    supabase.from('quotations').select('id, quote_no, version, total, you_save, valid_until').eq('status', 'sent').order('created_at', { ascending: false }),
+    quotesAwaitingPhone(user.phone).then((data) => ({ data })),
     supabase.from('invoices').select('id, invoice_no, total, amount_paid, status, payment_route').in('status', ['issued', 'part_paid']),
     supabase.from('warranties').select('id, valid_until'),
     loadRestoredFittings(4),

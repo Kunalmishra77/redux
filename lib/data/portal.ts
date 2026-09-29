@@ -15,7 +15,12 @@ export async function requirePortalUser(next?: string): Promise<PortalUser> {
   if (!c?.sub) redirect(`/portal/login${next ? `?next=${encodeURIComponent(next)}` : ''}`)
   if (c.user_role && c.user_role !== 'customer') redirect('/staff')
   const phone = c.phone ? `+${String(c.phone).replace(/^\+/, '')}` : null
-  const { data: customers } = await supabase.from('customers').select('id, name, type').order('name')
+  let { data: customers } = await supabase.from('customers').select('id, name, type').order('name')
+  // A login made while the customer was still a prospect is linked once they convert — the same
+  // rule trg_link_portal_user applies to logins created after conversion (phone match, active contact).
+  if (phone && !customers?.length && (await linkPortalContact(c.sub, phone))) {
+    ;({ data: customers } = await supabase.from('customers').select('id, name, type').order('name'))
+  }
   const meta = (c.user_metadata ?? {}) as { full_name?: string }
   let name = meta.full_name ?? 'there'
   if (phone) {
@@ -43,6 +48,28 @@ export async function quoteForPortal(quoteId: string, user: PortalUser) {
     if (!contact) return null
   }
   return admin
+}
+
+async function linkPortalContact(userId: string, phone: string): Promise<boolean> {
+  const admin = createAdminClient()
+  const { data: contacts } = await admin.from('customer_contacts').select('id, customer:customers!inner(is_prospect)')
+    .eq('phone', phone).eq('is_active', true).is('user_id', null).eq('customers.is_prospect', false)
+  const ids = (contacts ?? []).map((x) => x.id)
+  if (!ids.length) return false
+  const { error } = await admin.from('customer_contacts').update({ user_id: userId }).in('id', ids)
+  return !error
+}
+
+/** Quotations sent to this phone that are waiting for approval — prospects can't list them via RLS. */
+export async function quotesAwaitingPhone(phone: string | null) {
+  if (!phone) return []
+  const admin = createAdminClient()
+  const { data: contacts } = await admin.from('customer_contacts').select('customer_id').eq('phone', phone).eq('is_active', true)
+  const ids = (contacts ?? []).map((x) => x.customer_id)
+  if (!ids.length) return []
+  const { data } = await admin.from('quotations').select('id, quote_no, version, total, you_save, valid_until')
+    .in('customer_id', ids).eq('status', 'sent').order('created_at', { ascending: false })
+  return data ?? []
 }
 
 export async function requestContext() {

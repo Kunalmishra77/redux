@@ -40,14 +40,14 @@ export function PipelineBoard({ cards, lostCount, reasons }: { cards: BoardCard[
 
   return (
     <>
-      <div className="grid gap-3 overflow-x-auto pb-2 lg:grid-cols-6">
+      <div className="grid grid-cols-[repeat(6,minmax(13.5rem,1fr))] gap-3 overflow-x-auto pb-2">
         {COLUMNS.map((col) => {
           const list = cards.filter((c) => c.status === col.key)
           return (
             <section key={col.key} aria-label={`${col.label} — ${list.length}`}
               onDragOver={(e) => { e.preventDefault(); setOver(col.key) }} onDragLeave={() => setOver(null)}
               onDrop={(e) => { e.preventDefault(); setOver(null); if (dragging) move(dragging, col.key) }}
-              className={cn('flex min-h-[28rem] min-w-56 flex-col rounded-lg border p-2.5 transition-colors',
+              className={cn('flex min-h-[28rem] min-w-0 flex-col rounded-lg border p-2.5 transition-colors',
                 col.key === 'won' ? 'border-redux-lime/60 bg-[#f1fee5]' : 'border-line bg-white/60',
                 over === col.key && 'ring-2 ring-redux-blue')}>
               <header className="mb-2 flex items-center justify-between px-1">

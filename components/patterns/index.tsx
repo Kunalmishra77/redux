@@ -166,7 +166,7 @@ export function StageTracker({ current, compact = false }: { current: string; co
               {i < JOB_STAGES.length - 1 && <span className={cn('h-0.5 flex-1', i < at ? 'bg-redux-blue' : 'bg-line')} />}
             </div>
             {!compact && (
-              <span className={cn('pr-2 text-[11px] leading-tight', here ? 'font-semibold text-ink' : 'text-muted-ink')}>
+              <span className={cn('pr-2 text-[11px] leading-tight', here ? 'font-semibold text-ink' : 'hidden text-muted-ink sm:inline')}>
                 {s.label}
               </span>
             )}

@@ -3,12 +3,14 @@ import { Sparkles } from 'lucide-react'
 import { BeforeAfter } from '@/components/patterns'
 import { requirePortalUser } from '@/lib/data/portal'
 import { loadRestoredFittings } from '@/lib/data/portal-fittings'
+import { unitNoun } from '@/lib/data/jobs'
 
 export const metadata: Metadata = { title: 'My fittings' }
 
 // D4s — every fitting, before and after, room by room.
 export default async function FittingsPage() {
-  await requirePortalUser()
+  const user = await requirePortalUser()
+  const noun = unitNoun(user.customers[0]?.type)
   const all = await loadRestoredFittings()
   const units = [...new Set(all.map((f) => f.unit ?? 'Other'))]
   return (
@@ -21,7 +23,7 @@ export default async function FittingsPage() {
         <div className="rounded-xl border border-dashed border-line bg-white p-8 text-center text-sm text-muted-ink"><Sparkles className="mx-auto mb-2 size-6 text-redux-blue" aria-hidden />Your fittings appear here once a job starts.</div>
       ) : units.map((u) => (
         <section key={u}>
-          <h2 className="mb-3 font-semibold text-ink">{u}</h2>
+          <h2 className="mb-3 font-semibold text-ink">{/^[0-9A-Z-]+$/.test(u) ? `${noun} ${u}` : u}</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {all.filter((f) => (f.unit ?? 'Other') === u).map((f) => (
               <div key={f.id} className="rounded-xl border border-line bg-white p-3 shadow-card">
