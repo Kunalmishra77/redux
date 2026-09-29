@@ -44,7 +44,8 @@ insert into public.quotation_lines (quotation_id, unit_label, description, unit_
 update public.quotations q set status = 'approved', issued_at = now() - interval '35 days', valid_until = current_date,
   terms_text = 'T', pdf_sha256 = repeat('a', 64), place_of_supply_state_code = '07', supplier_state_code = '07',
   subtotal = s.t, taxable_value = s.t, cgst = s.c, sgst = s.c, total = s.t + 2 * s.c
-from (select quotation_id, sum(taxable_value) t, sum(cgst) c from public.quotation_lines group by quotation_id) s
+from (select quotation_id, sum(taxable_value) t, sum(cgst) c from public.quotation_lines
+      where quotation_id::text like '60000000-0000-0000-0000-00000000000_' group by quotation_id) s
 where s.quotation_id = q.id;
 
 insert into public.jobs (id, job_no, quotation_id, customer_id, property_id, status, actual_end) values

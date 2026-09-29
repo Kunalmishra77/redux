@@ -169,8 +169,8 @@ where rate_card_id = (select v from t where k = 'v2')
   and finish_id = '41000000-0000-0000-0000-000000000001'
   and work_type_id = (select id from public.work_types where code = 'restore_finish');
 select lives_ok($$ select public.activate_rate_card((select v from t where k = 'v2')) $$, 'D9: v2 activated');
-select is((select array_agg(version order by version) from public.rate_cards
-           where is_active and id in (select v from t)), array[2], 'D9-03: only v2 is active now');
+select is((select array_agg(t.k order by t.k) from public.rate_cards r join t on t.v = r.id
+           where r.is_active), array['v2'], 'D9-03: only v2 is active now');
 
 select is((select price_recommended from public.assessments where fitting_id = '50000000-0000-0000-0000-000000000003'),
   0.00::numeric, 'BR-A3: existing assessments keep their prices after a new version goes live');

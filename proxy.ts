@@ -48,12 +48,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(`/staff/login?next=${encodeURIComponent(path)}`, request.url))
   }
   if (isPortalArea && !data?.claims) {
-    return NextResponse.redirect(new URL('/portal/login', request.url))
+    return NextResponse.redirect(new URL(`/portal/login?next=${encodeURIComponent(path)}`, request.url))
   }
   return response
 }
 
 export const config = {
   // Skip static assets, images and webhooks (webhooks must answer in <200 ms, ADR-008).
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|api/webhooks|demo/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'],
+  // robots.txt / sitemap.xml are never rewritten: app. and my. must serve the disallow-all robots
+  // from app/robots.ts, not a 404 under /staff or /portal (SEO plan §3).
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|api/webhooks|demo/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'],
 }

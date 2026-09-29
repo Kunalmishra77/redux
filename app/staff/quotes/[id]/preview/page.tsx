@@ -5,7 +5,7 @@ import { ArrowLeft, Printer } from 'lucide-react'
 import { QuoteDocument } from '@/components/features/quotes/quote-document'
 import { requireRole } from '@/lib/auth/session'
 import { loadQuote, loadSupplier } from '@/lib/data/quotes'
-import { PrintButton } from './print-button'
+import { PrintButton } from '@/components/patterns/print-button'
 
 export const metadata: Metadata = { title: 'Quotation preview' }
 

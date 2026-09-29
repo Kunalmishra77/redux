@@ -43,7 +43,7 @@ select is((select count(*)::int from public.webhook_events where external_id in 
   'item 7: … two rows, keyed on the provider event id');
 select is((select count(*)::int from pgmq.q_q_webhooks where message ->> 'webhook_event_id' = (select v from t where k = 'w1')::text), 1,
   'ADR-009: the event was queued in the same transaction');
-select ok((select last_event_at > now() - interval '1 minute' from public.integration_accounts where provider = 'razorpay'),
+select ok((select last_event_at > now() - interval '1 minute' from public.integration_accounts where provider = 'razorpay' and external_id = 'acc_test'),
   'D3-07: the source''s last-event time moves');
 
 insert into t select 'bad', (r ->> 'id')::uuid from (select public.record_webhook('google_ads', 'lead_BAD', 'lead', '{}', false) r) s;
