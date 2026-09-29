@@ -326,6 +326,8 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | `dsr_requests` + requested_by, retained_explanation; `incidents.created_by` → auth.users | BR-P5 "what is retained and why" | migration 001500 |
 | 2026-09-28 | `lead_status_history.actor_id` → auth.users | Same reason as audit_log | migration 001500 |
 | 2026-09-28 | New `whatsapp_messages` (inbox, both directions) and `team_notifications` (TN* in-app) | schema.sql had nowhere for D4-08 or in-app alerts | migration 001400 |
+| 2026-09-29 | CN9–CN13 and CN16 now have triggers (migration 001700); CN10 is one message per job step naming its rooms, not one per room; CN7 gets its job number when the job opens (001800) | The matrix listed them but nothing sent them — the customer heard nothing between approval and payment | migrations 001700–001800 |
+| 2026-09-29 | A portal login created while the customer was a prospect is linked on the next visit after conversion (app-side, same rule as `trg_link_portal_user`) | The trigger fires only on auth-user insert/phone change, so an approving prospect lost access to their own job | `lib/data/portal.ts` |
 | 2026-09-29 | **A prospect approves the quote in the portal**: `/portal/quotes/[id]` is released to a signed-in user whose verified phone is an active contact of the quote's customer, read server-side with the service role for that one quote | The spec sends the quote to a prospect, but `my_customer_ids()` excludes prospects (no portal access before approval) — the approval screen was unreachable | `lib/data/portal.ts` |
 | 2026-09-29 | Storage: six buckets per 05-storage-media §1 with object policies keyed to the record the path names; no update/delete policy | The schema had no storage section; the surveyor app could not upload | migration 001600 |
 | 2026-09-29 | Surveyor app writes straight to Supabase (PostgREST/RPC/Storage) under RLS instead of `/api/mobile/*` | Same rules enforced by RLS + idempotent functions; the route layer adds nothing for the demo | mobile/ |
@@ -466,4 +468,14 @@ Append one line per working session. This is how the next session (or the next p
             Website (18 pages) done; production build green; demo live on Vercel
             (redux-demo-iota.vercel.app, bom1), 43 pages + staff/portal logins verified end to end.
             Next: the real integrations, Gotenberg PDFs, surveyor app production build.
+
+2026-09-29  DEMO HARDENING. Golden path automated against the live Vercel demo: website enquiry →
+            lead (SLA) → call → survey booked → surveyor check-in, 4 fittings × 4 photos uploaded and
+            confirmed, assessments, submit (the Expo app's exact calls) → quote created and issued →
+            prospect approves by OTP in the portal → job through all stages → handover (warranty
+            cards) → invoice issued → paid in the portal → lead won; 15 WhatsApps in the outbox.
+            Fixed: prospect→customer portal linking, prospect quote on portal home, outbox portal
+            buttons and live rendering, pipeline column overlap, mobile stage labels, missing
+            customer notifications (001700/001800, 392/392 pgTAP). pnpm demo:refresh re-dates the
+            demo to the day. DEMO-GUIDE.md written.
 ```
