@@ -24,7 +24,6 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 | ID | What | Blocked on | Since | Impact |
 |---|---|---|---|---|
 | E0-S08 | Branch protection on `main` (CI itself runs green on every push) | Project owner | 2026-09-27 | Gates run but are not yet enforced on merge |
-| — | Migration `20260929001600_storage.sql` (six buckets + object policies) is CI-green but not yet pushed to staging — the push needs the owner's go-ahead | Project owner | 2026-09-29 | Surveyor app photo upload and survey submit are blocked until it is on staging |
 
 > A blocker sits here until it is resolved. If something is blocked on REDUX, it also goes to
 > `../00-brief/04-assumptions-open-questions.md` §A and gets raised at the weekly call — not
@@ -463,7 +462,8 @@ Append one line per working session. This is how the next session (or the next p
             rules/templates, integrations, settings, audit, privacy, reports; service requests.
             Customer portal D1s–D10s incl. quote approval by OTP and pay now. Expo SDK 57 surveyor
             app in mobile/ (outbox, photo pipeline, offline pricing). Storage migration 001600:
-            CI green, 381/381 pgTAP in dry-run; staging push pending owner go-ahead.
-            Next: website (finishing), production-build QA, Vercel deploy, then the real
-            integrations.
+            CI green; pushed to staging on the owner's go-ahead — 381/381 pgTAP on staging.
+            Website (18 pages) done; production build green; demo live on Vercel
+            (redux-demo-iota.vercel.app, bom1), 43 pages + staff/portal logins verified end to end.
+            Next: the real integrations, Gotenberg PDFs, surveyor app production build.
 ```
