@@ -48,3 +48,6 @@ supabase/.branches/
 
 # local browser QA screenshots
 .playwright-mcp/
+
+.vercel
+.env*

@@ -1,0 +1,5 @@
+mobile/
+.playwright-mcp/
+blueprint/
+.next/
+node_modules/
