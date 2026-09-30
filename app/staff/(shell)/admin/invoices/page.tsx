@@ -59,7 +59,7 @@ export default async function InvoicesPage() {
       {rows.length === 0 ? (
         <EmptyState icon={Receipt} title="No invoices yet" body="Raise the first one from a finished job above." />
       ) : (
-        <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+        <div className="relative overflow-x-auto rounded-lg border border-line bg-white shadow-card">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-line bg-surface text-left">
               {['Invoice', 'Customer', 'Total', 'Paid', 'Collect by', 'Status'].map((h, i) => <th key={h} className={`eyebrow px-4 py-3 text-muted-ink ${i === 2 || i === 3 ? 'text-right' : ''}`}>{h}</th>)}

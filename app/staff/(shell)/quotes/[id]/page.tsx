@@ -67,7 +67,7 @@ export default async function QuotePage({ params }: PageProps<'/staff/quotes/[id
       )}
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+        <div className="relative overflow-x-auto rounded-lg border border-line bg-white shadow-card">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-line bg-surface text-left">
               {['Room', 'Fitting & work', 'REDUX price', 'Eurobrass new', 'Market new'].map((h, i) => <th key={h} className={`eyebrow px-4 py-3 text-muted-ink ${i >= 2 ? 'text-right' : ''}`}>{h}</th>)}

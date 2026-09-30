@@ -35,7 +35,7 @@ export default async function StockPage() {
       {list.length === 0 ? <EmptyState icon={Boxes} title="No stock items yet" body="Add parts and cartridges in Admin → Masters." /> : (
         <div className="space-y-6">
           {groups.map((g) => (
-            <section key={g} className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+            <section key={g} className="relative overflow-x-auto rounded-lg border border-line bg-white shadow-card">
               <h2 className="border-b border-line bg-surface px-4 py-2.5 text-sm font-semibold text-ink">{CATEGORY[g] ?? 'Other'}</h2>
               <table className="w-full text-sm">
                 <tbody>

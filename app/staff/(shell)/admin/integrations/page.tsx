@@ -59,7 +59,7 @@ export default async function IntegrationsPage() {
       {ev.length === 0 ? (
         <div className="flex items-center gap-3 rounded-lg border border-dashed border-line bg-white p-6 text-sm text-muted-ink"><PlugZap className="size-5" aria-hidden /> No webhooks received yet. They appear here the moment a provider calls.</div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+        <div className="relative overflow-x-auto rounded-lg border border-line bg-white shadow-card">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-line bg-surface text-left">
               {['Received', 'Source', 'Event', 'Signature', 'Status', 'Note'].map((h) => <th key={h} className="eyebrow px-4 py-3 text-muted-ink">{h}</th>)}

@@ -127,7 +127,7 @@ export function Panel({ title, action, children, className, bodyClassName }: {
           {action}
         </header>
       )}
-      <div className={cn('p-5', bodyClassName)}>{children}</div>
+      <div className={cn('relative overflow-x-auto p-5', bodyClassName)}>{children}</div>
     </section>
   )
 }

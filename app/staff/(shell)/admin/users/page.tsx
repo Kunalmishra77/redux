@@ -23,7 +23,7 @@ export default async function UsersPage() {
     <>
       <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Users & roles" description="What each person sees is set by their role. RLS enforces it in the database, not just the menu."
         actions={<AddStaffButton cities={cities ?? []} />} />
-      <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+      <div className="relative overflow-x-auto rounded-lg border border-line bg-white shadow-card">
         <table className="w-full text-sm">
           <thead><tr className="border-b border-line bg-surface text-left">
             {['Person', 'Role', 'City', 'Active'].map((h) => <th key={h} className="eyebrow px-4 py-3 text-muted-ink">{h}</th>)}

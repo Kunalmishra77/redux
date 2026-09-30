@@ -34,7 +34,7 @@ export default async function NotificationsPage({ searchParams }: PageProps<'/st
         ))}
       </nav>
       {!showTemplates ? (
-        <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+        <div className="relative overflow-x-auto rounded-lg border border-line bg-white shadow-card">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-line bg-surface text-left">
               {['Rule', 'When', 'Sends', 'To', 'Sent', 'On'].map((h) => <th key={h} className="eyebrow px-4 py-3 text-muted-ink">{h}</th>)}

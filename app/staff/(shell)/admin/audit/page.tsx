@@ -41,7 +41,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/staff/admi
         {ENTITIES.map((e) => <Link key={e} href={href(1, e)} className={`rounded-full px-3 py-1.5 text-sm font-medium ${entity === e ? 'bg-redux-blue text-white' : 'bg-white text-muted-ink ring-1 ring-line hover:text-ink'}`}>{e.replace(/_/g, ' ')}</Link>)}
       </nav>
       {rows.length === 0 ? <EmptyState icon={FileClock} title="Nothing recorded yet" body="Changes to quotes, invoices, jobs, settings and roles appear here." /> : (
-        <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+        <div className="relative overflow-x-auto rounded-lg border border-line bg-white shadow-card">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-line bg-surface text-left">
               {['When', 'Who', 'What', 'Change'].map((h) => <th key={h} className="eyebrow px-4 py-3 text-muted-ink">{h}</th>)}

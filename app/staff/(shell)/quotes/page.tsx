@@ -28,7 +28,7 @@ export default async function QuotesPage() {
       {live.length === 0 ? (
         <EmptyState icon={FileText} title="No quotations yet" body="Open a submitted survey and choose “Create quotation”." action={<Link href="/staff/surveys" className="text-sm font-semibold text-redux-blue hover:underline">Go to surveys →</Link>} />
       ) : (
-        <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+        <div className="relative overflow-x-auto rounded-lg border border-line bg-white shadow-card">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-line bg-surface text-left">
               {['Quotation', 'Customer', 'Total incl. GST', 'You save', 'Valid until', 'Status'].map((h, i) => <th key={h} className={`eyebrow px-4 py-3 text-muted-ink ${i === 2 || i === 3 ? 'text-right' : ''}`}>{h}</th>)}

@@ -31,7 +31,7 @@ export default async function PaymentsPage() {
         <Kpi label="Unmatched" value={<span className="inline-flex items-center gap-1.5 text-success"><CheckCircle2 className="size-5" aria-hidden /> 0</span>} hint="Every payment is tied to an invoice" />
       </div>
       {rows.length === 0 ? <EmptyState icon={Banknote} title="No payments yet" body="When a customer pays from their portal or by bank transfer, it appears here within seconds." /> : (
-        <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+        <div className="relative overflow-x-auto rounded-lg border border-line bg-white shadow-card">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-line bg-surface text-left">
               {['Received', 'Invoice', 'Method', 'Amount', 'Reference', 'Status'].map((h, i) => <th key={h} className={`eyebrow px-4 py-3 text-muted-ink ${i === 3 ? 'text-right' : ''}`}>{h}</th>)}

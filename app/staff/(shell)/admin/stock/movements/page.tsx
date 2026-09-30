@@ -30,7 +30,7 @@ export default async function MovementsPage() {
       <Link href="/staff/admin/stock" className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-redux-blue hover:underline"><ArrowLeft className="size-4" aria-hidden /> Stock</Link>
       <PageHeader eyebrow="Admin" title="Stock movements" description="Append-only. A wrong entry is corrected by an adjustment, never by editing." />
       {rows.length === 0 ? <EmptyState icon={History} title="No movements yet" body="Every receipt, use and count correction appears here." /> : (
-        <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+        <div className="relative overflow-x-auto rounded-lg border border-line bg-white shadow-card">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-line bg-surface text-left">
               {['When', 'Item', 'Movement', 'Qty', 'Job / reason', 'By'].map((h, i) => <th key={h} className={`eyebrow px-4 py-3 text-muted-ink ${i === 3 ? 'text-right' : ''}`}>{h}</th>)}

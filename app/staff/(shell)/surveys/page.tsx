@@ -32,7 +32,7 @@ export default async function SurveysPage() {
   const past = rows.filter((r) => r.scheduled_at < now || r.status === 'cancelled')
 
   const table = (list: Row[]) => (
-    <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+    <div className="relative overflow-x-auto rounded-lg border border-line bg-white shadow-card">
       <table className="w-full text-sm">
         <thead><tr className="border-b border-line bg-surface text-left">
           {['When', 'Property', 'Surveyor', 'Fittings', 'Status'].map((h) => <th key={h} className="eyebrow px-4 py-3 text-muted-ink">{h}</th>)}
