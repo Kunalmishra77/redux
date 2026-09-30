@@ -478,4 +478,11 @@ Append one line per working session. This is how the next session (or the next p
             buttons and live rendering, pipeline column overlap, mobile stage labels, missing
             customer notifications (001700/001800, 392/392 pgTAP). pnpm demo:refresh re-dates the
             demo to the day. DEMO-GUIDE.md written.
+
+2026-09-30  UI PASS. Automated audit of 79 pages × desktop and phone (overflow, clipped content,
+            broken images, console errors, headings) on the live demo: 156/158 clean (the 2 are
+            the deliberate 404 check). Fixed: leads table header overlapping rows, admin back
+            links, staff mobile menu, /staff/me profile (B4), tables scroll inside their cards
+            on phones, board/dashboard/inbox/stats/privacy phone layouts, document pages,
+            scheduled-survey waiting state, actual job dates, completed-job card in the portal.
 ```
