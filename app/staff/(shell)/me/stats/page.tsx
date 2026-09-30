@@ -42,12 +42,12 @@ export default async function MyStatsPage() {
         <Kpi label="Won" value={won} icon={Trophy} hint="Jobs from your leads" />
       </div>
       <Panel title="Calls per day" className="mt-6">
-        <div className="flex h-44 items-end gap-2" role="img" aria-label="Calls per day over the last 14 days">
-          {days.map((d) => (
-            <div key={d.key} className="flex flex-1 flex-col items-center gap-1.5">
+        <div className="flex h-44 items-end gap-1 sm:gap-2" role="img" aria-label="Calls per day over the last 14 days">
+          {days.map((d, i) => (
+            <div key={d.key} className="flex min-w-0 flex-1 flex-col items-center gap-1.5">
               <span className="num text-[11px] text-muted-ink">{d.n || ''}</span>
               <div className="w-full rounded-t-sm bg-redux-blue" style={{ height: `${(d.n / max) * 120}px`, minHeight: d.n ? 4 : 0 }} />
-              <span className="text-[10px] text-faint">{d.label}</span>
+              <span className={`text-[10px] whitespace-nowrap text-faint ${(days.length - 1 - i) % 2 ? 'invisible sm:visible' : ''}`}>{d.label}</span>
             </div>
           ))}
         </div>

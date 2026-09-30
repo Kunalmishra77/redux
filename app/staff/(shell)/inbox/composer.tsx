@@ -50,7 +50,7 @@ export function Composer({ conversationId, windowExpiresAt, templates }: {
           </p>
           <div className="flex gap-2">
             <label htmlFor="tpl" className="sr-only">Template</label>
-            <select id="tpl" value={template} onChange={(e) => setTemplate(e.target.value)} className="h-10 flex-1 rounded-md border border-line bg-white px-3 text-sm">
+            <select id="tpl" value={template} onChange={(e) => setTemplate(e.target.value)} className="h-10 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm">
               {templates.map((t) => <option key={t.code} value={t.code}>{t.label}</option>)}
             </select>
             <Button variant="secondary" disabled={pending || !template} onClick={() => send({ templateCode: template })}><Send aria-hidden /> Send template</Button>

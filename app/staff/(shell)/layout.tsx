@@ -46,7 +46,7 @@ export default async function StaffShell({ children }: LayoutProps<'/staff'>) {
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <DemoBar />
-        <Topbar name={user.name} roleLabel={ROLE_LABEL[user.role]} alerts={alerts} searchable={role !== 'surveyor'} />
+        <Topbar role={role} name={user.name} roleLabel={ROLE_LABEL[user.role]} alerts={alerts} searchable={role !== 'surveyor'} />
         <main className="mx-auto w-full max-w-[1400px] flex-1 px-6 py-8">{children}</main>
       </div>
     </div>

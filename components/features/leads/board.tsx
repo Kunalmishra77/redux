@@ -40,7 +40,7 @@ export function PipelineBoard({ cards, lostCount, reasons }: { cards: BoardCard[
 
   return (
     <>
-      <div className="grid grid-cols-[repeat(6,minmax(13.5rem,1fr))] gap-3 overflow-x-auto pb-2">
+      <div className="relative grid grid-cols-[repeat(6,minmax(13.5rem,1fr))] gap-3 overflow-x-auto pb-2">
         {COLUMNS.map((col) => {
           const list = cards.filter((c) => c.status === col.key)
           return (

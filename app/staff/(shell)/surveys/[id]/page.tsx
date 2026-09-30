@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { AlertTriangle, ArrowLeft, Crosshair, FileText, Wrench } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, Crosshair, FileText, MapPin, Smartphone, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatWhen, IconCircle, Money, Panel, StatusPill } from '@/components/patterns'
 import { requireRole } from '@/lib/auth/session'
@@ -86,6 +86,21 @@ export default async function SurveyDetailPage({ params }: PageProps<'/staff/sur
           {survey.lead && user.role !== 'surveyor' && <Link href={`/staff/leads/${survey.lead.id}`} className="mt-2 inline-block text-sm font-medium text-redux-blue hover:underline">Open lead →</Link>}
         </Panel>
       </div>
+
+      {fittings.length === 0 && (
+        <div className="flex flex-col items-center rounded-lg border border-dashed border-line bg-white px-6 py-12 text-center">
+          <IconCircle icon={Smartphone} size="lg" />
+          <p className="mt-4 font-semibold text-ink">{survey.status === 'scheduled' ? `Waiting for the visit on ${formatWhen(survey.scheduled_at)}` : 'The surveyor is on site'}</p>
+          <p className="mt-1 max-w-md text-sm text-muted-ink">
+            {survey.surveyor?.full_name ?? 'The surveyor'} records every fitting in the REDUX app — four photos, condition and the three prices. They appear here as soon as the phone syncs, even if the visit was offline.
+          </p>
+          {survey.property?.address && (
+            <Button variant="outline" size="sm" className="mt-5" asChild>
+              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(survey.property.address)}`} target="_blank" rel="noreferrer"><MapPin aria-hidden /> Open address in Maps</a>
+            </Button>
+          )}
+        </div>
+      )}
 
       <div className="space-y-4">
         {units.map((u) => (

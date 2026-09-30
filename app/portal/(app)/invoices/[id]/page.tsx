@@ -25,6 +25,7 @@ export default async function PortalInvoice({ params }: PageProps<'/portal/invoi
           {due > 0 && (inv.status === 'issued' || inv.status === 'part_paid') && <PayButton invoiceId={id} due={due} route={inv.payment_route} />}
         </div>
       </div>
+      <h1 className="sr-only">Invoice {inv.invoice_no}</h1>
       <div className="overflow-x-auto"><InvoiceDocument inv={inv} /></div>
     </div>
   )

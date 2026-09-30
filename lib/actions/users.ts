@@ -58,3 +58,20 @@ export async function setStaffCityAction(userId: string, cityId: string | null):
   revalidatePath('/staff/admin/assignment')
   return { ok: true, data: null }
 }
+
+const MyProfile = z.object({
+  full_name: z.string().trim().min(2, 'Enter your name'),
+  phone: z.string().trim().transform((s) => s.replace(/[\s-]/g, '')).pipe(z.string().regex(/^\+91[6-9]\d{9}$/, 'Use a +91 mobile number')),
+})
+
+// B4: my own contact fields — RLS (profiles_update_self) and the guard limit this to name and phone
+export async function updateMyProfileAction(input: z.input<typeof MyProfile>): Promise<Result<null>> {
+  const user = await requireRole(['super_admin', 'cc_exec', 'surveyor'])
+  const parsed = MyProfile.safeParse(input)
+  if (!parsed.success) return { ok: false, code: 'INVALID', message: parsed.error.issues[0]?.message ?? 'Check the form.' }
+  const supabase = await createClient()
+  const { error } = await supabase.from('profiles').update(parsed.data).eq('id', user.id)
+  if (error) return { ok: false, code: error.code ?? 'FAILED', message: 'That didn’t save. Try again.' }
+  revalidatePath('/staff', 'layout')
+  return { ok: true, data: null }
+}

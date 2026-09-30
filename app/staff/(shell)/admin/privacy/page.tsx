@@ -44,8 +44,8 @@ export default async function PrivacyPage() {
                 const late = !d.completed_at && new Date(d.due_at).getTime() < now
                 return (
                   <li key={d.id} className="flex items-start justify-between gap-3 px-5 py-3 text-sm">
-                    <div><p className="font-medium text-ink capitalize">{d.type.replace('_', ' ')} · <span className="num">{d.subject_phone}</span></p>{d.details && <p className="text-xs text-muted-ink">{d.details}</p>}</div>
-                    <div className="text-right"><StatusPill tone={DSR_TONE[d.status] ?? 'neutral'}>{d.status.replace('_', ' ')}</StatusPill>
+                    <div className="min-w-0"><p className="font-medium text-ink capitalize">{d.type.replace('_', ' ')} · <span className="num">{d.subject_phone}</span></p>{d.details && <p className="text-xs text-muted-ink">{d.details}</p>}</div>
+                    <div className="shrink-0 text-right"><StatusPill tone={DSR_TONE[d.status] ?? 'neutral'}>{d.status.replace('_', ' ')}</StatusPill>
                       <p className={`mt-1 text-xs ${late ? 'font-semibold text-danger' : 'text-muted-ink'}`}>{d.completed_at ? `Done ${formatWhen(d.completed_at, false)}` : `Due ${formatWhen(d.due_at, false)}`}</p></div>
                   </li>
                 )

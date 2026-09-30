@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, FileSignature, LifeBuoy, Receipt, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowRight, CheckCircle2, FileSignature, LifeBuoy, Receipt, ShieldCheck, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { BeforeAfter, formatWhen, JOB_STAGES, Money, StageTracker } from '@/components/patterns'
 import { createClient } from '@/lib/supabase/server'
@@ -67,6 +67,18 @@ export default async function PortalHome() {
           </Link>
         )
       })}
+
+      {done.map((j) => (
+        <Link key={j.id} href={`/portal/jobs/${j.id}`} className="flex items-center gap-4 rounded-xl border border-success/30 bg-white p-5 shadow-card transition hover:border-success/60">
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#EAF7EE] text-success"><CheckCircle2 className="size-6" aria-hidden /></span>
+          <div className="min-w-0 flex-1">
+            <p className="eyebrow text-success">Restoration complete</p>
+            <p className="mt-0.5 font-semibold text-ink">{(j.property as unknown as { name: string } | null)?.name}</p>
+            <p className="text-sm text-muted-ink">{(j.units as { status: string }[]).length} {unitNoun((j.customer as unknown as { type: string } | null)?.type).toLowerCase()}{(j.units as unknown[]).length === 1 ? '' : 's'} back in service · job {j.job_no}</p>
+          </div>
+          <ArrowRight className="size-5 shrink-0 text-muted-ink" aria-hidden />
+        </Link>
+      ))}
 
       <div className="grid gap-4 md:grid-cols-3">
         <Tile href="/portal/warranty" icon={ShieldCheck} title={`${liveW.length} warranty card${liveW.length === 1 ? '' : 's'}`} body={expiring ? `${expiring} expiring within 30 days` : liveW.length ? 'All active' : 'Issued at handover'} warn={!!expiring} />

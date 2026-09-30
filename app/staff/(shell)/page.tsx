@@ -105,7 +105,7 @@ export default async function DashboardPage() {
           <ul className="space-y-3">
             {bySource.map((s) => (
               <li key={s.code}>
-                <Link href={`/staff/leads?source=${s.code}`} className="group grid grid-cols-[9.5rem_1fr_auto] items-center gap-3">
+                <Link href={`/staff/leads?source=${s.code}`} className="group grid grid-cols-[6.5rem_1fr] items-center gap-x-3 gap-y-1 sm:grid-cols-[9.5rem_1fr_auto]">
                   <span className="truncate text-sm text-ink group-hover:text-redux-blue">{SOURCE_LABEL[s.code] ?? s.code}</span>
                   <span className="h-7 overflow-hidden rounded-sm bg-surface">
                     <span className="flex h-full items-center rounded-sm bg-redux-blue px-2 text-xs font-semibold text-white"
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
                       <span className="num">{s.count}</span>
                     </span>
                   </span>
-                  <span className="num w-44 text-right text-xs text-muted-ink">
+                  <span className="num col-span-2 text-right text-xs text-muted-ink sm:col-span-1 sm:w-44">
                     {s.wins} won{s.cpl !== null && <> · <Money value={s.cpl.toFixed(2)} paise="never" />/lead</>}
                     {s.cpw !== null && <> · <Money value={s.cpw.toFixed(2)} paise="never" />/win</>}
                   </span>

@@ -21,7 +21,8 @@ export default async function QuotePreviewPage({ params }: PageProps<'/staff/quo
         <Link href={`/staff/quotes/${id}`} className="inline-flex items-center gap-1 text-sm font-medium text-redux-blue hover:underline"><ArrowLeft className="size-4" aria-hidden /> Back to the quote</Link>
         <PrintButton><Printer aria-hidden /> Print / save PDF</PrintButton>
       </div>
-      <QuoteDocument q={q} supplier={supplier} />
+      <h1 className="sr-only">Quotation {q.quote_no} v{q.version}</h1>
+      <div className="overflow-x-auto px-2 print:overflow-visible print:px-0"><QuoteDocument q={q} supplier={supplier} /></div>
     </div>
   )
 }

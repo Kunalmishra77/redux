@@ -21,7 +21,7 @@ const date = (d: string | null) => d ? new Intl.DateTimeFormat('en-IN', { day: '
 export function QuoteDocument({ q, supplier }: { q: QuoteDoc; supplier: Supplier }) {
   const intra = Number(q.igst) === 0
   return (
-    <article className="mx-auto w-full max-w-[210mm] bg-white p-[14mm] text-[12.5px] leading-snug text-ink shadow-card print:shadow-none">
+    <article className="mx-auto w-full max-w-[210mm] min-w-[40rem] bg-white print:min-w-0 p-[14mm] text-[12.5px] leading-snug text-ink shadow-card print:shadow-none">
       <header className="flex items-start justify-between border-b-2 border-redux-blue pb-5">
         <div>
           <Logo withTagline />

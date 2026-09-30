@@ -39,8 +39,8 @@ export default async function InboxPage({ searchParams }: PageProps<'/staff/inbo
       {convos.length === 0 ? (
         <EmptyState icon={MessageCircle} title="No conversations yet" body="When a lead messages REDUX’s WhatsApp number, the chat appears here, linked to their lead." />
       ) : (
-        <div className="grid h-[calc(100vh-15rem)] min-h-[32rem] overflow-hidden rounded-lg border border-line bg-white shadow-card lg:grid-cols-[20rem_minmax(0,1fr)]">
-          <ul className="overflow-y-auto border-r border-line" aria-label="Conversations">
+        <div className="grid grid-cols-[minmax(0,1fr)] overflow-hidden rounded-lg border border-line bg-white shadow-card lg:h-[calc(100vh-15rem)] lg:min-h-[32rem] lg:grid-cols-[20rem_minmax(0,1fr)]">
+          <ul className="max-h-64 overflow-y-auto border-b border-line lg:max-h-none lg:border-r lg:border-b-0" aria-label="Conversations">
             {convos.map((c) => (
               <li key={c.id}>
                 <Link href={`?id=${c.id}`} aria-current={c.id === selected?.id ? 'true' : undefined}
@@ -63,13 +63,13 @@ export default async function InboxPage({ searchParams }: PageProps<'/staff/inbo
             ))}
           </ul>
           {selected && (
-            <section className="flex min-h-0 flex-col" aria-label="Conversation">
-              <header className="flex items-center justify-between border-b border-line px-5 py-3">
-                <div>
+            <section className="flex h-[70vh] min-h-0 flex-col lg:h-auto" aria-label="Conversation">
+              <header className="flex items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
+                <div className="min-w-0">
                   <p className="font-semibold text-ink">{selected.lead?.name ?? selected.profile_name}</p>
                   <p className="num text-xs text-muted-ink">+{selected.wa_id}{selected.ctwa_clid ? ' · came from a Click-to-WhatsApp ad' : ''}</p>
                 </div>
-                {selected.lead && <Link href={`/staff/leads/${selected.lead.id}`} className="text-sm font-medium text-redux-blue hover:underline">Open lead →</Link>}
+                {selected.lead && <Link href={`/staff/leads/${selected.lead.id}`} className="shrink-0 text-sm font-medium whitespace-nowrap text-redux-blue hover:underline">Open lead →</Link>}
               </header>
               <ol className="flex-1 space-y-3 overflow-y-auto bg-[#ECE5DD] px-5 py-5">
                 {selected.msgs.map((m) => (

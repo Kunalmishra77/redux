@@ -23,7 +23,7 @@ export function InvoiceDocument({ inv, fallbackSupplier }: { inv: InvoiceDoc; fa
   const s = { name: inv.supplier_name ?? fallbackSupplier?.name ?? '—', gstin: inv.supplier_gstin ?? fallbackSupplier?.gstin ?? '—', address: inv.supplier_address ?? fallbackSupplier?.address ?? '—' }
   const due = Math.max(0, Number(inv.total) - Number(inv.amount_paid))
   return (
-    <article className="relative mx-auto w-full max-w-[210mm] overflow-hidden bg-white p-[14mm] text-[12.5px] leading-snug text-ink shadow-card print:shadow-none">
+    <article className="relative mx-auto w-full max-w-[210mm] min-w-[40rem] overflow-hidden bg-white print:min-w-0 p-[14mm] text-[12.5px] leading-snug text-ink shadow-card print:shadow-none">
       {(inv.status === 'draft' || inv.status === 'cancelled') && (
         <p className={`pointer-events-none absolute inset-0 flex -rotate-12 items-center justify-center text-[88px] font-bold tracking-widest select-none ${inv.status === 'draft' ? 'text-line/70' : 'text-danger/15'}`} aria-hidden>
           {inv.status === 'draft' ? 'DRAFT' : 'CANCELLED'}

@@ -83,7 +83,11 @@ export default async function JobPage({ params }: PageProps<'/staff/jobs/[id]'>)
         <StageTracker current={job.current_stage} />
         <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-line pt-4 text-sm sm:grid-cols-4">
           <div><dt className="eyebrow text-muted-ink">{noun}s back</dt><dd className="num mt-0.5 text-lg font-semibold">{back} / {rooms.length}</dd></div>
-          <div><dt className="eyebrow text-muted-ink">Planned</dt><dd className="mt-0.5">{from ? `${formatWhen(from, false)} – ${to ? formatWhen(to, false) : '…'}` : 'Dates to confirm'}</dd></div>
+          {job.actual_start ? (
+            <div><dt className="eyebrow text-muted-ink">{job.actual_end ? 'Completed' : 'Started'}</dt><dd className="mt-0.5">{formatWhen(job.actual_start, false)}{job.actual_end ? ` – ${formatWhen(job.actual_end, false)}` : ''}</dd></div>
+          ) : (
+            <div><dt className="eyebrow text-muted-ink">Planned</dt><dd className="mt-0.5">{from ? `${formatWhen(from, false)} – ${to ? formatWhen(to, false) : '…'}` : 'Dates to confirm'}</dd></div>
+          )}
           <div><dt className="eyebrow text-muted-ink">Order value</dt><dd className="mt-0.5 font-semibold"><Money value={job.quote?.total} paise="never" /></dd></div>
           <div><dt className="eyebrow text-muted-ink">Warranty cards</dt><dd className="num mt-0.5 text-lg font-semibold">{warranties?.length ?? 0}</dd></div>
         </dl>

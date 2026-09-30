@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { ScrollIntoViewOnChange } from '@/components/patterns/scroll-into-view'
 import { Inbox, MapPin, Users } from 'lucide-react'
 import { cn } from 'cn'
 import { EmptyState, LEAD_STATUS, PageHeader, StatusPill, Timeline } from '@/components/patterns'
@@ -98,6 +99,7 @@ export default async function MyLeadsPage({ searchParams }: PageProps<'/staff/le
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,24rem)]">
               <div className="min-w-0 space-y-5">
                 <div className="rounded-lg border border-line bg-white p-5 shadow-card">
+                  <ScrollIntoViewOnChange when={selected.id} enabled={typeof sp.id === 'string'} />
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <h2 className="text-xl font-semibold text-ink">{selected.property_name ?? selected.name}</h2>

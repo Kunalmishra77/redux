@@ -9,10 +9,13 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { formatRelative } from '@/components/patterns'
 import { signOut } from '@/app/staff/login/actions'
+import type { AppRole } from '@/lib/auth/session'
+import { MobileNav } from './mobile-nav'
 
 export type Alert = { id: string; title: string; body: string | null; href: string | null; at: string; read: boolean }
 
-export function Topbar({ name, roleLabel, alerts, searchable }: {
+export function Topbar({ role, name, roleLabel, alerts, searchable }: {
+  role: Exclude<AppRole, 'customer'>
   name: string
   roleLabel: string
   alerts: Alert[]
@@ -21,7 +24,8 @@ export function Topbar({ name, roleLabel, alerts, searchable }: {
   const unread = alerts.filter((a) => !a.read).length
   const initials = name.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-line bg-white/95 px-6 backdrop-blur">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-line bg-white/95 px-3 backdrop-blur sm:gap-4 sm:px-6">
+      <MobileNav role={role} roleLabel={roleLabel} />
       {searchable ? (
         <form action="/staff/leads" className="relative w-full max-w-md" role="search">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-faint" aria-hidden />
@@ -43,7 +47,7 @@ export function Topbar({ name, roleLabel, alerts, searchable }: {
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="end" className="w-96 p-0">
+          <PopoverContent align="end" className="w-[min(24rem,calc(100vw-1.5rem))] p-0">
             <div className="border-b border-line px-4 py-3">
               <p className="text-sm font-semibold text-ink">Alerts</p>
               <p className="text-xs text-muted-ink">{unread ? `${unread} need your attention` : 'You’re all caught up'}</p>
