@@ -100,7 +100,7 @@ export default async function DashboardPage() {
           hint={`${surveysDone} free visits × ₹${visitCost.toLocaleString('en-IN')}`} />
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-5">
+      <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-5">
         <Panel title="Leads by source" className="xl:col-span-3" action={<Link href="/staff/leads" className="text-sm font-medium text-redux-blue hover:underline">All leads</Link>}>
           <ul className="space-y-3">
             {bySource.map((s) => (
@@ -130,7 +130,7 @@ export default async function DashboardPage() {
         </Panel>
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-5">
+      <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-5">
         <Panel title="Jobs in progress" className="xl:col-span-3" action={<Link href="/staff/jobs" className="text-sm font-medium text-redux-blue hover:underline">All jobs</Link>}>
           {jobs.length === 0 ? (
             <EmptyState icon={Factory} title="No jobs running" body="An approved quotation creates its job automatically." />
@@ -161,7 +161,7 @@ export default async function DashboardPage() {
           )}
         </Panel>
 
-        <div className="space-y-6 xl:col-span-2">
+        <div className="min-w-0 space-y-6 xl:col-span-2">
           <Panel title="Surveyors" bodyClassName="p-0">
             <TeamTable head={['Surveyor', 'Done', 'Booked', 'Quote value']}
               rows={surveyors.map((s) => [s.name, s.done, s.upcoming, <Money key="v" value={s.value.toFixed(2)} paise="never" />])} />
