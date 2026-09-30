@@ -36,7 +36,7 @@ export default async function SettingsPage() {
   const warranty = all.find((s) => s.key === 'warranty_terms')?.value as Record<string, unknown> | undefined
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Settings" description="Thresholds and terms the system runs on. Changes apply to new work; issued quotes and invoices keep what they were issued with." />
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Settings" description="Thresholds and terms the system runs on. Changes apply to new work; issued quotes and invoices keep what they were issued with." />
       <div className="grid gap-5 xl:grid-cols-3">
         {GROUPS.map((g) => (
           <Panel key={g.title} title={g.title}>

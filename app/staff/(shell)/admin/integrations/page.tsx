@@ -29,7 +29,7 @@ export default async function IntegrationsPage() {
   const demo = process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Integrations" description="Each provider’s last contact and the webhook queue. Webhooks are verified, stored and answered in under 200 ms; work happens in the queue." />
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Integrations" description="Each provider’s last contact and the webhook queue. Webhooks are verified, stored and answered in under 200 ms; work happens in the queue." />
       {demo && <p className="mb-5 rounded-lg border border-line bg-white px-4 py-3 text-sm text-muted-ink"><strong className="text-ink">Demo:</strong> integrations are simulated — outgoing messages appear in the demo outbox. The webhook endpoints are live and verify signatures.</p>}
       <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {Object.entries(PROVIDER).map(([key, p]) => {

@@ -29,7 +29,7 @@ export default async function InvoicesPage() {
   const collected = rows.reduce((s, r) => s + Number(r.amount_paid), 0)
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Invoices" description="GST tax invoices, raised from finished jobs. Numbers are gapless per financial year." />
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Invoices" description="GST tax invoices, raised from finished jobs. Numbers are gapless per financial year." />
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <Kpi label="Outstanding" value={<Money value={outstanding.toFixed(2)} paise="never" />} hint={`${live.length} open invoice${live.length === 1 ? '' : 's'}`} />
         <Kpi label="Collected" value={<Money value={collected.toFixed(2)} paise="never" />} hint="All time" />

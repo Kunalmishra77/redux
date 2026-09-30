@@ -33,7 +33,7 @@ export default async function MastersPage() {
   ]
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Master lists" description="What the surveyor app and every form choose from. Retire an entry to hide it — history keeps it." />
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Master lists" description="What the surveyor app and every form choose from. Retire an entry to hide it — history keeps it." />
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {lists.map((l) => (
           <Panel key={l.table} title={l.title} action={<span className="num text-xs text-muted-ink">{l.rows.filter((r) => r.is_active).length} active</span>}>

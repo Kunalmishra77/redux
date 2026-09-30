@@ -24,7 +24,7 @@ export default async function PaymentsPage() {
   const bank = captured.filter((r) => ['neft', 'rtgs', 'imps'].includes(r.method ?? '')).reduce((s, r) => s + Number(r.amount), 0)
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Payments & reconciliation" description="Payments come from Razorpay’s verified webhook and match their invoice automatically." />
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Payments & reconciliation" description="Payments come from Razorpay’s verified webhook and match their invoice automatically." />
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <Kpi label="Collected" value={<Money value={total.toFixed(2)} paise="never" />} hint={`${captured.length} payment${captured.length === 1 ? '' : 's'}`} />
         <Kpi label="By bank transfer" value={<Money value={bank.toFixed(2)} paise="never" />} hint="Large invoices — no card fee" />

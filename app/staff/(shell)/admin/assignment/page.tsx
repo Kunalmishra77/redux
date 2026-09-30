@@ -26,7 +26,7 @@ export default async function AssignmentPage() {
   const name = (id: string | null | undefined) => people?.find((p) => p.id === id)?.full_name
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Cities & assignment" description="New leads rotate among the care executives who cover the lead’s city. Nobody in a city? Everyone shares it."
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Cities & assignment" description="New leads rotate among the care executives who cover the lead’s city. Nobody in a city? Everyone shares it."
         actions={<Link href="/staff/admin/users" className="inline-flex items-center gap-1 text-sm font-semibold text-redux-blue hover:underline">Change who covers a city <ArrowRight className="size-4" aria-hidden /></Link>} />
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {(cities ?? []).map((c) => {

@@ -35,7 +35,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/staff/admi
   const href = (p: number, e = entity) => `/staff/admin/audit?${new URLSearchParams({ ...(e ? { entity: e } : {}), ...(p > 1 ? { page: String(p) } : {}) })}`
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Audit log" description="Every privileged change: who made it, when, and what it was before. Nobody can edit this list." />
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Audit log" description="Every privileged change: who made it, when, and what it was before. Nobody can edit this list." />
       <nav className="mb-4 flex flex-wrap gap-1.5" aria-label="Filter by record type">
         <Link href={href(1, null)} className={`rounded-full px-3 py-1.5 text-sm font-medium ${!entity ? 'bg-redux-blue text-white' : 'bg-white text-muted-ink ring-1 ring-line'}`}>All</Link>
         {ENTITIES.map((e) => <Link key={e} href={href(1, e)} className={`rounded-full px-3 py-1.5 text-sm font-medium ${entity === e ? 'bg-redux-blue text-white' : 'bg-white text-muted-ink ring-1 ring-line hover:text-ink'}`}>{e.replace(/_/g, ' ')}</Link>)}

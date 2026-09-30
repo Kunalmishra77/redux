@@ -67,7 +67,7 @@ export default async function LeadsPage({ searchParams }: PageProps<'/staff/lead
       {leads.length === 0 ? (
         <EmptyState icon={SearchX} title="No leads match" body="Try a different filter — or clear them to see every lead." action={<Button variant="outline" asChild><Link href="/staff/leads">Clear filters</Link></Button>} />
       ) : (
-        <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
+        <div className="overflow-clip rounded-lg border border-line bg-white shadow-card">
           <table className="w-full text-sm">
             <thead className="sticky top-16 z-10">
               <tr className="border-b border-line bg-surface text-left">

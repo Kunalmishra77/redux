@@ -33,7 +33,7 @@ export default async function RateCardPage({ searchParams }: PageProps<'/staff/a
   const works = [...new Map(rows.map((r) => [r.wt!.code, r.wt!])).values()].sort((a, b) => WORK_ORDER.indexOf(a.code) - WORK_ORDER.indexOf(b.code))
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Rate card" description="Fitting × work × finish → price, plus what the same fitting costs new at market."
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Rate card" description="Fitting × work × finish → price, plus what the same fitting costs new at market."
         actions={<NewVersionButton fromId={card.id} />} />
       <nav className="mb-5 flex flex-wrap gap-2" aria-label="Versions">
         {list.map((c) => (

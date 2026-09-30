@@ -66,7 +66,7 @@ export default async function ReportsPage({ searchParams }: PageProps<'/staff/ad
 
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Reports" description="From first enquiry to money in the bank."
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Reports" description="From first enquiry to money in the bank."
         actions={<nav className="flex gap-1.5" aria-label="Range">{[30, 90, 365].map((n) => (
           <Link key={n} href={`/staff/admin/reports?days=${n}`} className={`rounded-full px-3 py-1.5 text-sm font-medium ${days === n ? 'bg-redux-blue text-white' : 'bg-white text-muted-ink ring-1 ring-line'}`}>{n === 365 ? '1 year' : `${n} days`}</Link>
         ))}</nav>} />

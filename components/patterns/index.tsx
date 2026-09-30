@@ -1,6 +1,7 @@
 import * as React from 'react'
 import type { LucideIcon } from 'lucide-react'
-import { Check } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowLeft, Check } from 'lucide-react'
 import { cn } from 'cn'
 import { formatInr, type PaiseDisplay } from '@/lib/services/money'
 
@@ -85,8 +86,10 @@ export function EmptyState({ icon, title, body, action }: {
 }
 
 // ── Page header ───────────────────────────────────────────────────────────────
-export function PageHeader({ eyebrow, title, description, actions }: {
+export function PageHeader({ eyebrow, back, title, description, actions }: {
   eyebrow?: string
+  /** Where "back" goes from a page reached through a hub (e.g. Admin → Settings). */
+  back?: { href: string; label: string }
   title: string
   description?: React.ReactNode
   actions?: React.ReactNode
@@ -94,7 +97,12 @@ export function PageHeader({ eyebrow, title, description, actions }: {
   return (
     <div className="flex flex-wrap items-end justify-between gap-4 pb-6">
       <div className="min-w-0">
-        {eyebrow && <p className="eyebrow text-redux-blue">{eyebrow}</p>}
+        {back && (
+          <Link href={back.href} className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-redux-blue hover:underline">
+            <ArrowLeft className="size-4" aria-hidden /> {back.label}
+          </Link>
+        )}
+        {eyebrow && !back && <p className="eyebrow text-redux-blue">{eyebrow}</p>}
         <h1 className="mt-1 text-[28px] leading-tight font-semibold text-ink">{title}</h1>
         {description && <p className="mt-1 text-sm text-muted-ink">{description}</p>}
       </div>

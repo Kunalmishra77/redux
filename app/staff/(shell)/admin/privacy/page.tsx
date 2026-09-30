@@ -28,7 +28,7 @@ export default async function PrivacyPage() {
   const openDsr = (dsrs ?? []).filter((d) => ['received', 'in_progress'].includes(d.status))
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Privacy (DPDP)" description="Who agreed to what, under which notice — and every request to see, correct or erase their data."
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Privacy (DPDP)" description="Who agreed to what, under which notice — and every request to see, correct or erase their data."
         actions={<span className="inline-flex items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-sm ring-1 ring-line"><ShieldCheck className="size-4 text-success" aria-hidden /> Notice {notice?.map((n) => `v${n.version} (${n.language})`).join(', ') || '—'}</span>} />
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Kpi label="Consent records" value={c.length.toLocaleString('en-IN')} hint="Append-only ledger" />

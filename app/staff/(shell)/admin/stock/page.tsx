@@ -25,7 +25,7 @@ export default async function StockPage() {
   const options = list.map((i) => ({ id: i.id, label: `${i.name} (${i.sku})`, uom: i.uom, quantity: Number(i.quantity) }))
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Stock & parts" description="Every change is a movement with a person and a reason. Quantity can never go below zero."
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Stock & parts" description="Every change is a movement with a person and a reason. Quantity can never go below zero."
         actions={<><Button variant="outline" asChild><Link href="/staff/admin/stock/movements"><History aria-hidden /> Movements</Link></Button><MovementButton items={options} jobs={jobs ?? []} /></>} />
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <Kpi label="Items tracked" value={list.length} />

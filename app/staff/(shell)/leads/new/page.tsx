@@ -9,12 +9,12 @@ export const metadata: Metadata = { title: 'New lead' }
 // B9 — calls and walk-ins (D3: "manual entry for calls and walk-ins"), through the same
 // ingest_lead() path as every other source, so dedup and assignment hold.
 export default async function NewLeadPage() {
-  await requireRole(['super_admin', 'cc_exec'])
+  const user = await requireRole(['super_admin', 'cc_exec'])
   const supabase = await createClient()
   const { data: cities } = await supabase.from('cities').select('id, name').eq('is_active', true).order('name')
   return (
     <>
-      <PageHeader title="New lead" description="For phone calls and walk-ins. Web, Meta, Google and WhatsApp leads arrive on their own." />
+      <PageHeader back={user.role === 'cc_exec' ? { href: '/staff/leads/mine', label: 'My leads' } : { href: '/staff/leads', label: 'Leads' }} title="New lead" description="For phone calls and walk-ins. Web, Meta, Google and WhatsApp leads arrive on their own." />
       <NewLeadForm cities={cities ?? []} />
     </>
   )

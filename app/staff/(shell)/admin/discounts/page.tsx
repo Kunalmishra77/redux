@@ -28,7 +28,7 @@ export default async function DiscountsPage() {
   const history = (decided ?? []) as unknown as { id: string; requested_pct: string; decision: string; decision_note: string | null; decided_at: string; quote: { id: string; quote_no: string; version: number } | null }[]
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Discount approvals" description="Discounts above the threshold wait for you. The quote can’t be sent until you decide." />
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Discount approvals" description="Discounts above the threshold wait for you. The quote can’t be sent until you decide." />
       {pending.length === 0 ? (
         <EmptyState icon={BadgePercent} title="Nothing waiting" body="Every discount request has been decided." />
       ) : (

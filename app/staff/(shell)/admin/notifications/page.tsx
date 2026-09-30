@@ -26,7 +26,7 @@ export default async function NotificationsPage({ searchParams }: PageProps<'/st
   const showTemplates = tab === 'templates'
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Notifications" description="Which event sends which WhatsApp or SMS, to whom — and the exact words." />
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Notifications" description="Which event sends which WhatsApp or SMS, to whom — and the exact words." />
       <nav className="mb-5 flex gap-1.5" aria-label="Tabs">
         {[['', `Rules (${rules?.length ?? 0})`], ['templates', `Templates (${templates?.length ?? 0})`]].map(([k, label]) => (
           <Link key={k} href={k ? `/staff/admin/notifications?tab=${k}` : '/staff/admin/notifications'}

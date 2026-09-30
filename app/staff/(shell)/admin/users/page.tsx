@@ -21,7 +21,7 @@ export default async function UsersPage() {
   staff.sort((a, b) => order.indexOf(a.role!) - order.indexOf(b.role!) || a.full_name.localeCompare(b.full_name))
   return (
     <>
-      <PageHeader eyebrow="Admin" title="Users & roles" description="What each person sees is set by their role. RLS enforces it in the database, not just the menu."
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Users & roles" description="What each person sees is set by their role. RLS enforces it in the database, not just the menu."
         actions={<AddStaffButton cities={cities ?? []} />} />
       <div className="overflow-hidden rounded-lg border border-line bg-white shadow-card">
         <table className="w-full text-sm">
