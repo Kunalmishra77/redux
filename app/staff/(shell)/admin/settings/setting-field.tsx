@@ -24,7 +24,7 @@ export function SettingField({ settingKey, label, unit, value, hint }: { setting
           if (r.ok) { toast.success('Saved'); router.refresh() } else toast.error(r.message)
         })}>Save</Button>}
       </div>
-      {hint && <p className="mt-1 text-xs text-faint">{hint.replace(/^BR-[A-Z0-9]+:\s*/, '')}</p>}
+      {hint && <p className="mt-1 text-xs text-faint">{hint.replace(/^(BR|D)[0-9]*-[A-Z0-9-]+:\s*/, '')}</p>}
     </div>
   )
 }
