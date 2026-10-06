@@ -74,7 +74,7 @@ export default async function SurveyDetailPage({ params }: PageProps<'/staff/sur
               <p>GPS accuracy <span className="num font-semibold">{Math.round(Number(checkin.accuracy_m ?? 0))} m</span>
                 {checkin.geofence_ok !== null && <> · <span className="num">{Math.round(Number(checkin.distance_m ?? 0))} m</span> from the property</>}</p>
               {checkin.flagged
-                ? <p className="flex items-start gap-1.5 rounded-md bg-warning-bg px-2.5 py-1.5 text-xs text-warning"><AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden />{checkin.flag_reason} — recorded for review, work continued (BR-S3)</p>
+                ? <p className="flex items-start gap-1.5 rounded-md bg-warning-bg px-2.5 py-1.5 text-xs text-warning"><AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden />{checkin.flag_reason} — recorded for review, work continued</p>
                 : <StatusPill tone="positive">Inside the geofence</StatusPill>}
             </div>
           ) : <p className="text-sm text-muted-ink">Not checked in yet.</p>}
@@ -148,12 +148,12 @@ export default async function SurveyDetailPage({ params }: PageProps<'/staff/sur
                         </dl>
                         {f.assessment.you_save && <p className="mt-3 rounded-sm bg-redux-lime/70 px-2.5 py-1.5 text-sm font-semibold text-redux-blue">You save <Money value={f.assessment.you_save} paise="never" /></p>}
                         {f.assessment.part_unavailable_note && <p className="mt-2 text-xs text-ink">⚙ {f.assessment.part_unavailable_note}</p>}
-                        {f.assessment.is_manual_override && <p className="mt-2 text-xs text-warning">Manual price — reason on the audit log (BR-A5)</p>}
+                        {f.assessment.is_manual_override && <p className="mt-2 text-xs text-warning">Manual price — reason on the audit log</p>}
                         <p className="mt-3 text-[11px] text-faint">Available repairs and finishes depend on the condition of each fitting.</p>
                       </>
                     ) : user.role === 'cc_exec'
                       ? <p className="text-sm text-muted-ink">Prices appear on the quotation.</p>
-                      : <p className="text-sm text-warning">Not assessed yet — every fitting needs a recommendation before quoting (BR-A1).</p>}
+                      : <p className="text-sm text-warning">Not assessed yet — every fitting needs a recommendation before quoting.</p>}
                   </div>
                 </li>
               ))}

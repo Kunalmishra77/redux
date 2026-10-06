@@ -113,7 +113,7 @@ export function LeadWorkPane({ lead, outcomes, lostReasons, cities }: {
         )}
       </section>
 
-      {/* 2 — book the free survey inline (D4-04) */}
+      {/* 2 — book the free survey inline */}
       <section aria-labelledby="book-h" className="rounded-lg border border-line bg-white p-5 shadow-card">
         <h3 id="book-h" className="eyebrow mb-3 text-muted-ink">2 · Book free survey</h3>
         {canBook ? <BookSurvey lead={lead} cities={cities} onDone={() => router.refresh()} />
@@ -260,7 +260,7 @@ function LostDialog({ open, onOpenChange, reasons, onConfirm, pending }: {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Mark as lost</DialogTitle>
-          <DialogDescription>A reason is required (BR-L7). The lead can be reopened later — both events stay on the timeline.</DialogDescription>
+          <DialogDescription>A reason is required. The lead can be reopened later — both events stay on the timeline.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-2" role="radiogroup" aria-label="Lost reason">
           {reasons.map((r) => (
@@ -292,7 +292,7 @@ function FollowUpDialog({ open, onOpenChange, onConfirm, pending }: {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <DialogHeader><DialogTitle>Set a follow-up</DialogTitle><DialogDescription>It comes back to the top of your queue at that time (D4-07).</DialogDescription></DialogHeader>
+        <DialogHeader><DialogTitle>Set a follow-up</DialogTitle><DialogDescription>It comes back to the top of your queue at that time.</DialogDescription></DialogHeader>
         <div className="flex flex-wrap gap-2">
           {quick.map((q) => (
             <Button key={q.label} variant="outline" size="sm" onClick={() => {

@@ -88,7 +88,7 @@ export function PipelineBoard({ cards, lostCount, reasons }: { cards: BoardCard[
 
       <Dialog open={!!lostFor} onOpenChange={(o) => !o && setLostFor(null)}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Why was it lost?</DialogTitle><DialogDescription>A reason is required (BR-L7).</DialogDescription></DialogHeader>
+          <DialogHeader><DialogTitle>Why was it lost?</DialogTitle><DialogDescription>A reason is required.</DialogDescription></DialogHeader>
           <div className="grid gap-2">
             {reasons.map((r) => (
               <button key={r.code} type="button" onClick={() => setReason(r.code)} aria-pressed={reason === r.code}

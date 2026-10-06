@@ -68,7 +68,7 @@ export default async function LeadDetailPage({ params }: PageProps<'/staff/leads
               {lead.previous_lead_id && <Row label="Returning"><Link href={`/staff/leads/${lead.previous_lead_id}`} className="text-redux-blue hover:underline">Earlier lead →</Link></Row>}
             </dl>
           </Panel>
-          <Panel title="Attribution" action={<span className="text-[11px] text-faint">Locked (BR-L3)</span>}>
+          <Panel title="Attribution" action={<span className="text-[11px] text-faint">Locked to the first touch</span>}>
             <dl className="space-y-3 text-sm">
               <Row label="Source"><SourceBadge code={lead.source?.code ?? ''} /></Row>
               {lead.campaign && <Row label="Campaign">{lead.campaign.name}</Row>}

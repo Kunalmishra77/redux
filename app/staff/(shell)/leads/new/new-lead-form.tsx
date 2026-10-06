@@ -39,7 +39,7 @@ export function NewLeadForm({ cities }: { cities: { id: string; name: string }[]
       <Choice label="Who are they?" value={type} onChange={(v) => setType(v as 'hotel' | 'home' | 'dealer')} options={[['hotel', 'Hotel'], ['home', 'Home'], ['dealer', 'Dealer']]} />
       <div className="grid gap-4 sm:grid-cols-2">
         <Field id="name" label="Contact name" required />
-        <Field id="phone" label="Mobile number" required inputMode="tel" placeholder="98100 00000" hint="Any format — it is stored as +91…, and a repeat caller joins their open lead (BR-L1)" />
+        <Field id="phone" label="Mobile number" required inputMode="tel" placeholder="98100 00000" hint="Any format — it is stored as +91…, and a repeat caller joins their open lead" />
         <Field id="property" label={type === 'hotel' ? 'Hotel name' : type === 'dealer' ? 'Firm name' : 'Residence (optional)'} />
         {type !== 'dealer' && <Field id="units" label={type === 'hotel' ? 'Rooms' : 'Bathrooms'} inputMode="numeric" />}
         <div className="space-y-1.5">
