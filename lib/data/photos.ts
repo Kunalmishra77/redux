@@ -14,6 +14,11 @@ export async function photoUrls(paths: string[], bucket = 'survey-photos', width
     if (p.startsWith('demo/')) out.set(p, `/${p}`)
     else real.push(p)
   }
+  if (real.length && process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+    // demo: through the app, so a network that blocks *.supabase.co still shows photos (app/api/photo)
+    for (const p of real) out.set(p, `/api/photo?b=${bucket}&p=${encodeURIComponent(p)}${width ? `&w=${width}` : ''}`)
+    return out
+  }
   if (real.length) {
     const supabase = await createClient()
     const { data } = await supabase.storage.from(bucket).createSignedUrls(real, 600, width ? { transform: { width } } as never : undefined)

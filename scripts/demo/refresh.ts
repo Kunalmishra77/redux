@@ -43,7 +43,12 @@ async function main() {
     for (const [table, list] of byTable) {
       const set = list.map((c) => `"${c.column_name}" = "${c.column_name}" + ${c.data_type === 'date' ? `${days}` : `interval '${days} days'`}`).join(', ')
       await db.query(`alter table public."${table}" disable trigger user`)
-      const r = await db.query(`update public."${table}" set ${set}`)
+      // surveys carry an exclusion constraint (one surveyor, one slot): moving rows one by one can
+      // land a row on a slot another row still holds, so park them far away first, then bring back
+      const PARK = 36500
+      const shift = (n: number) => list.map((c) => `"${c.column_name}" = "${c.column_name}" + ${c.data_type === 'date' ? `${n}` : `interval '${n} days'`}`).join(', ')
+      if (table === 'surveys') await db.query(`update public."${table}" set ${shift(PARK)}`)
+      const r = await db.query(`update public."${table}" set ${table === 'surveys' ? shift(days - PARK) : set}`)
       await db.query(`alter table public."${table}" enable trigger user`)
       moved += r.rowCount ?? 0
     }
