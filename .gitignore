@@ -51,3 +51,6 @@ supabase/.branches/
 
 .vercel
 .env*
+
+# local CLI binaries (not committed)
+.tools/
