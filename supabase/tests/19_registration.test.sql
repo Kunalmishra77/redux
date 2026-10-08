@@ -7,8 +7,10 @@ insert into auth.users (id, email) values ('00000000-0000-0000-0000-0000000000a1
 insert into public.profiles (id, full_name) values ('00000000-0000-0000-0000-0000000000a1', 'Admin');
 insert into public.user_roles (user_id, role) values ('00000000-0000-0000-0000-0000000000a1', 'super_admin');
 
+-- own notice: CI runs on an empty database (no demo seed)
+insert into public.privacy_notices (version, language, body, effective_from) values ('test-reg-1', 'en', 'Test notice', current_date);
 create temp table k on commit drop as
-  select jsonb_build_object('notice_version', (select version from public.privacy_notices where is_active and language = 'en' limit 1),
+  select jsonb_build_object('notice_version', 'test-reg-1',
                             'language', 'en', 'method', 'web_form', 'purposes', jsonb_build_object('service', true, 'marketing', false)) as consent;
 create temp table r (k text primary key, v jsonb) on commit drop;
 grant all on k, r to authenticated;
