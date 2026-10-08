@@ -271,3 +271,16 @@ consent for that phone number. Withdrawal is honoured immediately. Keep opt-in e
 - [ ] URLs point to reduxbath.com / my.reduxbath.com — never a shortener
 - [ ] Display name approved before submitting templates
 - [ ] Quality rating monitored after go-live; a low rating pauses the template
+
+---
+
+### `portal_invite` · Utility
+*(added 8 Oct 2026 · CR-001 phase 2 · rule CN19)*
+```
+Hello {{1}},
+
+{{2}} has added you to the {{3}} account on the REDUX portal.
+
+Sign in with this mobile number at my.reduxbath.com to see assessments, proposals, work progress, invoices and warranty cards.
+```
+`{{1}}` colleague's first name · `{{2}}` who invited them · `{{3}}` account name
