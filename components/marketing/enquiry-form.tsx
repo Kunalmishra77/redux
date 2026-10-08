@@ -17,6 +17,7 @@ import {
   type EnquirerKind,
 } from '@/lib/validators/enquiry'
 import { readAttribution } from '@/components/marketing/attribution'
+import { useB2C } from '@/components/marketing/enquiry-dialog'
 
 export type EnquiryFormProps = {
   cities: { id: string; name: string }[]
@@ -36,10 +37,14 @@ const KINDS: { value: EnquirerKind; label: string; icon: typeof Home }[] = [
 const control =
   'h-11 w-full rounded-md border border-line bg-white px-3 text-[15px] text-ink shadow-none transition-colors outline-none placeholder:text-faint focus-visible:border-redux-blue focus-visible:ring-3 focus-visible:ring-redux-blue/20 aria-invalid:border-danger aria-invalid:ring-3 aria-invalid:ring-danger/15'
 
-export function EnquiryForm({ cities, noticeVersion, defaultKind = 'home', lockKind = false, className }: EnquiryFormProps) {
+export function EnquiryForm({ cities, noticeVersion, defaultKind, lockKind = false, className }: EnquiryFormProps) {
+  // BR-B3: the Home option exists only while B2C is on
+  const b2c = useB2C()
+  const kinds = KINDS.filter((k) => b2c || k.value !== 'home')
+  const initialKind: EnquirerKind = defaultKind && (b2c || defaultKind !== 'home') ? defaultKind : 'hotel'
   const id = React.useId()
   const formRef = React.useRef<HTMLFormElement>(null)
-  const [kind, setKind] = React.useState<EnquirerKind>(defaultKind)
+  const [kind, setKind] = React.useState<EnquirerKind>(initialKind)
   const [city, setCity] = React.useState('')
   const [touched, setTouched] = React.useState<Set<string>>(() => new Set())
   const [errors, setErrors] = React.useState<Record<string, string>>({})
@@ -134,8 +139,8 @@ export function EnquiryForm({ cities, noticeVersion, defaultKind = 'home', lockK
       ) : (
         <fieldset>
           <legend className="mb-2 text-sm font-medium text-ink">I&apos;m a</legend>
-          <div className="grid grid-cols-3 gap-1 rounded-lg bg-surface p-1" role="radiogroup" aria-label="I'm a">
-            {KINDS.map(({ value, label, icon: Icon }) => (
+          <div className={cn('grid gap-1 rounded-lg bg-surface p-1', kinds.length === 3 ? 'grid-cols-3' : 'grid-cols-2')} role="radiogroup" aria-label="I'm a">
+            {kinds.map(({ value, label, icon: Icon }) => (
               <label
                 key={value}
                 className={cn(

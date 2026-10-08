@@ -5,7 +5,32 @@ export type Database = {
   
   "public": {
           Tables: {
-            "assessments": {
+            "account_activities": {
+                  Row: {
+                    "actor_id": string,"body": string | null,"created_at": string,"customer_id": string,"id": string,"kind": string,"lead_id": string | null,"occurred_at": string,"title": string
+                  }
+                  Insert: {
+                    "actor_id"?: string,"body"?: string | null,"created_at"?: string,"customer_id": string,"id"?: string,"kind": string,"lead_id"?: string | null,"occurred_at"?: string,"title": string
+                  }
+                  Update: {
+                    "actor_id"?: string,"body"?: string | null,"created_at"?: string,"customer_id"?: string,"id"?: string,"kind"?: string,"lead_id"?: string | null,"occurred_at"?: string,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "account_activities_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "account_activities_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"assessments": {
                   Row: {
                     "created_at": string,"created_by": string | null,"finish_id": string | null,"fitting_id": string,"id": string,"is_manual_override": boolean,"override_reason": string | null,"part_unavailable_note": string | null,"price_market_replacement": number,"price_recommended": number,"price_replace_eurobrass": number,"rate_card_id": string,"recommended": Database["public"]['Enums']["treatment"],"surveyor_note": string | null,"updated_at": string,"you_save": number | null
                   }
@@ -271,13 +296,13 @@ isOneToOne: false
                   ]
                 },"customer_contacts": {
                   Row: {
-                    "customer_id": string,"email": string | null,"id": string,"is_active": boolean,"is_primary": boolean,"name": string,"notify_prefs": NonNullable<Json>,"phone": string,"role_title": string | null,"user_id": string | null
+                    "customer_id": string,"email": string | null,"id": string,"invited_by": string | null,"is_active": boolean,"is_admin": boolean,"is_primary": boolean,"name": string,"notify_prefs": NonNullable<Json>,"phone": string,"role_code": string | null,"role_title": string | null,"user_id": string | null
                   }
                   Insert: {
-                    "customer_id": string,"email"?: string | null,"id"?: string,"is_active"?: boolean,"is_primary"?: boolean,"name": string,"notify_prefs"?: NonNullable<Json>,"phone": string,"role_title"?: string | null,"user_id"?: string | null
+                    "customer_id": string,"email"?: string | null,"id"?: string,"invited_by"?: string | null,"is_active"?: boolean,"is_admin"?: boolean,"is_primary"?: boolean,"name": string,"notify_prefs"?: NonNullable<Json>,"phone": string,"role_code"?: string | null,"role_title"?: string | null,"user_id"?: string | null
                   }
                   Update: {
-                    "customer_id"?: string,"email"?: string | null,"id"?: string,"is_active"?: boolean,"is_primary"?: boolean,"name"?: string,"notify_prefs"?: NonNullable<Json>,"phone"?: string,"role_title"?: string | null,"user_id"?: string | null
+                    "customer_id"?: string,"email"?: string | null,"id"?: string,"invited_by"?: string | null,"is_active"?: boolean,"is_admin"?: boolean,"is_primary"?: boolean,"name"?: string,"notify_prefs"?: NonNullable<Json>,"phone"?: string,"role_code"?: string | null,"role_title"?: string | null,"user_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -288,28 +313,65 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"customers": {
+                },"customer_groups": {
                   Row: {
-                    "billing_address": string | null,"billing_city_id": string | null,"billing_state_code": string | null,"converted_at": string | null,"created_at": string,"gstin": string | null,"id": string,"is_prospect": boolean,"lead_id": string | null,"name": string,"type": string,"updated_at": string
+                    "created_at": string,"id": string,"name": string,"notes": string | null,"segment_id": string | null
                   }
                   Insert: {
-                    "billing_address"?: string | null,"billing_city_id"?: string | null,"billing_state_code"?: string | null,"converted_at"?: string | null,"created_at"?: string,"gstin"?: string | null,"id"?: string,"is_prospect"?: boolean,"lead_id"?: string | null,"name": string,"type": string,"updated_at"?: string
+                    "created_at"?: string,"id"?: string,"name": string,"notes"?: string | null,"segment_id"?: string | null
                   }
                   Update: {
-                    "billing_address"?: string | null,"billing_city_id"?: string | null,"billing_state_code"?: string | null,"converted_at"?: string | null,"created_at"?: string,"gstin"?: string | null,"id"?: string,"is_prospect"?: boolean,"lead_id"?: string | null,"name"?: string,"type"?: string,"updated_at"?: string
+                    "created_at"?: string,"id"?: string,"name"?: string,"notes"?: string | null,"segment_id"?: string | null
                   }
                   Relationships: [
                     {
+      foreignKeyName: "customer_groups_segment_id_fkey"
+      columns: ["segment_id"]
+isOneToOne: false
+      referencedRelation: "segments"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"customers": {
+                  Row: {
+                    "account_owner_id": string | null,"billing_address": string | null,"billing_city_id": string | null,"billing_state_code": string | null,"converted_at": string | null,"created_at": string,"group_id": string | null,"gstin": string | null,"id": string,"is_prospect": boolean,"kind": string,"lead_id": string | null,"legal_name": string | null,"name": string,"segment_id": string | null,"size_units": number | null,"tier": string | null,"type": string,"updated_at": string,"verified_at": string | null,"verified_by": string | null
+                  }
+                  Insert: {
+                    "account_owner_id"?: string | null,"billing_address"?: string | null,"billing_city_id"?: string | null,"billing_state_code"?: string | null,"converted_at"?: string | null,"created_at"?: string,"group_id"?: string | null,"gstin"?: string | null,"id"?: string,"is_prospect"?: boolean,"kind"?: string,"lead_id"?: string | null,"legal_name"?: string | null,"name": string,"segment_id"?: string | null,"size_units"?: number | null,"tier"?: string | null,"type": string,"updated_at"?: string,"verified_at"?: string | null,"verified_by"?: string | null
+                  }
+                  Update: {
+                    "account_owner_id"?: string | null,"billing_address"?: string | null,"billing_city_id"?: string | null,"billing_state_code"?: string | null,"converted_at"?: string | null,"created_at"?: string,"group_id"?: string | null,"gstin"?: string | null,"id"?: string,"is_prospect"?: boolean,"kind"?: string,"lead_id"?: string | null,"legal_name"?: string | null,"name"?: string,"segment_id"?: string | null,"size_units"?: number | null,"tier"?: string | null,"type"?: string,"updated_at"?: string,"verified_at"?: string | null,"verified_by"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "customers_account_owner_id_fkey"
+      columns: ["account_owner_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "customers_billing_city_id_fkey"
       columns: ["billing_city_id"]
 isOneToOne: false
       referencedRelation: "cities"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "customers_group_id_fkey"
+      columns: ["group_id"]
+isOneToOne: false
+      referencedRelation: "customer_groups"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "customers_lead_id_fkey"
       columns: ["lead_id"]
 isOneToOne: false
       referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "customers_segment_id_fkey"
+      columns: ["segment_id"]
+isOneToOne: false
+      referencedRelation: "segments"
       referencedColumns: ["id"]
     }
                   ]
@@ -921,13 +983,13 @@ isOneToOne: false
                   ]
                 },"leads": {
                   Row: {
-                    "assigned_at": string | null,"assigned_to": string | null,"campaign_id": string | null,"city_id": string | null,"created_at": string,"ctwa_clid": string | null,"customer_type": string | null,"email": string | null,"enquirer_role": string | null,"firm_gstin": string | null,"google_lead_id": string | null,"id": string,"lost_note": string | null,"lost_reason_id": string | null,"meta_ad_id": string | null,"meta_form_id": string | null,"meta_leadgen_id": string | null,"name": string | null,"phone": string,"previous_lead_id": string | null,"property_name": string | null,"raw_payload": Json | null,"sla_due_at": string | null,"source_id": string,"status": Database["public"]['Enums']["lead_status"],"unit_count": number | null,"updated_at": string,"utm": Json | null
+                    "assessment_mode": string | null,"assigned_at": string | null,"assigned_to": string | null,"business_name": string | null,"campaign_id": string | null,"city_id": string | null,"created_at": string,"ctwa_clid": string | null,"customer_id": string | null,"customer_type": string | null,"demo_offer": string | null,"email": string | null,"enquirer_role": string | null,"estimated_units": number | null,"estimated_value": number | null,"firm_gstin": string | null,"google_lead_id": string | null,"id": string,"lost_note": string | null,"lost_reason_id": string | null,"meta_ad_id": string | null,"meta_form_id": string | null,"meta_leadgen_id": string | null,"name": string | null,"phone": string,"pincode": string | null,"previous_lead_id": string | null,"property_name": string | null,"raw_payload": Json | null,"score": number | null,"segment_id": string | null,"sla_due_at": string | null,"source_id": string,"status": Database["public"]['Enums']["lead_status"],"tier": string | null,"unit_count": number | null,"updated_at": string,"utm": Json | null
                   }
                   Insert: {
-                    "assigned_at"?: string | null,"assigned_to"?: string | null,"campaign_id"?: string | null,"city_id"?: string | null,"created_at"?: string,"ctwa_clid"?: string | null,"customer_type"?: string | null,"email"?: string | null,"enquirer_role"?: string | null,"firm_gstin"?: string | null,"google_lead_id"?: string | null,"id"?: string,"lost_note"?: string | null,"lost_reason_id"?: string | null,"meta_ad_id"?: string | null,"meta_form_id"?: string | null,"meta_leadgen_id"?: string | null,"name"?: string | null,"phone": string,"previous_lead_id"?: string | null,"property_name"?: string | null,"raw_payload"?: Json | null,"sla_due_at"?: string | null,"source_id": string,"status"?: Database["public"]['Enums']["lead_status"],"unit_count"?: number | null,"updated_at"?: string,"utm"?: Json | null
+                    "assessment_mode"?: string | null,"assigned_at"?: string | null,"assigned_to"?: string | null,"business_name"?: string | null,"campaign_id"?: string | null,"city_id"?: string | null,"created_at"?: string,"ctwa_clid"?: string | null,"customer_id"?: string | null,"customer_type"?: string | null,"demo_offer"?: string | null,"email"?: string | null,"enquirer_role"?: string | null,"estimated_units"?: number | null,"estimated_value"?: number | null,"firm_gstin"?: string | null,"google_lead_id"?: string | null,"id"?: string,"lost_note"?: string | null,"lost_reason_id"?: string | null,"meta_ad_id"?: string | null,"meta_form_id"?: string | null,"meta_leadgen_id"?: string | null,"name"?: string | null,"phone": string,"pincode"?: string | null,"previous_lead_id"?: string | null,"property_name"?: string | null,"raw_payload"?: Json | null,"score"?: number | null,"segment_id"?: string | null,"sla_due_at"?: string | null,"source_id": string,"status"?: Database["public"]['Enums']["lead_status"],"tier"?: string | null,"unit_count"?: number | null,"updated_at"?: string,"utm"?: Json | null
                   }
                   Update: {
-                    "assigned_at"?: string | null,"assigned_to"?: string | null,"campaign_id"?: string | null,"city_id"?: string | null,"created_at"?: string,"ctwa_clid"?: string | null,"customer_type"?: string | null,"email"?: string | null,"enquirer_role"?: string | null,"firm_gstin"?: string | null,"google_lead_id"?: string | null,"id"?: string,"lost_note"?: string | null,"lost_reason_id"?: string | null,"meta_ad_id"?: string | null,"meta_form_id"?: string | null,"meta_leadgen_id"?: string | null,"name"?: string | null,"phone"?: string,"previous_lead_id"?: string | null,"property_name"?: string | null,"raw_payload"?: Json | null,"sla_due_at"?: string | null,"source_id"?: string,"status"?: Database["public"]['Enums']["lead_status"],"unit_count"?: number | null,"updated_at"?: string,"utm"?: Json | null
+                    "assessment_mode"?: string | null,"assigned_at"?: string | null,"assigned_to"?: string | null,"business_name"?: string | null,"campaign_id"?: string | null,"city_id"?: string | null,"created_at"?: string,"ctwa_clid"?: string | null,"customer_id"?: string | null,"customer_type"?: string | null,"demo_offer"?: string | null,"email"?: string | null,"enquirer_role"?: string | null,"estimated_units"?: number | null,"estimated_value"?: number | null,"firm_gstin"?: string | null,"google_lead_id"?: string | null,"id"?: string,"lost_note"?: string | null,"lost_reason_id"?: string | null,"meta_ad_id"?: string | null,"meta_form_id"?: string | null,"meta_leadgen_id"?: string | null,"name"?: string | null,"phone"?: string,"pincode"?: string | null,"previous_lead_id"?: string | null,"property_name"?: string | null,"raw_payload"?: Json | null,"score"?: number | null,"segment_id"?: string | null,"sla_due_at"?: string | null,"source_id"?: string,"status"?: Database["public"]['Enums']["lead_status"],"tier"?: string | null,"unit_count"?: number | null,"updated_at"?: string,"utm"?: Json | null
                   }
                   Relationships: [
                     {
@@ -949,6 +1011,12 @@ isOneToOne: false
       referencedRelation: "cities"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "leads_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "leads_lost_reason_id_fkey"
       columns: ["lost_reason_id"]
 isOneToOne: false
@@ -959,6 +1027,12 @@ isOneToOne: false
       columns: ["previous_lead_id"]
 isOneToOne: false
       referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "leads_segment_id_fkey"
+      columns: ["segment_id"]
+isOneToOne: false
+      referencedRelation: "segments"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "leads_source_id_fkey"
@@ -1369,6 +1443,19 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"segments": {
+                  Row: {
+                    "code": string,"id": string,"is_active": boolean,"is_b2c": boolean,"name": string,"sort_order": number
+                  }
+                  Insert: {
+                    "code": string,"id"?: string,"is_active"?: boolean,"is_b2c"?: boolean,"name": string,"sort_order"?: number
+                  }
+                  Update: {
+                    "code"?: string,"id"?: string,"is_active"?: boolean,"is_b2c"?: boolean,"name"?: string,"sort_order"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"service_requests": {
                   Row: {
                     "ack_due_at": string,"acknowledged_at": string | null,"assigned_to": string | null,"body": string | null,"created_at": string,"customer_id": string,"id": string,"job_unit_id": string | null,"property_id": string | null,"raised_by": string | null,"request_no": string,"resolution_note": string | null,"resolve_due_at": string,"resolved_at": string | null,"status": string,"subject": string,"updated_at": string,"warranty_id": string | null
@@ -1760,7 +1847,14 @@ isOneToOne: false
                 }
           }
           Views: {
-            "v_delayed_units": {
+            "v_account_timeline": {
+                  Row: {
+                    "actor_id": string | null,"customer_id": string | null,"detail": string | null,"entity_id": string | null,"entity_type": string | null,"kind": string | null,"lead_id": string | null,"occurred_at": string | null,"title": string | null
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"v_delayed_units": {
                   Row: {
                     "effective_downtime_hours": number | null,"job_id": string | null,"job_unit_id": string | null,"planned_downtime_hours": number | null
                   }
@@ -1930,6 +2024,9 @@ isOneToOne: false
 "custom_access_token_hook":
 { Args: { "event": Json }; Returns: Json
                            },
+"customer_contact":
+{ Args: { "p_customer": string }; Returns: Record<string, unknown>
+                           },
 "decide_discount":
 { Args: { "p_approval": string,"p_approve": boolean,"p_note"?: string }; Returns: undefined
                            },
@@ -1965,6 +2062,9 @@ isOneToOne: false
                            },
 "ingest_lead_with_consent":
 { Args: { "p_consent": Json,"p_lead": Json }; Returns: Json
+                           },
+"inr":
+{ Args: { "p": number }; Returns: string
                            },
 "install_schedules":
 { Args: Record<PropertyKey, never>; Returns: undefined
@@ -2062,6 +2162,9 @@ isOneToOne: false
 "staff_can_see_customer":
 { Args: { "p_customer_id": string }; Returns: boolean
                            },
+"stage_words":
+{ Args: { "p": Database["public"]['Enums']["job_stage"] }; Returns: string
+                           },
 "submit_survey":
 { Args: { "p_survey_id": string }; Returns: undefined
                            },
@@ -2076,6 +2179,9 @@ isOneToOne: false
                            },
 "unit_effective_downtime_hours":
 { Args: { "p_unit": string }; Returns: number
+                           },
+"unit_noun":
+{ Args: { "p_customer": string }; Returns: string
                            },
 "upsert_assessment":
 { Args: { "p": Json }; Returns: string

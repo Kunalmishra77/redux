@@ -7,7 +7,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 
 export type PortalUser = { id: string; phone: string | null; name: string; customerIds: string[]; customers: { id: string; name: string; type: string }[] }
 
-/** The signed-in portal user and the customer accounts they are a contact of (my_customer_ids). */
+/** The signed-in portal user and the accounts they are a contact of (my_customer_ids, ADR-016). */
 export async function requirePortalUser(next?: string): Promise<PortalUser> {
   const supabase = await createClient()
   const { data } = await supabase.auth.getClaims()
@@ -15,12 +15,10 @@ export async function requirePortalUser(next?: string): Promise<PortalUser> {
   if (!c?.sub) redirect(`/portal/login${next ? `?next=${encodeURIComponent(next)}` : ''}`)
   if (c.user_role && c.user_role !== 'customer') redirect('/staff')
   const phone = c.phone ? `+${String(c.phone).replace(/^\+/, '')}` : null
-  let { data: customers } = await supabase.from('customers').select('id, name, type').order('name')
-  // A login made while the customer was still a prospect is linked once they convert — the same
-  // rule trg_link_portal_user applies to logins created after conversion (phone match, active contact).
-  if (phone && !customers?.length && (await linkPortalContact(c.sub, phone))) {
-    ;({ data: customers } = await supabase.from('customers').select('id, name, type').order('name'))
-  }
+  // A contact added after this login existed (a new account for the same number) is linked on the
+  // next visit — the same rule trg_link_portal_user applies when a login is created.
+  if (phone) await linkPortalContacts(c.sub, phone)
+  const { data: customers } = await supabase.from('customers').select('id, name, type').order('name')
   const meta = (c.user_metadata ?? {}) as { full_name?: string }
   let name = meta.full_name ?? 'there'
   if (phone) {
@@ -31,44 +29,25 @@ export async function requirePortalUser(next?: string): Promise<PortalUser> {
 }
 
 /**
- * A quotation the signed-in person may view and approve. A customer sees theirs through RLS; a
- * PROSPECT has no portal access yet (my_customer_ids excludes prospects), so the quote they were
- * sent is released to them only when their verified phone is a contact of the quote's customer.
- * Read server-side with the service role, for that one quote only (deviation — see tracker).
+ * Can the signed-in person see (and so approve) this quotation? Decided by RLS alone: since
+ * ADR-016 a prospect account's contacts see its sent quotations like any customer.
  */
-export async function quoteForPortal(quoteId: string, user: PortalUser) {
+export async function canSeeQuote(quoteId: string): Promise<boolean> {
   const supabase = await createClient()
-  const own = await supabase.from('quotations').select('id').eq('id', quoteId).maybeSingle()
-  const admin = createAdminClient()
-  if (!own.data) {
-    if (!user.phone) return null
-    const { data: q } = await admin.from('quotations').select('customer_id, status').eq('id', quoteId).maybeSingle()
-    if (!q || ['draft', 'pending_approval'].includes(q.status)) return null
-    const { data: contact } = await admin.from('customer_contacts').select('id').eq('customer_id', q.customer_id).eq('phone', user.phone).eq('is_active', true).maybeSingle()
-    if (!contact) return null
-  }
-  return admin
+  const { data } = await supabase.from('quotations').select('id').eq('id', quoteId).maybeSingle()
+  return !!data
 }
 
-async function linkPortalContact(userId: string, phone: string): Promise<boolean> {
+async function linkPortalContacts(userId: string, phone: string) {
   const admin = createAdminClient()
-  const { data: contacts } = await admin.from('customer_contacts').select('id, customer:customers!inner(is_prospect)')
-    .eq('phone', phone).eq('is_active', true).is('user_id', null).eq('customers.is_prospect', false)
-  const ids = (contacts ?? []).map((x) => x.id)
-  if (!ids.length) return false
-  const { error } = await admin.from('customer_contacts').update({ user_id: userId }).in('id', ids)
-  return !error
+  await admin.from('customer_contacts').update({ user_id: userId }).eq('phone', phone).eq('is_active', true).is('user_id', null)
 }
 
-/** Quotations sent to this phone that are waiting for approval — prospects can't list them via RLS. */
-export async function quotesAwaitingPhone(phone: string | null) {
-  if (!phone) return []
-  const admin = createAdminClient()
-  const { data: contacts } = await admin.from('customer_contacts').select('customer_id').eq('phone', phone).eq('is_active', true)
-  const ids = (contacts ?? []).map((x) => x.customer_id)
-  if (!ids.length) return []
-  const { data } = await admin.from('quotations').select('id, quote_no, version, total, you_save, valid_until')
-    .in('customer_id', ids).eq('status', 'sent').order('created_at', { ascending: false })
+/** Quotations waiting for this person's approval (RLS: their accounts, sent only). */
+export async function quotesAwaitingApproval() {
+  const supabase = await createClient()
+  const { data } = await supabase.from('quotations').select('id, quote_no, version, total, you_save, valid_until')
+    .eq('status', 'sent').order('created_at', { ascending: false })
   return data ?? []
 }
 

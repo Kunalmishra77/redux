@@ -6,7 +6,8 @@ import { BeforeAfterGallery } from '@/components/marketing/before-after-gallery'
 import { EnquiryForm } from '@/components/marketing/enquiry-form'
 import { NumberedCard, PageHero, Section, SectionHeading, Steps } from '@/components/marketing/sections'
 import { GALLERY } from '@/lib/content/gallery'
-import { getEnquiryContext } from '@/lib/data/website'
+import { notFound } from 'next/navigation'
+import { getB2CEnabled, getEnquiryContext } from '@/lib/data/website'
 import { pageMetadata } from '@/lib/constants/site'
 
 // A6 — For Homes. Copy written in the voice of 01-website-copy.md (the doc has no A6 section yet);
@@ -22,6 +23,7 @@ export const metadata: Metadata = pageMetadata({
 const HOME_GALLERY_IDS = ['health_faucet-pvd_matte_black', 'basin_mixer-pvd_brushed_gold', 'spout-chrome']
 
 export default async function HomesPage() {
+  if (!(await getB2CEnabled())) notFound() // BR-B3: B2C is off
   const { cities, notice } = await getEnquiryContext()
   const gallery = HOME_GALLERY_IDS.map((id) => GALLERY.find((g) => g.id === id)!)
 

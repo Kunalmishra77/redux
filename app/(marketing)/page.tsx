@@ -303,7 +303,7 @@ export default async function HomePage() {
           <SectionHeading
             id="engagements"
             eyebrow="Selected restoration engagements"
-            title="Hotels and homes across NCR and beyond."
+            title="Hotels and businesses across NCR and beyond."
             intro="Hotel references are shared on request, for your property type. Read how an engagement runs from assessment to reopening."
           />
           <ul className="grid gap-4 sm:grid-cols-3">

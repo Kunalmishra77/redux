@@ -14,6 +14,8 @@ import type { EnquirerKind } from '@/lib/validators/enquiry'
 type Ctx = {
   cities: { id: string; name: string }[]
   noticeVersion: string | null
+  /** BR-B3 */
+  b2c: boolean
   open: (kind?: EnquirerKind) => void
 }
 
@@ -22,15 +24,18 @@ const EnquiryContext = React.createContext<Ctx | null>(null)
 export function EnquiryProvider({
   cities,
   noticeVersion,
+  b2c = false,
   children,
 }: {
   cities: { id: string; name: string }[]
   noticeVersion: string | null
+  b2c?: boolean
   children: React.ReactNode
 }) {
+  const fallback: EnquirerKind = b2c ? 'home' : 'hotel'
   const [state, setState] = React.useState<{ open: boolean; kind: EnquirerKind; path: string | null }>({
     open: false,
-    kind: 'home',
+    kind: fallback,
     path: null,
   })
   const pathname = usePathname()
@@ -38,8 +43,8 @@ export function EnquiryProvider({
   const isOpen = state.open && state.path === pathname
 
   const ctx = React.useMemo<Ctx>(
-    () => ({ cities, noticeVersion, open: (kind = 'home') => setState({ open: true, kind, path: pathname }) }),
-    [cities, noticeVersion, pathname],
+    () => ({ cities, noticeVersion, b2c, open: (kind = fallback) => setState({ open: true, kind, path: pathname }) }),
+    [cities, noticeVersion, b2c, fallback, pathname],
   )
 
   return (
@@ -65,7 +70,7 @@ export function EnquiryProvider({
 
 /** A CTA that is a link everywhere and a dialog trigger where the provider exists. */
 export function EnquiryLink({
-  kind = 'home',
+  kind,
   className,
   children,
   ...rest
@@ -87,4 +92,9 @@ export function EnquiryLink({
       {children}
     </Link>
   )
+}
+
+/** BR-B3: is the homeowner (B2C) offer on? Outside the provider: off. */
+export function useB2C(): boolean {
+  return React.useContext(EnquiryContext)?.b2c ?? false
 }

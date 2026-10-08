@@ -2,7 +2,8 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { quoteForPortal, requestContext, requirePortalUser } from '@/lib/data/portal'
+import { canSeeQuote, requestContext, requirePortalUser } from '@/lib/data/portal'
+import { createAdminClient } from '@/lib/supabase/admin'
 import type { Result } from '@/lib/result'
 
 // Customer portal actions (D13). The approval itself is verify_quote_otp() — one transaction that
@@ -22,8 +23,9 @@ const REASONS: Record<string, string> = {
 export async function requestApprovalOtpAction(quoteId: string): Promise<Result<{ otpId: string; demoCode?: string; phone: string }>> {
   const user = await requirePortalUser()
   if (!user.phone) return { ok: false, code: 'PHONE', message: 'Sign in with your mobile number to approve.' }
-  const admin = await quoteForPortal(quoteId, user)
-  if (!admin) return { ok: false, code: 'NOT_FOUND', message: 'Quotation not found.' }
+  // RLS decides visibility (ADR-016); the OTP functions themselves are server-only (service role)
+  if (!(await canSeeQuote(quoteId))) return { ok: false, code: 'NOT_FOUND', message: 'Quotation not found.' }
+  const admin = createAdminClient()
   const { data, error } = await admin.rpc('request_quote_otp', { p_quote: quoteId, p_phone: user.phone, p_channel: 'whatsapp' })
   if (error) return { ok: false, code: error.code ?? 'OTP', message: error.code === '53400' ? 'Too many codes requested — try again in an hour.' : error.code === '22023' ? REASONS.quote_not_approvable! : 'We couldn’t send a code. Try again.' }
   const r = data as { otp_id: string; code: string }
@@ -39,9 +41,10 @@ export async function requestApprovalOtpAction(quoteId: string): Promise<Result<
 }
 
 export async function verifyApprovalOtpAction(quoteId: string, otpId: string, code: string, approverName: string): Promise<Result<{ jobId: string } | { reason: string; attemptsLeft?: number }>> {
-  const user = await requirePortalUser()
-  const admin = await quoteForPortal(quoteId, user)
-  if (!admin) return { ok: false, code: 'NOT_FOUND', message: 'Quotation not found.' }
+  await requirePortalUser()
+  // RLS decides visibility (ADR-016); the OTP functions themselves are server-only (service role)
+  if (!(await canSeeQuote(quoteId))) return { ok: false, code: 'NOT_FOUND', message: 'Quotation not found.' }
+  const admin = createAdminClient()
   if (!/^\d{6}$/.test(code)) return { ok: false, code: 'CODE', message: 'Enter the 6-digit code.' }
   const ctx = await requestContext()
   const { data, error } = await admin.rpc('verify_quote_otp', {

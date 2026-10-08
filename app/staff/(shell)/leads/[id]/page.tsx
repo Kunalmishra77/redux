@@ -21,13 +21,14 @@ export default async function LeadDetailPage({ params }: PageProps<'/staff/leads
   const supabase = await createClient()
   const { data } = await supabase.from('leads')
     .select(`${LEAD_COLUMNS}, email, utm, ctwa_clid, meta_ad_id, meta_form_id, google_lead_id, lost_note,
-             campaign:campaigns(name), lost_reason:lost_reasons(name), previous_lead_id`)
+             campaign:campaigns(name), lost_reason:lost_reasons(name), previous_lead_id, customer_id, account:customers!leads_customer_id_fkey(name, is_prospect)`)
     .eq('id', id).maybeSingle()
   if (!data) notFound()
   const lead = data as unknown as LeadRow & {
     email: string | null; utm: Record<string, string> | null; ctwa_clid: string | null; meta_ad_id: string | null
     meta_form_id: string | null; google_lead_id: string | null; lost_note: string | null; campaign: { name: string } | null
     lost_reason: { name: string } | null; previous_lead_id: string | null
+    customer_id: string | null; account: { name: string; is_prospect: boolean } | null
   }
 
   const [lists, timeline, consents, openSurvey] = await Promise.all([
@@ -48,6 +49,9 @@ export default async function LeadDetailPage({ params }: PageProps<'/staff/leads
         <div>
           <h1 className="text-[28px] leading-tight font-semibold text-ink">{lead.property_name ?? lead.name}</h1>
           <p className="mt-1 text-sm text-muted-ink">{lead.name}{lead.enquirer_role ? ` · ${lead.enquirer_role}` : ''} · <span className="num">{lead.phone}</span>{lead.email ? ` · ${lead.email}` : ''}</p>
+          {lead.customer_id && lead.account && (
+            <Link href={`/staff/accounts/${lead.customer_id}`} className="mt-1.5 inline-flex items-center gap-1 text-sm font-medium text-redux-blue hover:underline">Account: {lead.account.name}{lead.account.is_prospect ? ' (prospect)' : ''} →</Link>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {st && <StatusPill tone={st.tone}>{st.label}</StatusPill>}

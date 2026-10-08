@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import { Mail, MapPin, Phone, ShieldCheck } from 'lucide-react'
 import { Logo } from '@/components/brand/logo'
-import { FOOTER_NAV, LEGAL_NAV, SITE } from '@/lib/constants/site'
+import { FOOTER_NAV, LEGAL_NAV, SITE, visibleNav } from '@/lib/constants/site'
 
 // Footer copy: 01-website-copy.md § Footer. The grievance-officer block is required by the Consumer
 // Protection (E-Commerce) Rules 2020 and Razorpay KYC looks for it — never remove it.
-export function SiteFooter({ legalName }: { legalName: string | null }) {
+export function SiteFooter({ legalName, b2c = false }: { legalName: string | null; b2c?: boolean }) {
   return (
     <footer className="bg-ink text-pale">
       <div className="mx-auto max-w-7xl px-4 pt-14 pb-28 sm:px-6 lg:px-8 lg:pb-12">
@@ -45,7 +45,7 @@ export function SiteFooter({ legalName }: { legalName: string | null }) {
               <nav key={col.title} aria-label={col.title}>
                 <p className="eyebrow text-white">{col.title}</p>
                 <ul className="mt-3 space-y-2 text-sm">
-                  {col.items.map((i) => (
+                  {visibleNav(col.items, b2c).map((i) => (
                     <li key={i.href}>
                       <Link href={i.href} className="hover:text-white hover:underline hover:underline-offset-4">
                         {i.label}

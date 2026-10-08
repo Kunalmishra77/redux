@@ -328,7 +328,7 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | New `whatsapp_messages` (inbox, both directions) and `team_notifications` (TN* in-app) | schema.sql had nowhere for D4-08 or in-app alerts | migration 001400 |
 | 2026-09-29 | CN9–CN13 and CN16 now have triggers (migration 001700); CN10 is one message per job step naming its rooms, not one per room; CN7 gets its job number when the job opens (001800) | The matrix listed them but nothing sent them — the customer heard nothing between approval and payment | migrations 001700–001800 |
 | 2026-09-29 | A portal login created while the customer was a prospect is linked on the next visit after conversion (app-side, same rule as `trg_link_portal_user`) | The trigger fires only on auth-user insert/phone change, so an approving prospect lost access to their own job | `lib/data/portal.ts` |
-| 2026-09-29 | **A prospect approves the quote in the portal**: `/portal/quotes/[id]` is released to a signed-in user whose verified phone is an active contact of the quote's customer, read server-side with the service role for that one quote | The spec sends the quote to a prospect, but `my_customer_ids()` excludes prospects (no portal access before approval) — the approval screen was unreachable | `lib/data/portal.ts` |
+| 2026-09-29 | ~~**A prospect approves the quote in the portal**~~ — *resolved 8 Oct 2026 by ADR-016 (account membership); the service-role read is removed*: `/portal/quotes/[id]` is released to a signed-in user whose verified phone is an active contact of the quote's customer, read server-side with the service role for that one quote | The spec sends the quote to a prospect, but `my_customer_ids()` excludes prospects (no portal access before approval) — the approval screen was unreachable | `lib/data/portal.ts` |
 | 2026-09-29 | Storage: six buckets per 05-storage-media §1 with object policies keyed to the record the path names; no update/delete policy | The schema had no storage section; the surveyor app could not upload | migration 001600 |
 | 2026-09-29 | Surveyor app writes straight to Supabase (PostgREST/RPC/Storage) under RLS instead of `/api/mobile/*` | Same rules enforced by RLS + idempotent functions; the route layer adds nothing for the demo | mobile/ |
 | 2026-09-29 | Surveyor app: image-picker camera (+ gallery for the demo); no burned-in corner stamp, onboarding screen or foreground upload service | Not possible in Expo Go; GPS/time are stored in columns. Needed for the production build | mobile/ |
@@ -498,4 +498,12 @@ Append one line per working session. This is how the next session (or the next p
             referral 5% + credit-on-payment + extra fit per 3, same-chain counts, no stacking,
             WhatsApp + email, four customer reports). ADR-015…018, BR-B/SC/S9–S11/D/R/C,
             glossary, D24–D33, backlog E18–E27. Next: CR phase 1 (E18).
+
+2026-10-08  CR-001 PHASE 1 (E18) built: migration 20261008001900_accounts (segments, groups,
+            account fields, contact roles, lead→account link with repeat-business trigger, B2C
+            switch, prospect access, v_account_timeline, account_activities) — CI green, on
+            staging, 411/411 pgTAP. App: portal uses RLS only (canSeeQuote), website hides B2C
+            from nav/forms/sitemap and /homes, Accounts list + account page (verify, profile,
+            group, owner, timeline, log activity), lead → account link. Awaiting approval of
+            phase 1 before phase 2.
 ```

@@ -6,14 +6,14 @@ import { pageMetadata } from '@/lib/constants/site'
 export const metadata: Metadata = pageMetadata({
   title: 'Book a free assessment',
   description:
-    'Book a free, no-obligation assessment of your bathroom fittings. We call within 2 working hours to arrange a visit — homes and hotels across Delhi NCR.',
+    'Book a free, no-obligation assessment of the bathroom fittings in your hotel or building. We call within 2 working hours to arrange it.',
   path: '/book-assessment',
 })
 
 export default function BookAssessmentPage() {
   return (
     <EnquiryPage
-      kind="home"
+      kind="hotel"
       path="/book-assessment"
       crumb="Book free assessment"
       eyebrow="Free · no obligation"

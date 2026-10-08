@@ -5,7 +5,8 @@ import { ArrowLeft, BadgeCheck } from 'lucide-react'
 import { formatWhen, Money } from '@/components/patterns'
 import { QuoteDocument, type QuoteDoc } from '@/components/features/quotes/quote-document'
 import { QUOTE_DOC_COLUMNS, loadSupplier } from '@/lib/data/quotes'
-import { quoteForPortal, requirePortalUser } from '@/lib/data/portal'
+import { canSeeQuote, requirePortalUser } from '@/lib/data/portal'
+import { createClient } from '@/lib/supabase/server'
 import { ApprovePanel } from './approve-panel'
 import { nowMs } from '@/lib/services/clock'
 
@@ -16,8 +17,8 @@ export const metadata: Metadata = { title: 'Your quotation' }
 export default async function PortalQuote({ params }: PageProps<'/portal/quotes/[id]'>) {
   const { id } = await params
   const user = await requirePortalUser(`/portal/quotes/${id}`)
-  const client = await quoteForPortal(id, user)
-  if (!client) notFound()
+  if (!(await canSeeQuote(id))) notFound()
+  const client = await createClient()
   const [{ data }, supplier, { data: approval }] = await Promise.all([
     client.from('quotations').select(QUOTE_DOC_COLUMNS).eq('id', id).single(),
     loadSupplier(),

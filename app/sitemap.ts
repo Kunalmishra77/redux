@@ -2,9 +2,11 @@ import type { MetadataRoute } from 'next'
 import { CASE_STUDIES } from '@/lib/content/case-studies'
 import { SERVICE_SLUGS } from '@/lib/content/services'
 import { SITE } from '@/lib/constants/site'
+import { getB2CEnabled } from '@/lib/data/website'
 
 // SEO plan §3: auto-generated, includes case studies. Conversion and legal pages are listed but low priority.
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const b2c = await getB2CEnabled()
   const page = (path: string, priority: number, changeFrequency: 'weekly' | 'monthly' | 'yearly' = 'monthly') => ({
     url: `${SITE.url}${path}`,
     changeFrequency,
@@ -15,7 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('', 1, 'weekly'),
     page('/hotels', 0.9),
     ...SERVICE_SLUGS.map((s) => page(`/services/${s}`, 0.8)),
-    page('/homes', 0.8),
+    ...(b2c ? [page('/homes', 0.8)] : []),
     page('/dealers', 0.6),
     page('/why-redux', 0.7),
     page('/work', 0.7, 'weekly'),

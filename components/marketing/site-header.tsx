@@ -15,12 +15,14 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { EnquiryLink } from '@/components/marketing/enquiry-dialog'
-import { MAIN_NAV, PRIMARY_CTA, SECONDARY_CTA, SERVICE_NAV, SITE, whatsappHref } from '@/lib/constants/site'
+import { MAIN_NAV, PRIMARY_CTA, SECONDARY_CTA, SERVICE_NAV, SITE, visibleNav, whatsappHref } from '@/lib/constants/site'
+import { useB2C } from '@/components/marketing/enquiry-dialog'
 
 const isActive = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`)
 
 export function SiteHeader() {
   const pathname = usePathname()
+  const nav = visibleNav(MAIN_NAV, useB2C()) // BR-B3
   const servicesActive = pathname.startsWith('/services')
 
   return (
@@ -55,7 +57,7 @@ export function SiteHeader() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          {MAIN_NAV.map((item) => (
+          {nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -101,7 +103,7 @@ export function SiteHeader() {
                   </MobileLink>
                 ))}
                 <p className="eyebrow px-2 pt-4 pb-1 text-faint">REDUX</p>
-                {MAIN_NAV.map((s) => (
+                {nav.map((s) => (
                   <MobileLink key={s.href} href={s.href} active={isActive(pathname, s.href)}>
                     {s.label}
                   </MobileLink>

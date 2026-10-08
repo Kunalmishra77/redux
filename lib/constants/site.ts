@@ -35,7 +35,10 @@ export const SITE = {
 export const PRIMARY_CTA = 'Book free assessment'
 export const SECONDARY_CTA = 'Dealer enquiry'
 
-export type NavItem = { href: string; label: string; description?: string }
+export type NavItem = { href: string; label: string; description?: string; b2c?: boolean }
+
+/** BR-B3: B2C items show only while settings.b2c_enabled is on. */
+export const visibleNav = (items: NavItem[], b2c: boolean) => items.filter((i) => b2c || !i.b2c)
 
 export const SERVICE_NAV: NavItem[] = [
   { href: '/services/restore-function', label: 'Restore function', description: 'Leaks, worn internal parts, stiff controls' },
@@ -45,7 +48,7 @@ export const SERVICE_NAV: NavItem[] = [
 
 export const MAIN_NAV: NavItem[] = [
   { href: '/hotels', label: 'For hotels' },
-  { href: '/homes', label: 'For homes' },
+  { href: '/homes', label: 'For homes', b2c: true },
   { href: '/work', label: 'Our work' },
   { href: '/process', label: 'Process' },
   { href: '/why-redux', label: 'Why REDUX' },
@@ -57,7 +60,7 @@ export const FOOTER_NAV: { title: string; items: NavItem[] }[] = [
     title: 'Who we work with',
     items: [
       { href: '/hotels', label: 'Hotels' },
-      { href: '/homes', label: 'Homes' },
+      { href: '/homes', label: 'Homes', b2c: true },
       { href: '/dealers', label: 'Dealers' },
     ],
   },

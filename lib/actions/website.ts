@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { ingestLead } from '@/lib/leads/ingest'
+import { getB2CEnabled } from '@/lib/data/website'
 import { clientIp, toConsent, toLeadIntake, type Attribution } from '@/lib/services/enquiry'
 import { enquirySchema, fieldErrors } from '@/lib/validators/enquiry'
 import type { Database } from '@/types/database'
@@ -34,6 +35,11 @@ export async function submitEnquiryAction(
       message: 'Please check the highlighted fields.',
       fields: fieldErrors(parsed.error),
     }
+  }
+
+  // BR-B3: the database refuses a home enquiry while B2C is off; say so plainly instead of failing
+  if (parsed.data.kind === 'home' && !(await getB2CEnabled())) {
+    return { ok: false, code: 'B2C_OFF', message: 'We currently work with hotels and businesses. Choose Hotel or Dealer to continue.', fields: {} }
   }
 
   const h = await headers()

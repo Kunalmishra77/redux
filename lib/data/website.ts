@@ -62,3 +62,13 @@ export const getLegalName = cache(async (): Promise<string | null> => {
     return null
   }
 })
+
+// BR-B3: homeowner (B2C) offers on the public site. Off unless the setting says otherwise.
+export const getB2CEnabled = cache(async (): Promise<boolean> => {
+  try {
+    const { data } = await createAdminClient().from('settings').select('value').eq('key', 'b2c_enabled').abortSignal(deadline()).maybeSingle()
+    return data?.value === true || data?.value === 'true'
+  } catch {
+    return false
+  }
+})
