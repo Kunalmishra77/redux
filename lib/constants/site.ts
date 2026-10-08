@@ -62,6 +62,8 @@ export const FOOTER_NAV: { title: string; items: NavItem[] }[] = [
       { href: '/hotels', label: 'Hotels' },
       { href: '/homes', label: 'Homes', b2c: true },
       { href: '/dealers', label: 'Dealers' },
+      { href: '/register', label: 'Create a business account' },
+      { href: '/portal/login', label: 'Customer sign in' },
     ],
   },
   {

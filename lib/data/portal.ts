@@ -5,7 +5,14 @@ import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
-export type PortalUser = { id: string; phone: string | null; name: string; customerIds: string[]; customers: { id: string; name: string; type: string }[] }
+export type PortalAccount = { id: string; name: string; type: string; is_prospect: boolean; verified_at: string | null }
+export type PortalUser = {
+  id: string; phone: string | null; name: string; customerIds: string[]; customers: PortalAccount[]
+  /** BR-B2: full history and reports need a verified account */
+  verified: boolean
+  /** accounts where this person is an admin contact (may invite colleagues) */
+  adminOf: string[]
+}
 
 /** The signed-in portal user and the accounts they are a contact of (my_customer_ids, ADR-016). */
 export async function requirePortalUser(next?: string): Promise<PortalUser> {
@@ -18,14 +25,20 @@ export async function requirePortalUser(next?: string): Promise<PortalUser> {
   // A contact added after this login existed (a new account for the same number) is linked on the
   // next visit — the same rule trg_link_portal_user applies when a login is created.
   if (phone) await linkPortalContacts(c.sub, phone)
-  const { data: customers } = await supabase.from('customers').select('id, name, type').order('name')
+  const { data: customers } = await supabase.from('customers').select('id, name, type, is_prospect, verified_at').order('name')
+  const { data: mine } = await supabase.from('customer_contacts').select('customer_id, is_admin').eq('user_id', c.sub).eq('is_active', true)
   const meta = (c.user_metadata ?? {}) as { full_name?: string }
   let name = meta.full_name ?? 'there'
   if (phone) {
     const { data: contact } = await supabase.from('customer_contacts').select('name').eq('phone', phone).limit(1).maybeSingle()
     if (contact?.name) name = contact.name
   }
-  return { id: c.sub, phone, name, customerIds: (customers ?? []).map((x) => x.id), customers: customers ?? [] }
+  const list = (customers ?? []) as PortalAccount[]
+  return {
+    id: c.sub, phone, name, customerIds: list.map((x) => x.id), customers: list,
+    verified: list.some((x) => !!x.verified_at),
+    adminOf: (mine ?? []).filter((m) => m.is_admin).map((m) => m.customer_id),
+  }
 }
 
 /**

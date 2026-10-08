@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { canSeeQuote, requestContext, requirePortalUser } from '@/lib/data/portal'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { normalisePhone } from '@/lib/services/phone'
 import type { Result } from '@/lib/result'
 
 // Customer portal actions (D13). The approval itself is verify_quote_otp() — one transaction that
@@ -111,3 +112,56 @@ export async function exportMyDataAction(customerId: string): Promise<Result<{ j
   return { ok: true, data: { json } }
 }
 
+
+/**
+ * D25 "Request again": a past job's property comes back as a new enquiry from the portal, linked to
+ * the account (BR-B1) with the fittings from that job listed for the team. The job must be visible to
+ * the caller (RLS) before anything is created.
+ */
+export async function requestRepeatAction(jobId: string, note: string): Promise<Result<null>> {
+  const user = await requirePortalUser()
+  if (!user.phone) return { ok: false, code: 'PHONE', message: 'Sign in with your mobile number to make a request.' }
+  const supabase = await createClient()
+  const { data: job } = await supabase.from('jobs')
+    .select('id, job_no, property_id, customer_id, property:properties(name, city_id), quote:quotations(lines:quotation_lines(unit_label, description))')
+    .eq('id', jobId).maybeSingle()
+  if (!job) return { ok: false, code: 'NOT_FOUND', message: 'That job isn’t on your account.' }
+  const j = job as unknown as { job_no: string; property_id: string; customer_id: string; property: { name: string; city_id: string | null } | null; quote: { lines: { unit_label: string | null; description: string }[] } | null }
+  const { data: account } = await supabase.from('customers').select('type, size_units').eq('id', j.customer_id).single()
+  const admin = createAdminClient()
+  const { error } = await admin.rpc('ingest_lead', {
+    p_lead: {
+      source: 'portal', phone: user.phone, name: user.name, city_id: j.property?.city_id ?? undefined,
+      customer_type: account?.type ?? 'other', property_name: j.property?.name, unit_count: account?.size_units ?? undefined,
+      raw_payload: {
+        form: 'repeat_request', repeat_of_job: j.job_no, property_id: j.property_id, note: note.trim() || null,
+        fittings: (j.quote?.lines ?? []).map((l) => `${l.unit_label ?? ''} ${l.description}`.trim()).slice(0, 60),
+      },
+    },
+  })
+  if (error) return { ok: false, code: error.code ?? 'FAILED', message: 'We couldn’t send the request. Please try again.' }
+  revalidatePath('/portal', 'layout')
+  return { ok: true, data: null }
+}
+
+// D25 colleagues: invite_contact / deactivate_contact enforce "account admin only" in the database
+export async function inviteColleagueAction(customerId: string, name: string, rawPhone: string, role: string): Promise<Result<null>> {
+  await requirePortalUser()
+  const phone = normalisePhone(rawPhone)
+  if (!phone || !/^\+91[6-9]\d{9}$/.test(phone)) return { ok: false, code: 'PHONE', message: 'Enter a 10-digit Indian mobile number.' }
+  if (name.trim().length < 2) return { ok: false, code: 'NAME', message: 'Enter their name.' }
+  const supabase = await createClient()
+  const { error } = await supabase.rpc('invite_contact', { p_customer: customerId, p_name: name.trim(), p_phone: phone, p_role: role || undefined })
+  if (error) return { ok: false, code: error.code ?? 'FAILED', message: error.code === '42501' ? 'Only an account admin can add colleagues.' : 'We couldn’t add them. Try again.' }
+  revalidatePath('/portal/team')
+  return { ok: true, data: null }
+}
+
+export async function removeColleagueAction(contactId: string): Promise<Result<null>> {
+  await requirePortalUser()
+  const supabase = await createClient()
+  const { error } = await supabase.rpc('deactivate_contact', { p_contact: contactId })
+  if (error) return { ok: false, code: error.code ?? 'FAILED', message: error.code === '22023' ? error.message : 'We couldn’t remove them. Try again.' }
+  revalidatePath('/portal/team')
+  return { ok: true, data: null }
+}

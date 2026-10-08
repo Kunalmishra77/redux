@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/server'
 
 const ENTITY_HREF: Record<string, (id: string) => string> = {
   leads: (id) => `/staff/leads/${id}`,
+  customers: (id) => `/staff/accounts/${id}`,
   surveys: (id) => `/staff/surveys/${id}`,
   quotations: (id) => `/staff/quotes/${id}`,
   discount_approvals: () => '/staff/admin/discounts',

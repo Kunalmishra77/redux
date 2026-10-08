@@ -13,8 +13,9 @@ import { PayButton } from './invoices/pay-button'
 export const metadata: Metadata = { title: 'My REDUX' }
 
 // D2s — active job, quotes to approve, invoices to pay, warranty, before/after, raise a request.
-export default async function PortalHome() {
+export default async function PortalHome({ searchParams }: PageProps<'/portal'>) {
   const user = await requirePortalUser()
+  const { welcome } = await searchParams
   const supabase = await createClient()
   const [{ data: jobs }, { data: quotes }, { data: invoices }, { data: warranties }, fittings] = await Promise.all([
     supabase.from('jobs').select('id, job_no, status, current_stage, is_pilot, customer:customers(type), property:properties(name), units:job_units(status)').order('created_at', { ascending: false }),
@@ -37,6 +38,14 @@ export default async function PortalHome() {
         <p className="eyebrow text-redux-blue">Namaste</p>
         <h1 className="mt-1 text-2xl font-semibold text-ink md:text-[28px]">Hello, {first}</h1>
       </div>
+
+      {(welcome || !user.verified) && (
+        <section className="rounded-xl border border-redux-blue/20 bg-select p-5">
+          <p className="font-semibold text-ink">{welcome ? 'Your business account is ready.' : 'Your account is being verified.'}</p>
+          <p className="mt-1 text-sm text-muted-ink">You can raise an enquiry and approve proposals now. REDUX verifies new accounts within a working day; your full history and reports open then. Add your colleagues from <a href="/portal/team" className="font-medium text-redux-blue hover:underline">Team</a>.</p>
+          <a href="/book-assessment" className="mt-3 inline-block text-sm font-semibold text-redux-blue hover:underline">Request an assessment →</a>
+        </section>
+      )}
 
       {(quotes ?? []).map((q) => (
         <Link key={q.id} href={`/portal/quotes/${q.id}`} className="flex items-center gap-4 rounded-xl border-2 border-redux-blue bg-white p-5 shadow-card transition hover:bg-select">

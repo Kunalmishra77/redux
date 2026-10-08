@@ -72,3 +72,18 @@ export const getB2CEnabled = cache(async (): Promise<boolean> => {
     return false
   }
 })
+
+export type Segment = { code: string; name: string }
+
+// CR-001 phase 2: business types offered on registration (B2C ones only while b2c_enabled)
+export const getSegments = cache(async (): Promise<Segment[]> => {
+  try {
+    const b2c = await getB2CEnabled()
+    let q = createAdminClient().from('segments').select('code, name').eq('is_active', true).order('sort_order').abortSignal(deadline())
+    if (!b2c) q = q.eq('is_b2c', false)
+    const { data } = await q
+    return (data ?? []) as Segment[]
+  } catch {
+    return []
+  }
+})

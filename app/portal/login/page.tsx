@@ -17,6 +17,7 @@ export default async function PortalLogin({ searchParams }: PageProps<'/portal/l
             <h1 className="text-xl font-semibold text-ink">Your REDUX portal</h1>
             <p className="mt-1 text-sm text-muted-ink">Track your restoration, approve quotations, pay invoices and keep your warranty cards.</p>
             <LoginForm next={typeof next === 'string' ? next : undefined} demo={demo} />
+            <p className="mt-5 border-t border-line pt-4 text-center text-sm text-muted-ink">New to REDUX? <a href="/register" className="font-semibold text-redux-blue hover:underline">Create a business account</a></p>
           </div>
           {demo && (
             <div className="mt-5 rounded-lg border border-dashed border-line bg-white/60 p-4 text-xs text-muted-ink">

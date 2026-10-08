@@ -2027,6 +2027,9 @@ isOneToOne: false
 "customer_contact":
 { Args: { "p_customer": string }; Returns: Record<string, unknown>
                            },
+"deactivate_contact":
+{ Args: { "p_contact": string }; Returns: undefined
+                           },
 "decide_discount":
 { Args: { "p_approval": string,"p_approve": boolean,"p_note"?: string }; Returns: undefined
                            },
@@ -2068,6 +2071,12 @@ isOneToOne: false
                            },
 "install_schedules":
 { Args: Record<PropertyKey, never>; Returns: undefined
+                           },
+"invite_contact":
+{ Args: { "p_admin"?: boolean,"p_customer": string,"p_name": string,"p_phone": string,"p_role"?: string }; Returns: string
+                           },
+"is_account_admin":
+{ Args: { "p_customer": string }; Returns: boolean
                            },
 "is_my_survey_lead":
 { Args: { "p_lead_id": string }; Returns: boolean
@@ -2143,6 +2152,9 @@ isOneToOne: false
                            },
 "record_webhook":
 { Args: { "p_event_type": string,"p_external_id": string,"p_payload": Json,"p_signature_ok": boolean,"p_source": Database["public"]['Enums']["webhook_source"] }; Returns: Json
+                           },
+"register_business":
+{ Args: { "p": Json,"p_consent": Json }; Returns: Json
                            },
 "request_quote_otp":
 { Args: { "p_channel": Database["public"]['Enums']["msg_channel"],"p_phone": string,"p_quote": string }; Returns: Json
