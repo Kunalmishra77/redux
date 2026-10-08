@@ -506,4 +506,13 @@ Append one line per working session. This is how the next session (or the next p
             from nav/forms/sitemap and /homes, Accounts list + account page (verify, profile,
             group, owner, timeline, log activity), lead → account link. Awaiting approval of
             phase 1 before phase 2.
+
+2026-10-08  CR-001 PHASE 2 (E19) built: migration 20261008002000_registration (register_business,
+            invite/deactivate contact, CN19 portal_invite, TN16, 'portal' source) — CI green, on
+            staging, pgTAP 19 (14). App: /register (details + mobile code), shared phone OTP module,
+            portal History tabs, Team, Request again, assessment/completion/warranty reports
+            (A4, print-to-PDF; Gotenberg in production), verification gating (BR-B2), welcome
+            banner. Verified live over HTTP with real sessions (browser on this machine can't
+            open any site). Demo account "Hotel Silver Lotus" (unverified) left on staging.
+            Demo report waits for demos (phase 5). Awaiting approval of phase 2 before phase 3.
 ```
