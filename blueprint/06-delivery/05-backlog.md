@@ -339,3 +339,55 @@ Story IDs are stable. Use them in commits (`feat(E4-S03): source tagging`), in P
 | D23 | E7-S08, E13-S05, E17-S06/S07 |
 
 **All 23 deliverables covered.**
+
+---
+
+# CR-001 — B2B customer lifecycle *(added 8 Oct 2026)*
+
+Design: `../08-change-requests/CR-001-b2b-customer-lifecycle.md`. Each epic is one CR phase and
+is approved on staging before the next starts.
+
+## E18 · Account foundation · CR phase 1 · **D24**
+
+| ID | Story | Done when |
+|---|---|---|
+| E18-S01 | `segments` master and `customer_groups`; `customers` + `kind`, `group_id`, `segment_id`, `legal_name`, `size_units`, `account_owner_id`, `tier`, `verified_at`; existing rows migrated (hotel/dealer → business, home → individual) | Migration + RLS + pgTAP; demo data migrated |
+| E18-S02 | `customer_contacts` + `role_code`, `is_admin`, `invited_by` | Columns + policy tests |
+| E18-S03 | `leads` + `customer_id`, `business_name`, `segment_id`, `estimated_units`, `estimated_value`, `pincode`, `score`, `tier`, `assessment_mode`, `demo_offer`; a repeat enquiry from a known contact links the account (BR-B1) | `ingest_lead` links; pgTAP |
+| E18-S04 | Account-membership access (ADR-016): `my_customer_ids()` includes prospects; every customer policy reviewed for the prospect case; portal service-role workaround removed | pgTAP prospect matrix; golden path green |
+| E18-S05 | `v_account_timeline` view + `account_activities` (ADR-017) | Timeline for an account matches its events; RLS respected |
+| E18-S06 | B2C switch (BR-B3): `b2c_enabled` setting; public site hides home pages/options; public ingest refuses home-type leads while off | Website has no Home option; setting on → back |
+| E18-S07 | Staff **Accounts**: list + account page (profile, group, segment, contacts, properties, timeline) | Page live with demo data; empty states |
+
+## E19 · Accounts & portal · CR phase 2 · **D25**
+Registration (open + verify, BR-B2) · colleagues · history tabs · repeat request · reports
+(assessment, demo, completion, warranty) via Gotenberg.
+
+## E20 · Account 360° CRM · CR phase 3 · **D26**
+Account 360° page · lead page tier/score/decision panel · salesperson/account owner · follow-up history.
+
+## E21 · Scoring & assessment engine · CR phase 4 · **D27**
+`scoring_rules`, thresholds, `lead_scores`, `pincodes`, `service_areas`, `assessment_policies`,
+`score_lead`, `decide_assessment`, overrides · self-assessment mode (ADR-015) with the four-slot
+wizard, reviewer queue, 24 h SLA (BR-S9…S11).
+
+## E22 · Demos · CR phase 5 · **D28**
+`demo_types`, `demos`, Super Admin approval, demo jobs (`jobs.kind`), cost, warranty, feedback,
+conversion (BR-D1…D4).
+
+## E23 · Referrals & rewards · CR phase 6 · **D29**
+Codes/links, capture, 5% referred benefit, credit-on-payment + extra fit per 3 conversions, ledger,
+redemption, portal and reports (BR-R1…R6).
+
+## E24 · Catalog · CR phase 7 · **D30**
+Categories, products, media, import, website catalog, links to quotes/fittings/demos/stock.
+
+## E25 · Process content & premium website · CR phase 8 · **D31**
+Process story, B2B information architecture, redesign of key pages after design sign-off.
+
+## E26 · Follow-up & outreach · CR phase 9 · **D32**
+Offers, cadences, audiences, consent gate, WhatsApp + email sending, reactivation (BR-C1…C3).
+
+## E27 · Lifecycle reporting · CR phase 10 · **D33**
+Tier, assessment, demo, referral, repeat, campaign and product reports; exports.
+

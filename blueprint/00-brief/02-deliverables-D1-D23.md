@@ -193,3 +193,23 @@ blockers in `../06-delivery/09-risk-register.md`:
 | Phase 2 — Survey & quote | D7, D8, D9, D10, D11, D12 | Thu 18 Feb 2027 |
 | Phase 3 — Retain & control | D13, D14, D15, D16, D17, D18 | Thu 25 Mar 2027 |
 | Project services (run across all phases) | D19, D20, D21, D22, D23 | Continuous; final handover Thu 9 Apr 2027 |
+
+---
+
+## CR-001 — B2B customer lifecycle *(added 8 Oct 2026; change order in progress)*
+
+Approved to start on 8 Oct 2026. Full design: `../08-change-requests/CR-001-b2b-customer-lifecycle.md`.
+
+| # | Deliverable | CR phase |
+|---|---|---|
+| D24 | B2B account model & account timeline | 1 |
+| D25 | Business accounts & extended customer portal (registration, history, reports, repeat request) | 2 |
+| D26 | Account 360° CRM profiling | 3 |
+| D27 | Lead scoring, assessment decision engine & self-assessment | 4 |
+| D28 | Demo programme management | 5 |
+| D29 | Referral & reward system | 6 |
+| D30 | Product catalog | 7 |
+| D31 | Process content & premium website redesign | 8 |
+| D32 | Follow-up cadences & outreach campaigns | 9 |
+| D33 | Lifecycle reporting | 10 |
+

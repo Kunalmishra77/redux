@@ -9,9 +9,10 @@ Where a word has a REDUX meaning that differs from the everyday one, it is marke
 |---|---|---|
 | **Lead** | An enquiry from any channel, before qualification | `leads` |
 | **Source** | The channel a lead came from (website, meta_lead_ad, whatsapp_chat, whatsapp_campaign, google_ads, dealer, call, walk_in) | `lead_sources.code` |
-| **Qualified lead** ⚠ | A lead a Care Executive has spoken to *and* booked a free survey for. Not "interested" — **booked**. | `leads.status = 'survey_booked'` |
-| **Free survey / assessment** | REDUX's free on-site audit. Never charged. The deck calls it *property assessment*. | `surveys` |
-| **Pilot** ⚠ | A trial bathroom done at agreed cost/timing before a hotel approves a wider project. A real commercial stage, not a demo. | `jobs.is_pilot` |
+| **Qualified lead** ⚠ | A lead a Care Executive has spoken to *and* booked an assessment for (on-site or self). Not "interested" — **booked**. | `leads.status = 'survey_booked'` |
+| **Free survey / assessment** | REDUX's free audit. Never charged. *(CR-001)* Offered by **mode**: on-site, self-assessment or video, decided by tier and distance. The deck calls it *property assessment*. | `surveys`, `surveys.mode` |
+| **Pilot** ⚠ | A trial bathroom done at agreed cost/timing before a hotel approves a wider project. A real commercial stage, **not a demo**. | `jobs.kind = 'pilot'` (`jobs.is_pilot`) |
+| **Demo** ⚠ | *(CR-001)* **Free** work to prove quality: a **room demo** (tier A) or a **single-fitting demo** (tier B). Super Admin approved; internal cost recorded. Never call a demo a pilot | `demos`, `jobs.kind = 'demo'` |
 | **Wider project** | The full multi-room job approved after a successful pilot | `jobs.parent_job_id` |
 | **Quotation** | The priced proposal generated from the audit | `quotations` |
 | **Job** | Approved work, created automatically when a quotation is OTP-approved | `jobs` |
@@ -70,3 +71,20 @@ Permission detail: `../02-product/01-roles-permissions.md`.
 | "Refurbishment" | Restoration | Client's brand word |
 | "Site visit" | Free survey / assessment | The word "free" is the offer |
 | "Inspection" | Audit | Matches the deck's *audit record* |
+
+## B2B lifecycle — CR-001 *(added 8 Oct 2026)*
+
+| Term | Meaning | Code / DB name |
+|---|---|---|
+| **Account** | One buying business entity — a hotel branch, a building, a company. Replaces "customer" in B2B conversation; the DB keeps `customers` | `customers` (`kind = 'business'`) |
+| **Group** | A chain or brand that owns several accounts (e.g. a hotel group). Internal only — branches do not see each other | `customer_groups` |
+| **Segment** | The kind of business: hotel, hospital, office, residential society, restaurant, club … | `segments` |
+| **Verified account** | An account REDUX has checked; unlocks full history and reports | `customers.verified_at` |
+| **Score / Tier** | Points from the scoring rules → **A** (high value), **B** (medium), **C** (low). Decides assessment mode and demo offer | `leads.score`, `leads.tier`, `lead_scores` |
+| **Self-assessment** | The customer photographs their fittings (all four slots) through the website; a REDUX reviewer prices them. A survey in `self` mode | `surveys.mode = 'self'` |
+| **Reviewer** | The staff member who prices a self-assessment | `surveys.reviewer_id` |
+| **Referral** | One account introducing another. Separate from the lead's source | `referrals` |
+| **Reward** | What a referrer earns — credit or an **extra fit** (a free fitting) — kept in a ledger | `rewards` |
+| **Offer** | A time-boxed commercial benefit used in outreach | `offers` |
+| **Outreach campaign** | A consented WhatsApp/email message to a chosen audience. Not the same as an **ad campaign** (Meta/Google spend, `campaigns`) | `outreach_campaigns` |
+

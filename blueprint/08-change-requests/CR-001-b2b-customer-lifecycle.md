@@ -1,6 +1,7 @@
 # CR-001 — B2B Customer Lifecycle Platform
 
-**Status:** Draft — awaiting client decisions (§9) and contract sign-off (§10)
+**Status:** Approved to start (8 Oct 2026) — decisions in §9; change-order paperwork runs in parallel (§10).
+Work proceeds phase by phase; each phase is shown on staging and approved before the next starts.
 **Raised:** 8 Oct 2026, after the client demo
 **Scope:** new work beyond D1–D23. Nothing here is built until it has an approved CR deliverable
 number (CLAUDE.md rule 10).
@@ -94,7 +95,7 @@ see. A small `account_activities` table holds manual entries (meetings, visits) 
 |---|---|
 | Register | Website "Create business account": business name, segment, city/pincode, contact name, mobile (OTP), email, GSTIN (optional), how they heard + **referred by**. Creates `customers` (prospect) + contact + lead in one transaction (`register_business()`), with consent |
 | Login / logout | Phone OTP (existing). Email magic link as a second option. Session per contact |
-| Colleagues & branches | Account admin invites colleagues by phone; group view across branches for a `customer_groups` admin contact |
+| Colleagues | Account admin invites colleagues by phone. Each branch is its own account; there is no cross-branch view for customers (Q3) |
 | Dashboard | Active work, quotes to approve, invoices due, demos, assessments in progress |
 | History | Tabs: Enquiries · Assessments (on-site and self) · Demos · Proposals · Orders/Jobs · Work done (rooms × fittings, before/after) · Invoices & payments · Warranty · Service · Referrals & rewards. All from `v_account_timeline` + existing tables |
 | Reports | Downloadable PDFs: assessment report, demo report, completion/handover report (before/after per room), warranty certificate, invoice. Rendered by **Gotenberg** from the same React document components (ADR-010) |
@@ -142,7 +143,7 @@ override with a reason.
 | `surveyor_id` | nullable for `self`; new `reviewer_id` (the staff member who prices it) |
 | Check-in / geofence | not applicable to `self` (constraint by mode) |
 | Who writes fittings & photos | for `self`: the customer contact, through RLS on their own open self-survey; upload via **signed upload URLs** to `survey-photos` (same path scheme) |
-| Photo slots | `self_photo_slots_required` setting (e.g. 2: front + close-up) instead of 4 |
+| Photo slots | all four slots, same as the surveyor (Q7); `self_photo_slots_required` stays a setting |
 | Catalog-guided capture | the wizard asks "which product is this?" from the catalog (§3.7) with pictures, then quantity, finish, condition, photos |
 | Review | staff reviewer sees submitted items, may ask for more photos (status `needs_info` + WhatsApp), then prices with the same `upsert_assessment` |
 | Output | **Assessment report** (PDF) to the customer + the normal `create_quote_from_survey` |
@@ -278,7 +279,7 @@ Every function: SECURITY DEFINER where it crosses RLS, identity from JWT claims
 | Area | New / changed screens |
 |---|---|
 | Website | B2B IA, `/products/*`, `/process`, `/assessment` (how it works by mode), `/demo-programme`, `/referral-programme`, `/register`, `/r/[code]`, self-assessment wizard (phone-first, camera capture), premium redesign of home/hotels/case studies |
-| Customer portal | Account dashboard, history tabs, reports, "Request again", self-assessment status, demos, referrals & rewards, colleagues, branches |
+| Customer portal | Account dashboard, history tabs, reports, "Request again", self-assessment status, demos, referrals & rewards, colleagues |
 | Staff CRM | Account 360° page (profile, group, branches, contacts, tier + score breakdown, timeline, money, referrals), lead page with tier/assessment decision/demo offer, self-assessment review queue, demo board, referral queue, campaign builder, cadence tasks |
 | Admin | Scoring rules + thresholds, assessment policy matrix, service areas, demo types, referral benefits & reward rules, offers, segments, catalog, B2C switch |
 | Surveyor app | Show demo jobs; optional catalog lookup in fitting capture; no change to the outbox or photo pipeline |
@@ -308,7 +309,7 @@ CR is approved.
 |---|---|---|---|
 | **0 · Decisions & paperwork** | Client answers §9; CR deliverables + estimate signed; ADR-015…018; glossary/BR updates; B2C switch | — | 1 wk |
 | **1 · Account foundation** | `customer_groups`, `segments`, customer/lead/contact columns, `v_account_timeline`, account-membership RLS (removes the prospect workaround), B2C off | 0 | 1.5 wk |
-| **2 · Accounts & portal** | Registration, colleagues, branches, history tabs, repeat request, reports (Gotenberg) | 1 | 2 wk |
+| **2 · Accounts & portal** | Registration (open + verify), colleagues, history tabs, repeat request, reports (Gotenberg) | 1 | 2 wk |
 | **3 · Profiling CRM** | Account 360°, lead page upgrades, assignment of salesperson/account owner, follow-up history | 1 | 1.5 wk |
 | **4 · Scoring & assessment engine** | Scoring rules, pincodes/service areas, `score_lead`, policy matrix, `decide_assessment`, self-assessment wizard + review queue | 1, 3 (catalog-guided capture waits for 6) | 2.5 wk |
 | **5 · Demos** | Demo types, demo workflow, demo jobs, costs, feedback, conversion | 4 | 1.5 wk |
@@ -340,29 +341,32 @@ arrives, which brings it to **≈ 14–16 weeks**.
 
 ---
 
-## 9. Questions for the client (needed before Phase 1)
+## 9. Decisions (answered 8 Oct 2026)
 
-1. **Scoring:** what makes a lead A / B / C? Which factors matter (rooms/bathrooms count, estimated
-   order value, brand/chain, city, segment), and the thresholds (e.g. A = 40+ rooms or ₹5 lakh+).
-2. **Geography:** which cities REDUX services on-site, and the distance bands for "near" and "far".
-3. **Demos:** the cost cap per room demo and per fitting demo; who approves; is a demo covered by
-   warranty; can a demo customer still get a paid pilot?
-4. **Self-assessment:** which photos per fitting (minimum count and angles); does the customer get
-   the assessment report before or with the quotation; turnaround promise (e.g. 48 h)?
-5. **Referrals:** the benefit for the referred business (discount % / special price); the reward for
-   the referrer and when it is earned (on approval or on payment); whether rewards stack with offers;
-   whether branches of the same chain count as referrals.
-6. **Campaigns:** channels (WhatsApp, email, SMS); expected monthly volume (for Meta marketing
-   cost); who approves an offer before it goes out.
-7. **Accounts:** may anyone register, or is an account approved by REDUX first? Can a chain's head
-   office see all branches?
-8. **B2C:** take the homeowner pages and forms off the website now, or keep them hidden but live?
-9. **Content:** the catalog format (Excel/PDF, images), the process content and photography, and
-   case studies with permission to name clients.
-10. **Reports:** which reports the customer receives (assessment, demo, completion, warranty) and
-    whether they carry REDUX branding only or co-branding.
+Every value below is a **seed** for an admin-editable setting or table, never a constant in code.
 
----
+| # | Topic | Decision |
+|---|---|---|
+| Q1 | B2C | **Hidden**: homeowner pages, forms and options disappear (`b2c_enabled = false`); the data model keeps `customers.kind = individual` for later |
+| Q2 | Registration | **Open + team verify**: anyone may register and immediately enquire or self-assess; full history and reports open once REDUX verifies the account |
+| Q3 | Chain view | **No**: each branch sees only its own data. Groups exist for referral roll-ups and internal reports only |
+| Q4 | Start | **Start now**: CR treated as approved; contract change order handled in parallel |
+| Q5 | Tiers | **A**: 40+ rooms, or ₹5 lakh+ estimated order, or a hotel chain. **B**: 10–39 rooms or ₹1–5 lakh. **C**: below |
+| Q6 | On-site area | **Delhi NCR** (Delhi, Gurugram, Noida, Faridabad, Ghaziabad); within 150 km of the Delhi hub = near, beyond = far → self-assessment |
+| Q7 | Self-assessment photos | **4 per fitting**: front, side, top, close-up (same slots as the surveyor) |
+| Q8 | Self-assessment turnaround | **24 hours** to the assessment report + quotation |
+| Q9 | Demo approval | **Every demo approved by the Super Admin**, regardless of cost; internal cost still recorded |
+| Q10 | Demo warranty | **Yes, same as paid work** (mechanical + finish) |
+| Q11 | Referred business | **5% off the first order**, pre-approved on the quote |
+| Q12 | Referrer reward | **Both**: 5% of the referred first order as credit when the referred business **pays**, usable on the next order; **and** one free fitting ("extra fit") for every 3 converted referrals |
+| Q13 | Same-chain referral | **Counts** (Radisson A → Radisson B earns the reward) |
+| Q14 | Stacking | **No**: referral discount and campaign offer do not add up; the larger single benefit applies |
+| Q15 | Campaign channels | **WhatsApp + email** (email provider to be added; no promotional SMS) |
+| Q16 | Customer reports | **Assessment report, demo report, completion report, warranty certificate** (+ invoice, existing) |
+
+Still to come from the client (not blocking Phases 1–4): the product catalog (Phase 7), the
+process content and photography (Phase 8), case-study permissions, and expected monthly campaign
+volume (Phase 9).
 
 ## 10. Contract impact
 

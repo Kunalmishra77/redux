@@ -22,7 +22,7 @@ If a rule here conflicts with a screen mock or a convenient shortcut, **this fil
 
 | ID | Rule | Test |
 |---|---|---|
-| BR-S1 | **The survey is free. It never generates a charge.** No survey record can carry a price | Schema has no price column on `surveys` |
+| BR-S1 | **The survey is free. It never generates a charge.** No survey record can carry a price. *(8 Oct 2026, CR-001: still free in every mode — on-site, self, video; who gets which mode is BR-S9)* | Schema has no price column on `surveys` |
 | BR-S2 | A surveyor can hold only one survey per time slot | Double-book → rejected with the clash shown |
 | BR-S3 | Check-in requires GPS. Accuracy >50 m is recorded and **flagged**, not blocked — a basement with no GPS must not stop work | Check in at 120 m accuracy → allowed, flagged |
 | BR-S4 | Server-side integrity: check-in outside a 500 m geofence of the property, or implying impossible travel from the previous check-in, is flagged for admin review | Both cases → flag raised, work continues |
@@ -105,3 +105,55 @@ If a rule here conflicts with a screen mock or a convenient shortcut, **this fil
 | BR-X2 | The service-role key is used only in server code and never reaches any client bundle | Build check greps client bundles |
 | BR-X3 | Photo access is via short-lived signed URLs (5–15 min). Buckets are never public | Public URL fetch → 403 |
 | BR-X4 | Every privileged action writes `audit_log` with actor, entity, before, after, timestamp | Change a price → audit row |
+
+## B2B lifecycle — CR-001 *(added 8 Oct 2026)*
+
+Thresholds, lists and amounts below are **seeds** for admin-editable tables or `settings`.
+
+### Accounts
+
+| ID | Rule | Test |
+|---|---|---|
+| BR-B1 | A **business account** is one buying entity (a branch of a chain is its own account). An account may belong to one `customer_group`. A repeat enquiry from a known contact links to the account (`leads.customer_id`) | Enquire again from a known contact's phone → new lead carries the same customer id |
+| BR-B2 | Registration is **open**; an account is `unverified` until REDUX verifies it. Unverified accounts can enquire, self-assess and approve quotations; full history and reports need `verified` | Register → can start a self-assessment; reports tab locked until verified |
+| BR-B3 | B2C is **off** (`b2c_enabled = false`): no new `individual` accounts or home-type leads from public forms; existing ones are kept, hidden from public pages | Public form offers no "Home" option; staff can still see old home records |
+| BR-B4 | A customer contact sees only accounts they belong to. **No cross-branch view** for customers; groups are internal | Branch A contact cannot read Branch B's jobs |
+
+### Scoring & assessment decision
+
+| ID | Rule | Test |
+|---|---|---|
+| BR-SC1 | A lead's **score** is the sum of points from the active scoring rules; every scoring writes an append-only record with the breakdown and the rules version | Score a lead → `lead_scores` row explains every point |
+| BR-SC2 | **Tier** from score thresholds (seed: A = 40+ rooms or ₹5 lakh+ or hotel chain; B = 10–39 rooms or ₹1–5 lakh; C = below) | 45-room hotel → A |
+| BR-SC3 | A manager may **override** a tier with a reason; the override is audited and survives rescoring until cleared | Override C → B, rescore → stays B with "override" shown |
+| BR-S9 | The **assessment mode** comes from the policy matrix (tier × distance band): on-site only inside the service area (seed: Delhi NCR, 150 km of the Delhi hub); elsewhere self-assessment. A care executive may override with a reason | A-tier lead in Pune → self-assessment; executive overrides to on-site with a reason → logged |
+| BR-S10 | A **self-assessment** is a survey in `self` mode: the customer writes fittings and **all four photo slots** for their own open self-survey only; submission locks it; a staff reviewer prices it | Customer edits after submit → rejected; another account's survey → denied |
+| BR-S11 | Self-assessment **turnaround SLA** (seed: 24 h) runs from submission to report + quotation; breaches alert the team | Submit, wait 24 h unreviewed → alert raised |
+
+### Demos
+
+| ID | Rule | Test |
+|---|---|---|
+| BR-D1 | A **demo** is free and separate from a paid pilot. **Every demo needs Super Admin approval** before scheduling | Schedule an unapproved demo → rejected |
+| BR-D2 | Demo eligibility by tier (seed: A → room demo, B → single-fitting demo, C → none); one demo per account per type unless the Super Admin allows another | Second room demo for the same account → blocked unless overridden |
+| BR-D3 | A demo's **internal cost** is recorded; demo work carries the **same warranty** as paid work | Complete a demo → warranty cards issued, cost visible in reports |
+| BR-D4 | A demo is **converted** when a quotation for the same account is approved after the demo | Approve a quote after a demo → demo marked converted, linked |
+
+### Referrals & rewards
+
+| ID | Rule | Test |
+|---|---|---|
+| BR-R1 | A referral is a **separate dimension** from lead source (BR-L2/L3 unchanged). Captured on registration, any enquiry form, a `/r/{code}` link, or by staff | Referred lead from Google Ads → source google_ads, referral recorded |
+| BR-R2 | A referred business gets **5% off its first order**, pre-approved (no BR-A6 approval for that 5%) | First quote → 5% applied, no approval needed; 8% → approval for the extra |
+| BR-R3 | The referrer earns **credit = 5% of the referred first order, when that order is paid**, and **one free fitting for every 3 converted referrals** | Referred invoice paid → credit issued; third conversion → free-fitting reward issued |
+| BR-R4 | Branches of the same chain **can** refer each other; an account cannot refer itself | Radisson A → Radisson B counts; A → A rejected |
+| BR-R5 | **No stacking**: when a referral benefit and an offer both apply, the larger single benefit is used | 5% referral + 10% offer → 10% |
+| BR-R6 | Rewards are an **append-only ledger** (issued → redeemed / expired); redemption references a quotation or invoice | Redeem twice → second rejected |
+
+### Follow-up & campaigns
+
+| ID | Rule | Test |
+|---|---|---|
+| BR-C1 | Outreach goes **only** to contacts with live **marketing consent**, through an approved WhatsApp marketing template or email; "STOP" withdraws consent | Contact without marketing consent → excluded from the audience |
+| BR-C2 | Quiet hours and a per-contact frequency cap (setting) apply to every outreach message | Third campaign to a contact in a week (cap 2) → skipped, logged |
+| BR-C3 | An audience preview count equals the send count at launch (same SQL) | Preview 120 → 120 recipients queued |

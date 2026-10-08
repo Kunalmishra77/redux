@@ -372,3 +372,78 @@ long as the script and the cross-repo CI job keep working.
 CI jobs for the web app ignore `mobile/**` changes and vice versa via path filters.
 
 **What would change this.** A separate team owning the mobile app on its own release cadence.
+
+---
+
+## ADR-015 — Self-assessment is a survey mode, not a second pipeline
+
+*Added 8 Oct 2026 · CR-001.*
+
+**Decision.** A remote assessment is a `surveys` row with `mode = 'self'` (or `video`). The customer
+captures fittings and the four photo slots through the website/portal into the same `fittings`,
+`fitting_photos` and `survey-photos` storage paths; a staff **reviewer** prices them with the same
+`upsert_assessment`, and the quotation comes from the same `create_quote_from_survey`.
+
+**Why.** Quotation, OTP approval, jobs, warranty, invoicing and reporting already hang off a
+survey. A parallel "self-assessment" model would duplicate every one of them or need adapters.
+
+**Costs we accept.** `surveys.surveyor_id` becomes nullable for non-onsite modes (constraint by
+mode); check-in/geofence rules apply to `onsite` only; RLS gains a customer-writer path scoped to
+the customer's own open self-survey.
+
+**What would change this.** Self-assessments that never lead to a quote (pure lead-qualification
+questionnaires) at high volume.
+
+---
+
+## ADR-016 — Portal access by account membership, prospects included
+
+*Added 8 Oct 2026 · CR-001. Supersedes the "prospects have no portal access" rule in §4 of
+`../03-architecture/04-auth-security-rls.md`.*
+
+**Decision.** `my_customer_ids()` returns every account the signed-in contact belongs to,
+converted or not. Each table's customer policy states what a prospect may see (own enquiries,
+self-assessments, sent quotations, demos) and what needs a converted or **verified** account
+(full history, reports).
+
+**Why.** Every business has an account from first contact (CR-001 Q2). The service-role read in
+`lib/data/portal.ts` that let a prospect see one quotation becomes unnecessary and is removed.
+
+**Costs we accept.** Every customer-facing policy is re-reviewed and re-tested (pgTAP) for the
+prospect case.
+
+---
+
+## ADR-017 — The account timeline is a view over existing event tables
+
+*Added 8 Oct 2026 · CR-001.*
+
+**Decision.** `v_account_timeline` (security invoker) unions the event tables that already exist
+(status history, calls, notes, touches, surveys, quotations, approvals, job stage events,
+handovers, invoices, payments, service requests, messages) and the new ones (scores, demos,
+referrals, rewards, outreach). Only manual entries (meetings, visits) get a table,
+`account_activities`.
+
+**Why.** One source of truth per event; no sync bugs between an event table and an activity copy;
+RLS on each underlying table decides visibility for staff and customers alike.
+
+**What would change this.** Timeline queries too slow at production volume, at which point a
+materialised projection is refreshed by the queue, still derived from the same tables.
+
+---
+
+## ADR-018 — Business rules for qualification are data, evaluated in Postgres
+
+*Added 8 Oct 2026 · CR-001.*
+
+**Decision.** Lead scoring factors, tier thresholds, the assessment policy matrix, demo types,
+referral benefits and reward rules are rows in admin-editable tables. Postgres functions
+(`score_lead`, `decide_assessment`, `evaluate_rewards`) evaluate them and write an append-only
+result with a breakdown and the rules version used.
+
+**Why.** The client must tune thresholds without a release (CR-001 §14.11). Evaluating in the
+database gives the website, CRM, surveyor app and cron one answer, and every decision is explainable
+after the rules change.
+
+**Costs we accept.** A small, typed rule vocabulary (factor + operator + value + points) instead of
+arbitrary expressions; new factor kinds need a migration.

@@ -23,7 +23,6 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 
 | ID | What | Blocked on | Since | Impact |
 |---|---|---|---|---|
-| CR-001 | B2B customer lifecycle (accounts, scoring, self-assessment, demos, referrals, catalog, campaigns) — plan in `../08-change-requests/CR-001-b2b-customer-lifecycle.md` | Client answers (§9) + change-order sign-off (§10) | 2026-10-08 | No CR code is written until approved (rule 10) |
 | E0-S08 | Branch protection on `main` (CI itself runs green on every push) | Project owner | 2026-09-27 | Gates run but are not yet enforced on merge |
 
 > A blocker sits here until it is resolved. If something is blocked on REDUX, it also goes to
@@ -492,4 +491,11 @@ Append one line per working session. This is how the next session (or the next p
             separate from paid pilots, referrals & rewards, catalog, process content, outreach
             campaigns, reporting). Six conflicts with decided blueprint listed (C1–C6), ten client
             questions, proposed D24–D33. Awaiting decisions; no code.
+
+2026-10-08  CR-001 PHASE 0 DONE. Client decisions recorded (CR §9: B2C hidden, open
+            registration + verify, no cross-branch view, tiers A/B/C, Delhi NCR on-site, 4-photo
+            self-assessment with 24 h SLA, every demo Super Admin approved with warranty,
+            referral 5% + credit-on-payment + extra fit per 3, same-chain counts, no stacking,
+            WhatsApp + email, four customer reports). ADR-015…018, BR-B/SC/S9–S11/D/R/C,
+            glossary, D24–D33, backlog E18–E27. Next: CR phase 1 (E18).
 ```
