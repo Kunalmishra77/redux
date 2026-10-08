@@ -1,7 +1,7 @@
 -- CR-001 phase 1 · accounts · BR-B1…B4, ADR-016, ADR-017.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(18);
+select plan(19);
 
 insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-0000000000a1', 'admin@test.local'),
@@ -79,6 +79,16 @@ select is((select count(*)::int from public.surveys where id = '32000000-0000-00
 select is((select count(*)::int from public.quotations), 0, 'a prospect never sees a draft quotation');
 select is((select count(*)::int from public.v_account_timeline where kind in ('activity', 'note')), 0,
   'ADR-017: internal notes and activities never reach the customer timeline');
+
+-- ADR-016: once sent, the prospect sees the quotation through RLS alone (no service-role read)
+reset role;
+update public.quotations set status = 'sent', issued_at = now(), valid_until = current_date + 15, terms_text = 'T',
+  pdf_sha256 = repeat('b', 64), place_of_supply_state_code = '06', supplier_state_code = '07'
+where id = '60000000-0000-0000-0000-0000000001f1';
+set local role authenticated;
+set local request.jwt.claims = '{"role":"authenticated","sub":"00000000-0000-0000-0000-0000000001d1","user_role":"customer"}';
+select is((select count(*)::int from public.quotations where id = '60000000-0000-0000-0000-0000000001f1'), 1,
+  'ADR-016: a prospect sees its sent quotation through RLS');
 
 -- staff timeline for the same account shows the internal activity and the survey
 set local request.jwt.claims = '{"role":"authenticated","sub":"00000000-0000-0000-0000-0000000000a1","user_role":"super_admin"}';
