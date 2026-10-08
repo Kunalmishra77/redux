@@ -23,6 +23,7 @@ Status: `TODO` · `WIP` · `REVIEW` · `DONE` · `BLOCKED`
 
 | ID | What | Blocked on | Since | Impact |
 |---|---|---|---|---|
+| CR-001 | B2B customer lifecycle (accounts, scoring, self-assessment, demos, referrals, catalog, campaigns) — plan in `../08-change-requests/CR-001-b2b-customer-lifecycle.md` | Client answers (§9) + change-order sign-off (§10) | 2026-10-08 | No CR code is written until approved (rule 10) |
 | E0-S08 | Branch protection on `main` (CI itself runs green on every push) | Project owner | 2026-09-27 | Gates run but are not yet enforced on merge |
 
 > A blocker sits here until it is resolved. If something is blocked on REDUX, it also goes to
@@ -485,4 +486,10 @@ Append one line per working session. This is how the next session (or the next p
             links, staff mobile menu, /staff/me profile (B4), tables scroll inside their cards
             on phones, board/dashboard/inbox/stats/privacy phone layouts, document pages,
             scheduled-survey waiting state, actual job dates, completed-job card in the portal.
+
+2026-10-08  CR-001 drafted after the client demo: B2B-only lifecycle (accounts & history,
+            scoring + assessment policy, self-assessment on the survey pipeline, free demos
+            separate from paid pilots, referrals & rewards, catalog, process content, outreach
+            campaigns, reporting). Six conflicts with decided blueprint listed (C1–C6), ten client
+            questions, proposed D24–D33. Awaiting decisions; no code.
 ```
