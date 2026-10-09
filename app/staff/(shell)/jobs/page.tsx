@@ -8,7 +8,7 @@ import { JOB_STATUS } from '@/lib/constants/statuses'
 
 export const metadata: Metadata = { title: 'Jobs' }
 
-type Row = { id: string; job_no: string; status: string; current_stage: string; is_pilot: boolean; planned_start: string | null; planned_end: string | null
+type Row = { id: string; job_no: string; status: string; current_stage: string; is_pilot: boolean; kind: string; planned_start: string | null; planned_end: string | null
   customer: { name: string } | null; property: { name: string } | null; units: { status: string }[] }
 
 // B22 — every job with its stage; the least advanced room sets the job's stage.
@@ -17,7 +17,7 @@ export default async function JobsPage({ searchParams }: PageProps<'/staff/jobs'
   const { status } = await searchParams
   const supabase = await createClient()
   let query = supabase.from('jobs')
-    .select('id, job_no, status, current_stage, is_pilot, planned_start, planned_end, customer:customers(name), property:properties(name), units:job_units(status)')
+    .select('id, job_no, status, current_stage, is_pilot, kind, planned_start, planned_end, customer:customers(name), property:properties(name), units:job_units(status)')
     .order('created_at', { ascending: false })
   if (typeof status === 'string' && status in JOB_STATUS) query = query.eq('status', status as 'planned')
   const { data } = await query
@@ -44,7 +44,7 @@ export default async function JobsPage({ searchParams }: PageProps<'/staff/jobs'
               <Link key={j.id} href={`/staff/jobs/${j.id}`} className="block rounded-lg border border-line bg-white p-5 shadow-card transition hover:border-redux-blue/40">
                 <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="num font-semibold text-ink">{j.job_no}{j.is_pilot && <span className="ml-2 rounded-sm bg-redux-lime px-1.5 py-0.5 text-[11px] font-semibold text-redux-blue">PILOT</span>}</p>
+                    <p className="num font-semibold text-ink">{j.job_no}{j.kind === 'demo' ? <span className="ml-2 rounded-sm bg-pale px-1.5 py-0.5 text-[11px] font-semibold text-redux-blue">DEMO</span> : j.is_pilot && <span className="ml-2 rounded-sm bg-redux-lime px-1.5 py-0.5 text-[11px] font-semibold text-redux-blue">PILOT</span>}</p>
                     <p className="text-sm text-muted-ink">{j.customer?.name}{j.property?.name && j.property.name !== j.customer?.name ? ` · ${j.property.name}` : ''}</p>
                   </div>
                   <div className="flex items-center gap-3 text-sm">

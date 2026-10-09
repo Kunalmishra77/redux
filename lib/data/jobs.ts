@@ -9,7 +9,7 @@ export type JobUnit = BoardUnit & { batch_id: string | null; downtime_from: stri
 export async function loadJob(id: string) {
   const supabase = await createClient()
   const { data: job } = await supabase.from('jobs')
-    .select('id, job_no, status, current_stage, is_pilot, parent_job_id, planned_start, planned_end, actual_start, actual_end, quotation_id, customer:customers(id, name, type), property:properties(name, address), quote:quotations(quote_no, version, total, survey:surveys(surveyor_id))')
+    .select('id, job_no, status, current_stage, is_pilot, kind, parent_job_id, planned_start, planned_end, actual_start, actual_end, quotation_id, customer:customers(id, name, type), property:properties(name, address), quote:quotations(quote_no, version, total, survey:surveys(surveyor_id))')
     .eq('id', id).maybeSingle()
   if (!job) return null
   const [{ data: batches }, { data: units }] = await Promise.all([
@@ -28,7 +28,7 @@ export async function loadJob(id: string) {
 }
 
 type JobHead = { id: string; job_no: string; status: string; current_stage: string; is_pilot: boolean; parent_job_id: string | null
-  planned_start: string | null; planned_end: string | null; actual_start: string | null; actual_end: string | null; quotation_id: string
+  planned_start: string | null; planned_end: string | null; actual_start: string | null; actual_end: string | null; quotation_id: string | null; kind: string
   customer: { id: string; name: string; type: string } | null; property: { name: string; address: string | null } | null
   quote: { quote_no: string; version: number; total: string; survey: { surveyor_id: string } | null } | null }
 

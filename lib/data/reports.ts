@@ -15,11 +15,11 @@ export type ReportFitting = {
   before: string | null; after: string | null
 }
 
-async function fittingsFor(surveyIds: string[], quoteId: string | null, withAfter: boolean) {
+async function fittingsFor(surveyIds: string[], quoteId: string | null, withAfter: boolean, onlyIds?: string[]) {
   const admin = createAdminClient()
   const [{ data: fittings }, { data: lines }] = await Promise.all([
-    admin.from('fittings').select('id, unit_label, ft:fitting_types(name), brand:brands(name), finish:finishes(name), conds:fitting_conditions(flag:condition_flags(name)), photos:fitting_photos(slot, storage_path)')
-      .in('survey_id', surveyIds).order('unit_label'),
+    (onlyIds ? admin.from('fittings').select('id, unit_label, ft:fitting_types(name), brand:brands(name), finish:finishes(name), conds:fitting_conditions(flag:condition_flags(name)), photos:fitting_photos(slot, storage_path)').in('id', onlyIds)
+      : admin.from('fittings').select('id, unit_label, ft:fitting_types(name), brand:brands(name), finish:finishes(name), conds:fitting_conditions(flag:condition_flags(name)), photos:fitting_photos(slot, storage_path)').in('survey_id', surveyIds)).order('unit_label'),
     quoteId ? admin.from('quotation_lines').select('fitting_id, description, line_total, price_replace_eurobrass, market_price').eq('quotation_id', quoteId) : Promise.resolve({ data: [] }),
   ])
   const rows = (fittings ?? []) as unknown as { id: string; unit_label: string | null; ft: { name: string } | null; brand: { name: string } | null; finish: { name: string } | null
@@ -71,16 +71,23 @@ export async function loadJobReport(jobId: string) {
   if (!visible) return null
   const admin = createAdminClient()
   const { data: j } = await admin.from('jobs')
-    .select('id, job_no, status, actual_start, actual_end, quotation_id, customer_id, property:properties(name, address, customer:customers(name, type)), quote:quotations(quote_no, version, survey_id, terms_text), units:job_units(id, back_in_service_at, pu:property_units(label), handover:handovers(customer_name, leak_check, operation_check, finish_check, completed_at))')
+    .select('id, job_no, kind, status, actual_start, actual_end, quotation_id, customer_id, property:properties(name, address, customer:customers(name, type)), quote:quotations(quote_no, version, survey_id, terms_text), units:job_units(id, back_in_service_at, pu:property_units(label), handover:handovers(customer_name, leak_check, operation_check, finish_check, completed_at))')
     .eq('id', jobId).single()
-  const job = j as unknown as { id: string; job_no: string; status: string; actual_start: string | null; actual_end: string | null; quotation_id: string; customer_id: string
+  const job = j as unknown as { id: string; job_no: string; kind: string; status: string; actual_start: string | null; actual_end: string | null; quotation_id: string | null; customer_id: string
     property: { name: string; address: string; customer: { name: string; type: string } | null } | null
     quote: { quote_no: string; version: number; survey_id: string; terms_text: string | null } | null
     units: { id: string; back_in_service_at: string | null; pu: { label: string } | null; handover: { customer_name: string; leak_check: boolean; operation_check: boolean; finish_check: boolean; completed_at: string } | { customer_name: string; leak_check: boolean; operation_check: boolean; finish_check: boolean; completed_at: string }[] | null }[] }
   const { data: warranties } = await admin.from('warranties')
     .select('id, card_no, kind, valid_from, valid_until, job_unit_id, fitting_id, terms_text, fitting:fittings(unit_label, ft:fitting_types(name), finish:finishes(name))')
     .eq('job_id', jobId).order('card_no')
-  const fittings = job.quote ? await fittingsFor([job.quote.survey_id], job.quotation_id, true) : []
+  // a demo job has no quotation: its fittings are the demo's own (CR-001 phase 5, D28)
+  let fittings: ReportFitting[] = []
+  if (job.quote && job.quotation_id) fittings = await fittingsFor([job.quote.survey_id], job.quotation_id, true)
+  else if (job.kind === 'demo') {
+    const { data: items } = await admin.from('demo_items').select('fitting_id, d:demos!inner(job_id)').eq('d.job_id', jobId)
+    const ids = (items ?? []).map((i) => i.fitting_id)
+    if (ids.length) fittings = await fittingsFor([], null, true, ids)
+  }
   return { job, fittings, customerId: job.customer_id, warranties: (warranties ?? []) as unknown as { id: string; card_no: string; kind: string; valid_from: string; valid_until: string; terms_text: string
     fitting: { unit_label: string | null; ft: { name: string } | null; finish: { name: string } | null } | null }[] }
 }

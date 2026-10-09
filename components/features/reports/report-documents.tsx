@@ -81,9 +81,10 @@ export function AssessmentReport({ r, noun }: { r: NonNullable<Awaited<ReturnTyp
 
 export function CompletionReport({ r, noun }: { r: NonNullable<Awaited<ReturnType<typeof import('@/lib/data/reports').loadJobReport>>>; noun: string }) {
   const { job, fittings, warranties } = r
+  const title = job.kind === 'demo' ? 'Demo report' : 'Completion report'
   const handover = (u: (typeof job.units)[number]) => (Array.isArray(u.handover) ? u.handover[0] : u.handover) ?? null
   return (
-    <Sheet kind="Completion report" reference={job.job_no} meta={<>{job.actual_start ? `${date(job.actual_start)} – ` : ''}{date(job.actual_end)}</>}>
+    <Sheet kind={title} reference={job.job_no} meta={<>{job.actual_start ? `${date(job.actual_start)} – ` : ''}{date(job.actual_end)}</>}>
       <section className="grid grid-cols-2 gap-6 py-5">
         <div><p className="eyebrow text-faint">For</p><p className="mt-1 font-semibold">{job.property?.customer?.name}</p><p className="text-muted-ink">{job.property?.name} · {job.property?.address}</p></div>
         <div className="grid grid-cols-3 gap-2 text-center">

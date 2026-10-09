@@ -30,6 +30,7 @@ export default async function JobPage({ params }: PageProps<'/staff/jobs/[id]'>)
     supabase.from('unit_blocks').select('id, job_unit_id, reason, note, blocked_from, blocked_to').in('job_unit_id', rooms.map((r) => r.id)).order('blocked_from', { ascending: false }),
     supabase.from('v_delayed_units').select('job_unit_id, planned_downtime_hours, effective_downtime_hours').eq('job_id', id),
   ])
+  const { data: demo } = job.kind === 'demo' ? await supabase.from('demos').select('id, demo_no').eq('job_id', id).maybeSingle() : { data: null }
   const actorIds = [...new Set((events ?? []).map((e) => e.actor_id).filter(Boolean))] as string[]
   const { data: actors } = actorIds.length ? await supabase.from('profiles').select('id, full_name').in('id', actorIds) : { data: [] }
   const who = (uid: string | null) => actors?.find((a) => a.id === uid)?.full_name ?? (uid ? 'Customer' : 'System')
@@ -67,14 +68,16 @@ export default async function JobPage({ params }: PageProps<'/staff/jobs/[id]'>)
       <Link href="/staff/jobs" className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-redux-blue hover:underline"><ArrowLeft className="size-4" aria-hidden /> Jobs</Link>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="eyebrow text-redux-blue">Job{job.is_pilot ? ' · Pilot' : ''}</p>
+          <p className="eyebrow text-redux-blue">Job{job.kind === 'demo' ? ' · Free demo' : job.is_pilot ? ' · Pilot' : ''}</p>
           <h1 className="num mt-1 text-[28px] leading-tight font-semibold text-ink">{job.job_no}</h1>
           <p className="mt-1 text-sm text-muted-ink">{job.customer?.name}{place}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <StatusPill tone={st.tone}>{st.label}</StatusPill>
           <Button variant="outline" asChild><Link href={`/staff/jobs/${id}/board`}><LayoutGrid aria-hidden /> {noun} board</Link></Button>
-          <Button variant="outline" asChild><Link href={`/staff/quotes/${job.quotation_id}`}><FileText aria-hidden /> {job.quote?.quote_no} v{job.quote?.version}</Link></Button>
+          {job.quotation_id
+            ? <Button variant="outline" asChild><Link href={`/staff/quotes/${job.quotation_id}`}><FileText aria-hidden /> {job.quote?.quote_no} v{job.quote?.version}</Link></Button>
+            : demo && <Button variant="outline" asChild><Link href={`/staff/demos/${demo.id}`}><FileText aria-hidden /> Demo {demo.demo_no}</Link></Button>}
           {canHandover && rooms.some((r) => r.current_stage === 'refit_test' && r.status !== 'blocked') && <Button asChild><Link href={`/staff/jobs/${id}/handover`}><ClipboardCheck aria-hidden /> Handover</Link></Button>}
         </div>
       </div>
@@ -88,7 +91,9 @@ export default async function JobPage({ params }: PageProps<'/staff/jobs/[id]'>)
           ) : (
             <div><dt className="eyebrow text-muted-ink">Planned</dt><dd className="mt-0.5">{from ? `${formatWhen(from, false)} – ${to ? formatWhen(to, false) : '…'}` : 'Dates to confirm'}</dd></div>
           )}
-          <div><dt className="eyebrow text-muted-ink">Order value</dt><dd className="mt-0.5 font-semibold"><Money value={job.quote?.total} paise="never" /></dd></div>
+          {job.kind === 'demo'
+            ? <div><dt className="eyebrow text-muted-ink">Order value</dt><dd className="mt-0.5 font-semibold">Free demo</dd></div>
+            : <div><dt className="eyebrow text-muted-ink">Order value</dt><dd className="mt-0.5 font-semibold"><Money value={job.quote?.total} paise="never" /></dd></div>}
           <div><dt className="eyebrow text-muted-ink">Warranty cards</dt><dd className="num mt-0.5 text-lg font-semibold">{warranties?.length ?? 0}</dd></div>
         </dl>
       </Panel>

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Camera, CheckCircle2, FileSignature, LifeBuoy, Receipt, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowRight, Camera, Gift, CheckCircle2, FileSignature, LifeBuoy, Receipt, ShieldCheck, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { BeforeAfter, formatWhen, JOB_STAGES, Money, StageTracker } from '@/components/patterns'
 import { createClient } from '@/lib/supabase/server'
@@ -10,6 +10,7 @@ import { unitNoun } from '@/lib/data/jobs'
 import { nowMs } from '@/lib/services/clock'
 import { PayButton } from './invoices/pay-button'
 import { StartSelfAssessmentButton } from './self-assessment-card'
+import { RateDemo } from './demo-card'
 
 export const metadata: Metadata = { title: 'My REDUX' }
 
@@ -18,7 +19,7 @@ export default async function PortalHome({ searchParams }: PageProps<'/portal'>)
   const user = await requirePortalUser()
   const { welcome } = await searchParams
   const supabase = await createClient()
-  const [{ data: jobs }, { data: quotes }, { data: invoices }, { data: warranties }, fittings, { data: selfs }, { data: offers }] = await Promise.all([
+  const [{ data: jobs }, { data: quotes }, { data: invoices }, { data: warranties }, fittings, { data: selfs }, { data: offers }, { data: demos }] = await Promise.all([
     supabase.from('jobs').select('id, job_no, status, current_stage, is_pilot, customer:customers(type), property:properties(name), units:job_units(status)').order('created_at', { ascending: false }),
     quotesAwaitingApproval().then((data) => ({ data })),
     supabase.from('invoices').select('id, invoice_no, total, amount_paid, status, payment_route').in('status', ['issued', 'part_paid']),
@@ -26,6 +27,7 @@ export default async function PortalHome({ searchParams }: PageProps<'/portal'>)
     loadRestoredFittings(4),
     supabase.from('surveys').select('id, status, review_status, info_request, property:properties(name), fittings(count)').neq('mode', 'onsite').neq('status', 'cancelled').order('created_at', { ascending: false }),
     supabase.rpc('my_self_assessment_offers'),
+    supabase.rpc('my_demos'),
   ])
   const openSelf = ((selfs ?? []) as unknown as { id: string; status: string; review_status: string | null; info_request: string | null; property: { name: string } | null; fittings: { count: number }[] }[])
     .filter((s) => s.status !== 'submitted' || s.review_status !== 'priced')
@@ -72,6 +74,24 @@ export default async function PortalHome({ searchParams }: PageProps<'/portal'>)
           </div>
           <ArrowRight className="size-5 shrink-0 text-redux-blue" aria-hidden />
         </Link>
+      ))}
+
+      {((demos ?? []) as { id: string; demo_no: string; type_name: string; status: string; property_name: string; scheduled_for: string | null; job_id: string | null; fittings: number; customer_rating: number | null }[])
+        .filter((d) => d.status !== 'not_converted' && !(d.status === 'converted' && d.customer_rating))
+        .map((d) => (
+        <section key={d.id} className="rounded-xl border border-line bg-white p-5 shadow-card">
+          <div className="flex items-center gap-4">
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-redux-lime text-redux-blue"><Gift className="size-6" aria-hidden /></span>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-ink">
+                {d.status === 'approved' ? `Your free ${d.type_name.toLowerCase()} is approved` : ['scheduled', 'in_progress'].includes(d.status) ? `Your free ${d.type_name.toLowerCase()}${d.scheduled_for ? ` — ${formatWhen(d.scheduled_for, false)}` : ''}` : `Your free ${d.type_name.toLowerCase()} is done`}
+              </p>
+              <p className="text-sm text-muted-ink">{d.property_name} · <span className="num">{d.fittings}</span> {d.fittings === 1 ? 'fitting' : 'fittings'}{d.status === 'approved' ? ' · we’ll confirm the date with you' : ''}</p>
+            </div>
+            {d.job_id && <Link href={`/portal/jobs/${d.job_id}`} className="shrink-0 text-sm font-semibold text-redux-blue hover:underline">Follow it →</Link>}
+          </div>
+          {['completed', 'converted'].includes(d.status) && !d.customer_rating && (<><p className="mt-3 text-sm text-ink">How did it turn out?</p><RateDemo demoId={d.id} /></>)}
+        </section>
       ))}
 
       {(quotes ?? []).map((q) => (

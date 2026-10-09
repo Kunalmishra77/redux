@@ -11,6 +11,8 @@ import { requireRole } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { nowMs } from '@/lib/services/clock'
 import { AccountActions, ActivityButton, RequirementsButton } from './account-actions'
+import { ProposeDemoButton } from '@/components/features/demos/propose-demo'
+import { DEMO_STATUS, demoCandidates } from '@/lib/data/demos'
 
 export const metadata: Metadata = { title: 'Account' }
 
@@ -108,16 +110,20 @@ export default async function AccountPage({ params, searchParams }: PageProps<'/
   )
 }
 
-type Acc = { current_requirements: string | null; future_requirements: string | null; website: string | null; gstin: string | null; size_units: number | null; kind: string | null }
+type Acc = { tier: string | null; current_requirements: string | null; future_requirements: string | null; website: string | null; gstin: string | null; size_units: number | null; kind: string | null }
 
 async function overview({ id, supabase }: Ctx, acc: Acc) {
-  const [contacts, properties, leads, mix, sum] = await Promise.all([
+  const [contacts, properties, leads, mix, sum, demos, candidates] = await Promise.all([
     supabase.from('customer_contacts').select('id, name, phone, email, role_title, is_admin, is_primary, user_id, is_active').eq('customer_id', id).order('is_primary', { ascending: false }),
     supabase.from('properties').select('id, name, address, city:cities(name)').eq('customer_id', id),
     supabase.from('leads').select('id, status, created_at, raw_payload, source:lead_sources(name)').eq('customer_id', id).order('created_at'),
     supabase.from('quotation_lines').select('line_total, wt:work_types(name), q:quotations!inner(customer_id, status)').eq('q.customer_id', id).eq('q.status', 'approved'),
     supabase.from('v_account_summary').select('discount_total, approved_value, first_source, first_enquiry_at, open_service_requests').eq('customer_id', id).maybeSingle(),
+    supabase.from('demos').select('id, demo_no, status, scheduled_for, type:demo_types(name)').eq('customer_id', id).order('created_at', { ascending: false }),
+    demoCandidates(id),
   ])
+  // the demo the policy offers this account's latest open enquiry (CR §3.4)
+  const openLead = (leads.data ?? []).toReversed().find((l) => !['won', 'lost'].includes(l.status))
   const services = new Map<string, { n: number; v: number }>()
   for (const l of (mix.data ?? []) as unknown as { line_total: number; wt: { name: string } | null }[]) {
     const k = l.wt?.name ?? 'Other'
@@ -181,6 +187,16 @@ async function overview({ id, supabase }: Ctx, acc: Acc) {
               ))}
             </ul>
           ) : <p className="text-sm text-muted-ink">No site yet — one is added when an assessment is booked.</p>}
+        </Panel>
+        <Panel title="Demos" action={<ProposeDemoButton customerId={id} leadId={openLead?.id ?? null} offer={null} tier={acc.tier} candidates={candidates} />}>
+          {demos.data?.length ? (
+            <ul className="space-y-2 text-sm">
+              {((demos.data ?? []) as unknown as { id: string; demo_no: string; status: string; scheduled_for: string | null; type: { name: string } | null }[]).map((d) => (
+                <li key={d.id} className="flex justify-between gap-2"><Link href={`/staff/demos/${d.id}`} className="text-redux-blue hover:underline">{d.type?.name} <span className="num">{d.demo_no}</span></Link>
+                  <span className="text-xs text-muted-ink">{DEMO_STATUS[d.status]?.label}{d.scheduled_for ? ` · ${formatWhen(d.scheduled_for, false)}` : ''}</span></li>
+              ))}
+            </ul>
+          ) : <p className="text-sm text-muted-ink">No demo yet.{acc.tier === 'A' ? ' Tier A accounts are offered a free room demo.' : acc.tier === 'B' ? ' Tier B accounts are offered a free single-fitting demo.' : ''}</p>}
         </Panel>
         <Panel title="Referrals">
           <p className="flex gap-2 text-sm text-muted-ink"><Gift className="mt-0.5 size-4 shrink-0 text-redux-blue" aria-hidden />

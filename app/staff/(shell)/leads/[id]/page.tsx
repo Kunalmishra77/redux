@@ -6,6 +6,8 @@ import { formatWhen, LEAD_STATUS, Money, Panel, StatusPill, Timeline } from '@/c
 import { SourceBadge, SlaTimer } from '@/components/features/leads/bits'
 import { LeadWorkPane } from '@/components/features/leads/work-pane'
 import { DecisionControls } from '@/components/features/leads/decision-panel'
+import { ProposeDemoButton } from '@/components/features/demos/propose-demo'
+import { DEMO_STATUS, demoCandidates } from '@/lib/data/demos'
 import { BAND_LABEL, DEMO_LABEL, MODE_LABEL } from '@/lib/constants/assessment'
 import { requireRole } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
@@ -47,6 +49,9 @@ export default async function LeadDetailPage({ params }: PageProps<'/staff/leads
   const acct = summary.data
   const breakdown = (lastScore.data?.breakdown ?? []) as { label: string; points: number }[]
   const canWork = user.role === 'super_admin' || (user.role === 'cc_exec' && lead.assigned_to === user.id)
+  const [candidates, { data: demos }] = lead.customer_id && user.role !== 'surveyor'
+    ? await Promise.all([demoCandidates(lead.customer_id), supabase.from('demos').select('id, demo_no, status, type:demo_types(name)').eq('customer_id', lead.customer_id).order('created_at', { ascending: false })])
+    : [[], { data: [] }]
   const st = LEAD_STATUS[lead.status]
   // latest record per purpose wins (BR-P2)
   const consent = new Map<string, NonNullable<typeof consents.data>[number]>()
@@ -104,6 +109,14 @@ export default async function LeadDetailPage({ params }: PageProps<'/staff/leads
                 {selfSurvey.data && <Row label="Self-assessment">{selfSurvey.data.status === 'submitted' ? (selfSurvey.data.review_status === 'priced' ? 'quoted' : 'submitted — to review') : selfSurvey.data.review_status === 'needs_info' ? 'more info asked' : 'with the customer'}</Row>}
               </dl>
               {lead.assessment_override_reason && <p className="mt-2 text-xs text-warning">Changed by the team — {lead.assessment_override_reason}</p>}
+              {(demos ?? []).length > 0 && (
+                <ul className="mt-3 space-y-1 border-t border-line pt-3 text-sm">
+                  {((demos ?? []) as unknown as { id: string; demo_no: string; status: string; type: { name: string } | null }[]).map((d) => (
+                    <li key={d.id} className="flex justify-between gap-2"><Link href={`/staff/demos/${d.id}`} className="text-redux-blue hover:underline">{d.type?.name} {d.demo_no}</Link><span className="text-xs text-muted-ink">{DEMO_STATUS[d.status]?.label}</span></li>
+                  ))}
+                </ul>
+              )}
+              {canWork && lead.customer_id && <div className="mt-3"><ProposeDemoButton customerId={lead.customer_id} leadId={id} offer={lead.demo_offer} tier={lead.tier} candidates={candidates} /></div>}
               <DecisionControls leadId={id} isAdmin={user.role === 'super_admin'} tier={lead.tier} tierOverridden={!!lead.tier_override}
                 mode={lead.assessment_mode} demoOffer={lead.demo_offer} modeOverridden={!!lead.assessment_override_reason}
                 selfSurveyId={selfSurvey.data?.id ?? null} canWork={canWork} />

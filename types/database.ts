@@ -412,6 +412,135 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"demo_items": {
+                  Row: {
+                    "demo_id": string,"finish_id": string | null,"fitting_id": string,"id": string,"work_type_id": string
+                  }
+                  Insert: {
+                    "demo_id": string,"finish_id"?: string | null,"fitting_id": string,"id"?: string,"work_type_id": string
+                  }
+                  Update: {
+                    "demo_id"?: string,"finish_id"?: string | null,"fitting_id"?: string,"id"?: string,"work_type_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "demo_items_demo_id_fkey"
+      columns: ["demo_id"]
+isOneToOne: false
+      referencedRelation: "demos"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "demo_items_finish_id_fkey"
+      columns: ["finish_id"]
+isOneToOne: false
+      referencedRelation: "finishes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "demo_items_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "fittings"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "demo_items_fitting_id_fkey"
+      columns: ["fitting_id"]
+isOneToOne: false
+      referencedRelation: "v_incomplete_fittings"
+      referencedColumns: ["fitting_id"]
+    },{
+      foreignKeyName: "demo_items_work_type_id_fkey"
+      columns: ["work_type_id"]
+isOneToOne: false
+      referencedRelation: "work_types"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"demo_types": {
+                  Row: {
+                    "code": string,"cost_cap": number | null,"description": string | null,"eligible_tiers": (string)[],"id": string,"is_active": boolean,"max_fittings": number,"max_units": number,"name": string,"sort_order": number
+                  }
+                  Insert: {
+                    "code": string,"cost_cap"?: number | null,"description"?: string | null,"eligible_tiers"?: (string)[],"id"?: string,"is_active"?: boolean,"max_fittings"?: number,"max_units"?: number,"name": string,"sort_order"?: number
+                  }
+                  Update: {
+                    "code"?: string,"cost_cap"?: number | null,"description"?: string | null,"eligible_tiers"?: (string)[],"id"?: string,"is_active"?: boolean,"max_fittings"?: number,"max_units"?: number,"name"?: string,"sort_order"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"demos": {
+                  Row: {
+                    "closed_note": string | null,"converted_at": string | null,"converted_quote_id": string | null,"created_at": string,"customer_id": string,"customer_rating": number | null,"decided_at": string | null,"decided_by": string | null,"decision_note": string | null,"demo_no": string,"demo_type_id": string,"exception_reason": string | null,"feedback": string | null,"feedback_at": string | null,"id": string,"internal_cost": number | null,"job_id": string | null,"lead_id": string | null,"note": string | null,"property_id": string,"requested_by": string | null,"result": string | null,"scheduled_for": string | null,"status": string,"updated_at": string
+                  }
+                  Insert: {
+                    "closed_note"?: string | null,"converted_at"?: string | null,"converted_quote_id"?: string | null,"created_at"?: string,"customer_id": string,"customer_rating"?: number | null,"decided_at"?: string | null,"decided_by"?: string | null,"decision_note"?: string | null,"demo_no": string,"demo_type_id": string,"exception_reason"?: string | null,"feedback"?: string | null,"feedback_at"?: string | null,"id"?: string,"internal_cost"?: number | null,"job_id"?: string | null,"lead_id"?: string | null,"note"?: string | null,"property_id": string,"requested_by"?: string | null,"result"?: string | null,"scheduled_for"?: string | null,"status"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "closed_note"?: string | null,"converted_at"?: string | null,"converted_quote_id"?: string | null,"created_at"?: string,"customer_id"?: string,"customer_rating"?: number | null,"decided_at"?: string | null,"decided_by"?: string | null,"decision_note"?: string | null,"demo_no"?: string,"demo_type_id"?: string,"exception_reason"?: string | null,"feedback"?: string | null,"feedback_at"?: string | null,"id"?: string,"internal_cost"?: number | null,"job_id"?: string | null,"lead_id"?: string | null,"note"?: string | null,"property_id"?: string,"requested_by"?: string | null,"result"?: string | null,"scheduled_for"?: string | null,"status"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "demos_converted_quote_id_fkey"
+      columns: ["converted_quote_id"]
+isOneToOne: false
+      referencedRelation: "quotations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "demos_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "demos_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
+      foreignKeyName: "demos_decided_by_fkey"
+      columns: ["decided_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "demos_demo_type_id_fkey"
+      columns: ["demo_type_id"]
+isOneToOne: false
+      referencedRelation: "demo_types"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "demos_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: true
+      referencedRelation: "jobs"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "demos_job_id_fkey"
+      columns: ["job_id"]
+isOneToOne: true
+      referencedRelation: "v_invoices_due"
+      referencedColumns: ["job_id"]
+    },{
+      foreignKeyName: "demos_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "demos_property_id_fkey"
+      columns: ["property_id"]
+isOneToOne: false
+      referencedRelation: "properties"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "demos_requested_by_fkey"
+      columns: ["requested_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"discount_approvals": {
                   Row: {
                     "decided_at": string | null,"decided_by": string | null,"decision": string | null,"decision_note": string | null,"id": string,"quotation_id": string,"reason": string,"requested_at": string,"requested_by": string,"requested_pct": number
@@ -888,13 +1017,13 @@ isOneToOne: false
                   ]
                 },"jobs": {
                   Row: {
-                    "actual_end": string | null,"actual_start": string | null,"created_at": string,"current_stage": Database["public"]['Enums']["job_stage"],"customer_id": string,"id": string,"is_pilot": boolean,"job_no": string,"parent_job_id": string | null,"planned_end": string | null,"planned_start": string | null,"property_id": string,"quotation_id": string,"status": Database["public"]['Enums']["job_status"],"updated_at": string
+                    "actual_end": string | null,"actual_start": string | null,"created_at": string,"current_stage": Database["public"]['Enums']["job_stage"],"customer_id": string,"id": string,"is_pilot": boolean,"job_no": string,"kind": string,"parent_job_id": string | null,"planned_end": string | null,"planned_start": string | null,"property_id": string,"quotation_id": string | null,"status": Database["public"]['Enums']["job_status"],"updated_at": string
                   }
                   Insert: {
-                    "actual_end"?: string | null,"actual_start"?: string | null,"created_at"?: string,"current_stage"?: Database["public"]['Enums']["job_stage"],"customer_id": string,"id"?: string,"is_pilot"?: boolean,"job_no": string,"parent_job_id"?: string | null,"planned_end"?: string | null,"planned_start"?: string | null,"property_id": string,"quotation_id": string,"status"?: Database["public"]['Enums']["job_status"],"updated_at"?: string
+                    "actual_end"?: string | null,"actual_start"?: string | null,"created_at"?: string,"current_stage"?: Database["public"]['Enums']["job_stage"],"customer_id": string,"id"?: string,"is_pilot"?: boolean,"job_no": string,"kind"?: string,"parent_job_id"?: string | null,"planned_end"?: string | null,"planned_start"?: string | null,"property_id": string,"quotation_id"?: string | null,"status"?: Database["public"]['Enums']["job_status"],"updated_at"?: string
                   }
                   Update: {
-                    "actual_end"?: string | null,"actual_start"?: string | null,"created_at"?: string,"current_stage"?: Database["public"]['Enums']["job_stage"],"customer_id"?: string,"id"?: string,"is_pilot"?: boolean,"job_no"?: string,"parent_job_id"?: string | null,"planned_end"?: string | null,"planned_start"?: string | null,"property_id"?: string,"quotation_id"?: string,"status"?: Database["public"]['Enums']["job_status"],"updated_at"?: string
+                    "actual_end"?: string | null,"actual_start"?: string | null,"created_at"?: string,"current_stage"?: Database["public"]['Enums']["job_stage"],"customer_id"?: string,"id"?: string,"is_pilot"?: boolean,"job_no"?: string,"kind"?: string,"parent_job_id"?: string | null,"planned_end"?: string | null,"planned_start"?: string | null,"property_id"?: string,"quotation_id"?: string | null,"status"?: Database["public"]['Enums']["job_status"],"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -2237,6 +2366,9 @@ isOneToOne: false
 "check_integration_health":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
+"close_demo":
+{ Args: { "p_demo": string,"p_note": string,"p_outcome": string }; Returns: undefined
+                           },
 "create_dsr_request":
 { Args: { "p_customer": string,"p_details": string,"p_phone": string,"p_type": Database["public"]['Enums']["dsr_type"] }; Returns: string
                            },
@@ -2260,6 +2392,9 @@ isOneToOne: false
                            },
 "deactivate_contact":
 { Args: { "p_contact": string }; Returns: undefined
+                           },
+"decide_demo":
+{ Args: { "p_approve": boolean,"p_demo": string,"p_note"?: string }; Returns: undefined
                            },
 "decide_discount":
 { Args: { "p_approval": string,"p_approve": boolean,"p_note"?: string }; Returns: undefined
@@ -2345,6 +2480,11 @@ isOneToOne: false
 "my_customer_ids":
 { Args: Record<PropertyKey, never>; Returns: (string)[]
                            },
+"my_demos":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "customer_rating": number,"demo_no": string,"fittings": number,"id": string,"job_id": string,"property_name": string,"scheduled_for": string,"status": string,"type_name": string
+            }[]
+                           },
 "my_self_assessment_offers":
 { Args: Record<PropertyKey, never>; Returns: {
               "customer_name": string,"lead_id": string,"mode": string
@@ -2374,6 +2514,9 @@ isOneToOne: false
 "progress_service_request":
 { Args: { "p_id": string,"p_note"?: string,"p_to": string }; Returns: undefined
                            },
+"propose_demo":
+{ Args: { "p": Json }; Returns: string
+                           },
 "purge_expired_recordings":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
@@ -2383,11 +2526,17 @@ isOneToOne: false
 "rate_card_price":
 { Args: { "p_finish": string,"p_fitting_type": string,"p_rate_card": string,"p_work_type_code": string }; Returns: number
                            },
+"rate_my_demo":
+{ Args: { "p_comment": string,"p_demo": string,"p_rating": number }; Returns: undefined
+                           },
 "recompute_quote":
 { Args: { "p_quote": string }; Returns: undefined
                            },
 "record_consent":
 { Args: { "p": Json }; Returns: number
+                           },
+"record_demo_outcome":
+{ Args: { "p": Json,"p_demo": string }; Returns: undefined
                            },
 "record_handover":
 { Args: { "p": Json }; Returns: string
@@ -2418,6 +2567,9 @@ isOneToOne: false
                            },
 "rollup_job":
 { Args: { "p_job": string }; Returns: undefined
+                           },
+"schedule_demo":
+{ Args: { "p_date": string,"p_demo": string }; Returns: string
                            },
 "score_lead":
 { Args: { "p_lead": string }; Returns: Json
