@@ -47,6 +47,10 @@ export default async function LeadDetailPage({ params }: PageProps<'/staff/leads
     lead.customer_id ? supabase.from('v_account_summary').select('lifetime_billed, open_proposal_value, jobs_done, last_work_on').eq('customer_id', lead.customer_id).maybeSingle() : Promise.resolve({ data: null }),
   ])
   const acct = summary.data
+  // BR-R1: a referral sits beside the source, never replaces it
+  const { data: referral } = await supabase.from('referrals').select('status, referrer:customers!referrals_referrer_customer_id_fkey(id, name)')
+    .neq('status', 'rejected').or(lead.customer_id ? `referred_lead_id.eq.${id},referred_customer_id.eq.${lead.customer_id}` : `referred_lead_id.eq.${id}`).limit(1).maybeSingle()
+  const referrer = (referral as unknown as { referrer: { id: string; name: string } | null } | null)?.referrer ?? null
   const breakdown = (lastScore.data?.breakdown ?? []) as { label: string; points: number }[]
   const canWork = user.role === 'super_admin' || (user.role === 'cc_exec' && lead.assigned_to === user.id)
   const [candidates, { data: demos }] = lead.customer_id && user.role !== 'surveyor'
@@ -136,6 +140,7 @@ export default async function LeadDetailPage({ params }: PageProps<'/staff/leads
           <Panel title="Attribution" action={<span className="text-[11px] text-faint">Locked to the first touch</span>}>
             <dl className="space-y-3 text-sm">
               <Row label="Source"><SourceBadge code={lead.source?.code ?? ''} /></Row>
+              {referrer && <Row label="Referred by"><Link href={`/staff/accounts/${referrer.id}`} className="text-redux-blue hover:underline">{referrer.name}</Link></Row>}
               {lead.campaign && <Row label="Campaign">{lead.campaign.name}</Row>}
               {lead.meta_ad_id && <Row label="Meta ad"><span className="num text-xs">{lead.meta_ad_id}</span></Row>}
               {lead.ctwa_clid && <Row label="CTWA click"><span className="num break-all text-xs">{lead.ctwa_clid}</span></Row>}

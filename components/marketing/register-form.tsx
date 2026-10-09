@@ -21,6 +21,14 @@ export function RegisterForm({ segments, cities, noticeVersion }: { segments: Op
   const [demoCode, setDemoCode] = React.useState<string | null>(null)
   const [code, setCode] = React.useState('')
   const [pending, start] = React.useTransition()
+  // BR-R1: a referral link (/r/{code}) arrives as ?ref= and a cookie — fill in "referred by" with it
+  const referredRef = React.useRef<HTMLInputElement>(null)
+  React.useEffect(() => {
+    const fromUrl = new URLSearchParams(window.location.search).get('ref')
+    const fromCookie = document.cookie.split('; ').find((c) => c.startsWith('redux_ref='))?.split('=')[1]
+    const code = fromUrl ?? fromCookie
+    if (code && referredRef.current && !referredRef.current.value) referredRef.current.value = code
+  }, [])
 
   const submitDetails = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -85,7 +93,7 @@ export function RegisterForm({ segments, cities, noticeVersion }: { segments: Op
         <div className="flex"><span className="flex items-center rounded-l-md border border-r-0 border-line bg-surface px-3 text-sm text-muted-ink">+91</span>
           <input id="reg-phone" name="phone" inputMode="numeric" autoComplete="tel-national" className={cn(control, 'num rounded-l-none')} aria-invalid={!!errors.phone} /></div></Field>
       <Field name="email" error={errors.email} label="Work email" optional><input id="reg-email" name="email" type="email" autoComplete="email" className={control} aria-invalid={!!errors.email} /></Field>
-      <Field name="referredBy" error={errors.referredBy} label="Referred by another business?" optional className="sm:col-span-2"><input id="reg-referredBy" name="referredBy" className={control} placeholder="Business name or referral code" /></Field>
+      <Field name="referredBy" error={errors.referredBy} label="Referred by another business?" optional className="sm:col-span-2"><input ref={referredRef} id="reg-referredBy" name="referredBy" className={control} placeholder="Business name or referral code" /></Field>
 
       <div className="hidden" aria-hidden><label htmlFor="reg-website">Website</label><input id="reg-website" name="website" tabIndex={-1} autoComplete="off" /></div>
       <div className="space-y-3 sm:col-span-2">

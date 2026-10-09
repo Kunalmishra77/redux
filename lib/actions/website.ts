@@ -1,6 +1,6 @@
 'use server'
 
-import { headers } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -43,6 +43,9 @@ export async function submitEnquiryAction(
   }
 
   const h = await headers()
+  // BR-R1: a referral link sets this cookie (app/r/[code]); it rides along as a referral, not a source
+  const refCookie = (await cookies()).get('redux_ref')?.value
+  if (refCookie && !attribution.referralCode) attribution = { ...attribution, referralCode: refCookie }
   const meta = {
     ip: clientIp(h.get('x-forwarded-for'), h.get('x-real-ip')),
     userAgent: h.get('user-agent') ?? undefined,

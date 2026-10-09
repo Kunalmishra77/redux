@@ -1523,13 +1523,13 @@ isOneToOne: false
                   ]
                 },"quotations": {
                   Row: {
-                    "cgst": number,"created_at": string,"created_by": string | null,"customer_id": string,"discount_amount": number,"discount_pct": number,"id": string,"igst": number,"issued_at": string | null,"lead_id": string | null,"market_total": number,"pdf_path": string | null,"pdf_sha256": string | null,"place_of_supply_state_code": string | null,"property_id": string,"quote_no": string,"rate_card_id": string,"sgst": number,"status": Database["public"]['Enums']["quote_status"],"subtotal": number,"supersedes_id": string | null,"supplier_state_code": string | null,"survey_id": string,"taxable_value": number,"terms_text": string | null,"terms_version": string | null,"total": number,"updated_at": string,"valid_until": string | null,"version": number,"warranty_finish_days": number | null,"warranty_mechanical_days": number | null,"you_save": number
+                    "cgst": number,"created_at": string,"created_by": string | null,"customer_id": string,"discount_amount": number,"discount_pct": number,"id": string,"igst": number,"issued_at": string | null,"lead_id": string | null,"market_total": number,"pdf_path": string | null,"pdf_sha256": string | null,"place_of_supply_state_code": string | null,"property_id": string,"quote_no": string,"rate_card_id": string,"referral_discount_pct": number | null,"referral_id": string | null,"sgst": number,"status": Database["public"]['Enums']["quote_status"],"subtotal": number,"supersedes_id": string | null,"supplier_state_code": string | null,"survey_id": string,"taxable_value": number,"terms_text": string | null,"terms_version": string | null,"total": number,"updated_at": string,"valid_until": string | null,"version": number,"warranty_finish_days": number | null,"warranty_mechanical_days": number | null,"you_save": number
                   }
                   Insert: {
-                    "cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id": string,"discount_amount"?: number,"discount_pct"?: number,"id"?: string,"igst"?: number,"issued_at"?: string | null,"lead_id"?: string | null,"market_total"?: number,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code"?: string | null,"property_id": string,"quote_no": string,"rate_card_id": string,"sgst"?: number,"status"?: Database["public"]['Enums']["quote_status"],"subtotal"?: number,"supersedes_id"?: string | null,"supplier_state_code"?: string | null,"survey_id": string,"taxable_value"?: number,"terms_text"?: string | null,"terms_version"?: string | null,"total"?: number,"updated_at"?: string,"valid_until"?: string | null,"version"?: number,"warranty_finish_days"?: number | null,"warranty_mechanical_days"?: number | null,"you_save"?: number
+                    "cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id": string,"discount_amount"?: number,"discount_pct"?: number,"id"?: string,"igst"?: number,"issued_at"?: string | null,"lead_id"?: string | null,"market_total"?: number,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code"?: string | null,"property_id": string,"quote_no": string,"rate_card_id": string,"referral_discount_pct"?: number | null,"referral_id"?: string | null,"sgst"?: number,"status"?: Database["public"]['Enums']["quote_status"],"subtotal"?: number,"supersedes_id"?: string | null,"supplier_state_code"?: string | null,"survey_id": string,"taxable_value"?: number,"terms_text"?: string | null,"terms_version"?: string | null,"total"?: number,"updated_at"?: string,"valid_until"?: string | null,"version"?: number,"warranty_finish_days"?: number | null,"warranty_mechanical_days"?: number | null,"you_save"?: number
                   }
                   Update: {
-                    "cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id"?: string,"discount_amount"?: number,"discount_pct"?: number,"id"?: string,"igst"?: number,"issued_at"?: string | null,"lead_id"?: string | null,"market_total"?: number,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code"?: string | null,"property_id"?: string,"quote_no"?: string,"rate_card_id"?: string,"sgst"?: number,"status"?: Database["public"]['Enums']["quote_status"],"subtotal"?: number,"supersedes_id"?: string | null,"supplier_state_code"?: string | null,"survey_id"?: string,"taxable_value"?: number,"terms_text"?: string | null,"terms_version"?: string | null,"total"?: number,"updated_at"?: string,"valid_until"?: string | null,"version"?: number,"warranty_finish_days"?: number | null,"warranty_mechanical_days"?: number | null,"you_save"?: number
+                    "cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id"?: string,"discount_amount"?: number,"discount_pct"?: number,"id"?: string,"igst"?: number,"issued_at"?: string | null,"lead_id"?: string | null,"market_total"?: number,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code"?: string | null,"property_id"?: string,"quote_no"?: string,"rate_card_id"?: string,"referral_discount_pct"?: number | null,"referral_id"?: string | null,"sgst"?: number,"status"?: Database["public"]['Enums']["quote_status"],"subtotal"?: number,"supersedes_id"?: string | null,"supplier_state_code"?: string | null,"survey_id"?: string,"taxable_value"?: number,"terms_text"?: string | null,"terms_version"?: string | null,"total"?: number,"updated_at"?: string,"valid_until"?: string | null,"version"?: number,"warranty_finish_days"?: number | null,"warranty_mechanical_days"?: number | null,"you_save"?: number
                   }
                   Relationships: [
                     {
@@ -1567,6 +1567,12 @@ isOneToOne: false
       columns: ["rate_card_id"]
 isOneToOne: false
       referencedRelation: "rate_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotations_referral_id_fkey"
+      columns: ["referral_id"]
+isOneToOne: false
+      referencedRelation: "referrals"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "quotations_supersedes_id_fkey"
@@ -1673,6 +1679,166 @@ isOneToOne: false
       columns: ["created_by"]
 isOneToOne: false
       referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"referral_codes": {
+                  Row: {
+                    "code": string,"created_at": string,"customer_id": string
+                  }
+                  Insert: {
+                    "code": string,"created_at"?: string,"customer_id": string
+                  }
+                  Update: {
+                    "code"?: string,"created_at"?: string,"customer_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "referral_codes_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: true
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "referral_codes_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: true
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    }
+                  ]
+                },"referrals": {
+                  Row: {
+                    "channel": string,"converted_at": string | null,"created_at": string,"created_by": string | null,"first_order_value": number | null,"first_quote_id": string | null,"id": string,"referred_customer_id": string | null,"referred_lead_id": string | null,"referrer_customer_id": string,"rejected_reason": string | null,"status": string,"updated_at": string
+                  }
+                  Insert: {
+                    "channel": string,"converted_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"first_order_value"?: number | null,"first_quote_id"?: string | null,"id"?: string,"referred_customer_id"?: string | null,"referred_lead_id"?: string | null,"referrer_customer_id": string,"rejected_reason"?: string | null,"status"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "channel"?: string,"converted_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"first_order_value"?: number | null,"first_quote_id"?: string | null,"id"?: string,"referred_customer_id"?: string | null,"referred_lead_id"?: string | null,"referrer_customer_id"?: string,"rejected_reason"?: string | null,"status"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "referrals_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "referrals_first_quote_id_fkey"
+      columns: ["first_quote_id"]
+isOneToOne: false
+      referencedRelation: "quotations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "referrals_referred_customer_id_fkey"
+      columns: ["referred_customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "referrals_referred_customer_id_fkey"
+      columns: ["referred_customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
+      foreignKeyName: "referrals_referred_lead_id_fkey"
+      columns: ["referred_lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "referrals_referrer_customer_id_fkey"
+      columns: ["referrer_customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "referrals_referrer_customer_id_fkey"
+      columns: ["referrer_customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    }
+                  ]
+                },"reward_redemptions": {
+                  Row: {
+                    "amount": number | null,"id": string,"invoice_id": string | null,"note": string | null,"payment_id": string | null,"quotation_id": string | null,"redeemed_at": string,"redeemed_by": string | null,"reward_id": string
+                  }
+                  Insert: {
+                    "amount"?: number | null,"id"?: string,"invoice_id"?: string | null,"note"?: string | null,"payment_id"?: string | null,"quotation_id"?: string | null,"redeemed_at"?: string,"redeemed_by"?: string | null,"reward_id": string
+                  }
+                  Update: {
+                    "amount"?: number | null,"id"?: string,"invoice_id"?: string | null,"note"?: string | null,"payment_id"?: string | null,"quotation_id"?: string | null,"redeemed_at"?: string,"redeemed_by"?: string | null,"reward_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "reward_redemptions_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoices"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reward_redemptions_payment_id_fkey"
+      columns: ["payment_id"]
+isOneToOne: false
+      referencedRelation: "payments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reward_redemptions_quotation_id_fkey"
+      columns: ["quotation_id"]
+isOneToOne: false
+      referencedRelation: "quotations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reward_redemptions_redeemed_by_fkey"
+      columns: ["redeemed_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reward_redemptions_reward_id_fkey"
+      columns: ["reward_id"]
+isOneToOne: true
+      referencedRelation: "rewards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reward_redemptions_reward_id_fkey"
+      columns: ["reward_id"]
+isOneToOne: true
+      referencedRelation: "v_rewards"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"rewards": {
+                  Row: {
+                    "amount": number | null,"customer_id": string,"description": string,"expires_at": string,"id": string,"issued_at": string,"kind": string,"milestone": number | null,"referral_id": string | null
+                  }
+                  Insert: {
+                    "amount"?: number | null,"customer_id": string,"description": string,"expires_at": string,"id"?: string,"issued_at"?: string,"kind": string,"milestone"?: number | null,"referral_id"?: string | null
+                  }
+                  Update: {
+                    "amount"?: number | null,"customer_id"?: string,"description"?: string,"expires_at"?: string,"id"?: string,"issued_at"?: string,"kind"?: string,"milestone"?: number | null,"referral_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "rewards_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "rewards_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
+      foreignKeyName: "rewards_referral_id_fkey"
+      columns: ["referral_id"]
+isOneToOne: false
+      referencedRelation: "referrals"
       referencedColumns: ["id"]
     }
                   ]
@@ -2264,6 +2430,43 @@ isOneToOne: false
       referencedColumns: ["customer_id"]
     }
                   ]
+                },"v_rewards": {
+                  Row: {
+                    "amount": number | null,"customer_id": string | null,"description": string | null,"expires_at": string | null,"id": string | null,"invoice_id": string | null,"issued_at": string | null,"kind": string | null,"milestone": number | null,"quotation_id": string | null,"redeemed_at": string | null,"referral_id": string | null,"status": string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "reward_redemptions_invoice_id_fkey"
+      columns: ["invoice_id"]
+isOneToOne: false
+      referencedRelation: "invoices"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reward_redemptions_quotation_id_fkey"
+      columns: ["quotation_id"]
+isOneToOne: false
+      referencedRelation: "quotations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "rewards_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "rewards_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
+      foreignKeyName: "rewards_referral_id_fkey"
+      columns: ["referral_id"]
+isOneToOne: false
+      referencedRelation: "referrals"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"v_service_requests_overdue": {
                   Row: {
                     "ack_due_at": string | null,"ack_overdue": boolean | null,"customer_id": string | null,"id": string | null,"request_no": string | null,"resolve_due_at": string | null,"resolve_overdue": boolean | null,"status": string | null
@@ -2322,6 +2525,9 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"_record_referral":
+{ Args: { "p_actor": string,"p_channel": string,"p_customer": string,"p_lead": string,"p_referrer": string }; Returns: string
+                           },
 "_score_lead":
 { Args: { "p_actor"?: string,"p_force"?: boolean,"p_lead": string }; Returns: Json
                            },
@@ -2485,6 +2691,16 @@ isOneToOne: false
               "customer_rating": number,"demo_no": string,"fittings": number,"id": string,"job_id": string,"property_name": string,"scheduled_for": string,"status": string,"type_name": string
             }[]
                            },
+"my_referrals":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "business": string,"converted_at": string,"created_at": string,"credit": number,"id": string,"status": string
+            }[]
+                           },
+"my_rewards":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "amount": number,"description": string,"expires_at": string,"id": string,"issued_at": string,"kind": string,"redeemed_at": string,"status": string
+            }[]
+                           },
 "my_self_assessment_offers":
 { Args: Record<PropertyKey, never>; Returns: {
               "customer_name": string,"lead_id": string,"mode": string
@@ -2547,14 +2763,32 @@ isOneToOne: false
 "record_payment":
 { Args: { "p": Json }; Returns: Json
                            },
+"record_referral":
+{ Args: { "p_customer"?: string,"p_lead"?: string,"p_referrer": string }; Returns: string
+                           },
 "record_stock_movement":
 { Args: { "p": Json }; Returns: number
                            },
 "record_webhook":
 { Args: { "p_event_type": string,"p_external_id": string,"p_payload": Json,"p_signature_ok": boolean,"p_source": Database["public"]['Enums']["webhook_source"] }; Returns: Json
                            },
+"redeem_reward":
+{ Args: { "p_invoice": string,"p_note"?: string,"p_quotation": string,"p_reward": string }; Returns: string
+                           },
+"referral_code_for":
+{ Args: { "p_customer": string }; Returns: string
+                           },
+"referral_programme_terms":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"referral_setting":
+{ Args: { "p_key": string }; Returns: number
+                           },
 "register_business":
 { Args: { "p": Json,"p_consent": Json }; Returns: Json
+                           },
+"reject_referral":
+{ Args: { "p_reason": string,"p_referral": string }; Returns: undefined
                            },
 "request_quote_otp":
 { Args: { "p_channel": Database["public"]['Enums']["msg_channel"],"p_phone": string,"p_quote": string }; Returns: Json

@@ -25,6 +25,7 @@ export default async function PortalLayout({ children }: LayoutProps<'/portal'>)
               <p className="text-sm font-semibold text-ink">{user.name}</p>
               <p className="text-xs text-muted-ink">{user.customers.map((c) => c.name).join(' · ') || user.phone}</p>
             </div>
+            <Link href="/portal/referrals" className="hidden text-sm font-medium text-redux-blue hover:underline md:inline">Refer &amp; earn</Link>
             <Link href="/portal/team" className="hidden text-sm font-medium text-muted-ink hover:text-ink md:inline">Team</Link>
             <Link href="/portal/privacy" className="hidden text-sm font-medium text-muted-ink hover:text-ink md:inline">My data</Link>
             <form action={portalSignOutAction}>

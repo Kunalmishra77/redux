@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { LucideIcon } from 'lucide-react'
 import {
-  Banknote, CalendarCheck, CalendarClock, ClipboardList, FileText, Gift, Globe, Hammer, LifeBuoy, MapPin, MessageCircle, MessagesSquare,
+  Banknote, CalendarCheck, CalendarClock, ClipboardList, FileText, Globe, Hammer, LifeBuoy, MapPin, MessageCircle, MessagesSquare,
   Phone, Receipt, ShieldCheck, StickyNote, Users,
 } from 'lucide-react'
 import { formatRelative, formatWhen, Money, PageHeader, Panel, StatusPill, Timeline, type TimelineItem } from '@/components/patterns'
@@ -13,6 +13,7 @@ import { nowMs } from '@/lib/services/clock'
 import { AccountActions, ActivityButton, RequirementsButton } from './account-actions'
 import { ProposeDemoButton } from '@/components/features/demos/propose-demo'
 import { DEMO_STATUS, demoCandidates } from '@/lib/data/demos'
+import { LinkReferral } from '../../referrals/referral-controls'
 
 export const metadata: Metadata = { title: 'Account' }
 
@@ -113,7 +114,7 @@ export default async function AccountPage({ params, searchParams }: PageProps<'/
 type Acc = { tier: string | null; current_requirements: string | null; future_requirements: string | null; website: string | null; gstin: string | null; size_units: number | null; kind: string | null }
 
 async function overview({ id, supabase }: Ctx, acc: Acc) {
-  const [contacts, properties, leads, mix, sum, demos, candidates] = await Promise.all([
+  const [contacts, properties, leads, mix, sum, demos, candidates, code, refsIn, refsOut, rewards, accounts] = await Promise.all([
     supabase.from('customer_contacts').select('id, name, phone, email, role_title, is_admin, is_primary, user_id, is_active').eq('customer_id', id).order('is_primary', { ascending: false }),
     supabase.from('properties').select('id, name, address, city:cities(name)').eq('customer_id', id),
     supabase.from('leads').select('id, status, created_at, raw_payload, source:lead_sources(name)').eq('customer_id', id).order('created_at'),
@@ -121,6 +122,11 @@ async function overview({ id, supabase }: Ctx, acc: Acc) {
     supabase.from('v_account_summary').select('discount_total, approved_value, first_source, first_enquiry_at, open_service_requests').eq('customer_id', id).maybeSingle(),
     supabase.from('demos').select('id, demo_no, status, scheduled_for, type:demo_types(name)').eq('customer_id', id).order('created_at', { ascending: false }),
     demoCandidates(id),
+    supabase.rpc('referral_code_for', { p_customer: id }),
+    supabase.from('referrals').select('id, status, referrer:customers!referrals_referrer_customer_id_fkey(id, name)').eq('referred_customer_id', id).neq('status', 'rejected').maybeSingle(),
+    supabase.from('referrals').select('id, status').eq('referrer_customer_id', id).neq('status', 'rejected'),
+    supabase.from('v_rewards').select('id, kind, amount, status').eq('customer_id', id),
+    supabase.from('customers').select('id, name').eq('kind', 'business').neq('id', id).order('name'),
   ])
   // the demo the policy offers this account's latest open enquiry (CR §3.4)
   const openLead = (leads.data ?? []).toReversed().find((l) => !['won', 'lost'].includes(l.status))
@@ -131,6 +137,9 @@ async function overview({ id, supabase }: Ctx, acc: Acc) {
     services.set(k, { n: s.n + 1, v: s.v + Number(l.line_total) })
   }
   const referredBy = (leads.data ?? []).map((l) => (l.raw_payload as { referred_by?: string } | null)?.referred_by).find(Boolean)
+  const referrer = (refsIn.data as unknown as { status: string; referrer: { id: string; name: string } | null } | null)
+  const made = refsOut.data ?? []
+  const avail = (rewards.data ?? []).filter((r) => r.status === 'available')
   const s = sum.data
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
@@ -198,9 +207,16 @@ async function overview({ id, supabase }: Ctx, acc: Acc) {
             </ul>
           ) : <p className="text-sm text-muted-ink">No demo yet.{acc.tier === 'A' ? ' Tier A accounts are offered a free room demo.' : acc.tier === 'B' ? ' Tier B accounts are offered a free single-fitting demo.' : ''}</p>}
         </Panel>
-        <Panel title="Referrals">
-          <p className="flex gap-2 text-sm text-muted-ink"><Gift className="mt-0.5 size-4 shrink-0 text-redux-blue" aria-hidden />
-            <span>{referredBy ? <>Said they were referred by <span className="font-medium text-ink">{referredBy}</span>.</> : 'No referral recorded.'} Referral tracking and rewards arrive with the referral programme.</span></p>
+        <Panel title="Referrals" action={referrer ? null : <LinkReferral leadId={openLead?.id ?? null} customerId={id} accounts={accounts.data ?? []} hint={referredBy ?? ''} label="Who referred them?" />}>
+          <dl className="space-y-2 text-sm">
+            <div className="flex justify-between gap-3"><dt className="text-muted-ink">Their code</dt><dd className="num font-semibold text-redux-blue">{code.data ?? '—'}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-ink">Referred by</dt><dd className="text-right">{referrer?.referrer
+              ? <Link href={`/staff/accounts/${referrer.referrer.id}`} className="text-redux-blue hover:underline">{referrer.referrer.name}</Link>
+              : referredBy ? <span className="text-muted-ink">said “{referredBy}” — not linked</span> : '—'}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-ink">They referred</dt><dd className="num">{made.length}{made.length ? ` · ${made.filter((r) => r.status !== 'pending').length} ordered` : ''}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-muted-ink">Rewards to use</dt><dd className="num">{avail.length ? avail.map((r) => r.kind === 'credit' ? `₹${Math.round(Number(r.amount)).toLocaleString('en-IN')} credit` : 'free fitting').join(' · ') : '—'}</dd></div>
+          </dl>
+          {(made.length > 0 || avail.length > 0) && <Link href="/staff/referrals" className="mt-3 inline-block text-xs font-medium text-redux-blue hover:underline">Referral programme →</Link>}
         </Panel>
       </div>
     </div>

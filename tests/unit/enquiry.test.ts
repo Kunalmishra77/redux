@@ -83,6 +83,14 @@ describe('enquiry → lead intake + consent (E2-S09/S10)', () => {
     expect(lead.raw_payload).toMatchObject({ message: 'Leaks', form_page: '/hotels' })
   })
 
+  it('carries a referral code as a referral, leaving the source alone (BR-R1)', () => {
+    const e = enquirySchema.parse({ ...base, kind: 'hotel', propertyName: 'The Grand', units: '40' })
+    const lead = toLeadIntake(e, { referralCode: 'lakev412' })
+    expect(lead.source).toBe('website')
+    expect(lead.raw_payload).toMatchObject({ referral_code: 'LAKEV412' })
+    expect(toLeadIntake(e, { referralCode: 'x; drop' }).raw_payload).not.toHaveProperty('referral_code')
+  })
+
   it('keeps an unknown city in the payload, never as city_id', () => {
     const e = enquirySchema.parse({ ...base, city: 'other', cityOther: 'Lucknow' })
     const lead = toLeadIntake(e)

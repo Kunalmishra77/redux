@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import {
-  BarChart3, Boxes, Gift, Building2, CalendarCheck, ClipboardList, FileText, Gauge, Hammer, Inbox, KanbanSquare,
+  BarChart3, Boxes, Gift, Share2, Building2, CalendarCheck, ClipboardList, FileText, Gauge, Hammer, Inbox, KanbanSquare,
   LifeBuoy, ListChecks, Receipt, Settings, Users,
 } from 'lucide-react'
 import type { AppRole } from '@/lib/auth/session'
@@ -17,6 +17,7 @@ export const NAV: Record<Exclude<AppRole, 'customer'>, NavItem[]> = {
     { href: '/staff/accounts', label: 'Accounts', icon: Building2 },
     { href: '/staff/surveys', label: 'Surveys', icon: CalendarCheck },
     { href: '/staff/demos', label: 'Demos', icon: Gift },
+    { href: '/staff/referrals', label: 'Referrals', icon: Share2 },
     { href: '/staff/quotes', label: 'Quotes', icon: FileText },
     { href: '/staff/jobs', label: 'Jobs', icon: Hammer },
     { href: '/staff/admin/invoices', label: 'Invoices', icon: Receipt },
@@ -32,6 +33,7 @@ export const NAV: Record<Exclude<AppRole, 'customer'>, NavItem[]> = {
     { href: '/staff/accounts', label: 'Accounts', icon: Building2 },
     { href: '/staff/surveys', label: 'Surveys', icon: CalendarCheck },
     { href: '/staff/demos', label: 'Demos', icon: Gift },
+    { href: '/staff/referrals', label: 'Referrals', icon: Share2 },
     { href: '/staff/jobs', label: 'Jobs', icon: Hammer },
     { href: '/staff/service-requests', label: 'Service requests', icon: LifeBuoy },
     { href: '/staff/me/stats', label: 'My stats', icon: BarChart3 },

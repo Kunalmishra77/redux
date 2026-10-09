@@ -14,6 +14,8 @@ export type Attribution = {
   landingPage?: unknown
   referrer?: unknown
   formPage?: unknown
+  /** BR-R1: the code from a /r/{code} link — a referral, never a lead source */
+  referralCode?: unknown
 }
 
 const clip = (v: unknown, max = 200) => (typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : undefined)
@@ -58,6 +60,8 @@ export function toLeadIntake(e: Enquiry, attribution: Attribution = {}): LeadInt
   if (formPage) payload.form_page = formPage
   if (landingPage) payload.landing_page = landingPage
   if (referrer) payload.referrer = referrer
+  const referralCode = clip(attribution.referralCode, 12)
+  if (referralCode && /^[A-Za-z0-9]{4,12}$/.test(referralCode)) payload.referral_code = referralCode.toUpperCase()
 
   return {
     source: sourceFor(e.kind),
