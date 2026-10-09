@@ -62,7 +62,7 @@ export default async function DemosPage() {
                           <td className="px-4 py-3"><Link href={`/staff/demos/${r.id}`} className="num font-semibold text-ink hover:text-redux-blue">{r.demo_no}</Link>
                             {r.exception_reason && <p className="text-xs text-warning">Exception asked</p>}</td>
                           <td className="px-4 py-3">{r.customer?.name}{r.customer?.tier && <span className="num ml-1.5 rounded-sm bg-pale px-1.5 text-xs font-bold text-redux-blue">{r.customer.tier}</span>}</td>
-                          <td className="px-4 py-3 text-muted-ink">{r.type?.name} · <span className="num">{r.items[0]?.count ?? 0}</span> fittings</td>
+                          <td className="px-4 py-3 text-muted-ink">{r.type?.name} · <span className="num">{r.items[0]?.count ?? 0}</span> {(r.items[0]?.count ?? 0) === 1 ? 'fitting' : 'fittings'}</td>
                           <td className="px-4 py-3 whitespace-nowrap text-muted-ink">{r.scheduled_for ? formatWhen(r.scheduled_for, false) : '—'}</td>
                           <td className="num px-4 py-3">{r.internal_cost !== null ? <Money value={r.internal_cost} paise="never" /> : '—'}</td>
                           <td className="px-4 py-3"><StatusPill tone={DEMO_STATUS[r.status]!.tone}>{DEMO_STATUS[r.status]!.label}</StatusPill></td>
