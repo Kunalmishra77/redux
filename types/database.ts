@@ -36,6 +36,19 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"assessment_policies": {
+                  Row: {
+                    "demo_offer": string,"distance_band": string,"followup_days": number,"mode": string,"note": string | null,"owner_role": string,"tier": string,"updated_at": string
+                  }
+                  Insert: {
+                    "demo_offer"?: string,"distance_band": string,"followup_days"?: number,"mode": string,"note"?: string | null,"owner_role"?: string,"tier": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "demo_offer"?: string,"distance_band"?: string,"followup_days"?: number,"mode"?: string,"note"?: string | null,"owner_role"?: string,"tier"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"assessments": {
                   Row: {
                     "created_at": string,"created_by": string | null,"finish_id": string | null,"fitting_id": string,"id": string,"is_manual_override": boolean,"override_reason": string | null,"part_unavailable_note": string | null,"price_market_replacement": number,"price_recommended": number,"price_replace_eurobrass": number,"rate_card_id": string,"recommended": Database["public"]['Enums']["treatment"],"surveyor_note": string | null,"updated_at": string,"you_save": number | null
@@ -220,13 +233,13 @@ isOneToOne: false
                   ]
                 },"cities": {
                   Row: {
-                    "id": string,"is_active": boolean,"name": string,"state_code": string
+                    "id": string,"is_active": boolean,"lat": number | null,"lng": number | null,"name": string,"state_code": string
                   }
                   Insert: {
-                    "id"?: string,"is_active"?: boolean,"name": string,"state_code": string
+                    "id"?: string,"is_active"?: boolean,"lat"?: number | null,"lng"?: number | null,"name": string,"state_code": string
                   }
                   Update: {
-                    "id"?: string,"is_active"?: boolean,"name"?: string,"state_code"?: string
+                    "id"?: string,"is_active"?: boolean,"lat"?: number | null,"lng"?: number | null,"name"?: string,"state_code"?: string
                   }
                   Relationships: [
                     
@@ -960,6 +973,31 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"lead_scores": {
+                  Row: {
+                    "breakdown": NonNullable<Json>,"computed_tier": string,"created_at": string,"distance_band": string,"id": string,"inputs": NonNullable<Json>,"lead_id": string,"override_reason": string | null,"rules_version": number,"score": number,"scored_by": string | null,"tier": string
+                  }
+                  Insert: {
+                    "breakdown": NonNullable<Json>,"computed_tier": string,"created_at"?: string,"distance_band": string,"id"?: string,"inputs": NonNullable<Json>,"lead_id": string,"override_reason"?: string | null,"rules_version": number,"score": number,"scored_by"?: string | null,"tier": string
+                  }
+                  Update: {
+                    "breakdown"?: NonNullable<Json>,"computed_tier"?: string,"created_at"?: string,"distance_band"?: string,"id"?: string,"inputs"?: NonNullable<Json>,"lead_id"?: string,"override_reason"?: string | null,"rules_version"?: number,"score"?: number,"scored_by"?: string | null,"tier"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lead_scores_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lead_scores_scored_by_fkey"
+      columns: ["scored_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"lead_sources": {
                   Row: {
                     "code": string,"id": string,"is_active": boolean,"name": string
@@ -1025,13 +1063,13 @@ isOneToOne: false
                   ]
                 },"leads": {
                   Row: {
-                    "assessment_mode": string | null,"assigned_at": string | null,"assigned_to": string | null,"business_name": string | null,"campaign_id": string | null,"city_id": string | null,"created_at": string,"ctwa_clid": string | null,"customer_id": string | null,"customer_type": string | null,"demo_offer": string | null,"email": string | null,"enquirer_role": string | null,"estimated_units": number | null,"estimated_value": number | null,"firm_gstin": string | null,"google_lead_id": string | null,"id": string,"lost_note": string | null,"lost_reason_id": string | null,"meta_ad_id": string | null,"meta_form_id": string | null,"meta_leadgen_id": string | null,"name": string | null,"phone": string,"pincode": string | null,"previous_lead_id": string | null,"property_name": string | null,"raw_payload": Json | null,"score": number | null,"segment_id": string | null,"sla_due_at": string | null,"source_id": string,"status": Database["public"]['Enums']["lead_status"],"tier": string | null,"unit_count": number | null,"updated_at": string,"utm": Json | null
+                    "assessment_decided_at": string | null,"assessment_mode": string | null,"assessment_override_reason": string | null,"assigned_at": string | null,"assigned_to": string | null,"business_name": string | null,"campaign_id": string | null,"city_id": string | null,"created_at": string,"ctwa_clid": string | null,"customer_id": string | null,"customer_type": string | null,"demo_offer": string | null,"distance_band": string | null,"distance_km": number | null,"email": string | null,"enquirer_role": string | null,"estimated_units": number | null,"estimated_value": number | null,"firm_gstin": string | null,"google_lead_id": string | null,"id": string,"lost_note": string | null,"lost_reason_id": string | null,"meta_ad_id": string | null,"meta_form_id": string | null,"meta_leadgen_id": string | null,"name": string | null,"phone": string,"pincode": string | null,"previous_lead_id": string | null,"property_name": string | null,"raw_payload": Json | null,"score": number | null,"scored_at": string | null,"segment_id": string | null,"sla_due_at": string | null,"source_id": string,"status": Database["public"]['Enums']["lead_status"],"tier": string | null,"tier_override": string | null,"tier_override_reason": string | null,"unit_count": number | null,"updated_at": string,"utm": Json | null
                   }
                   Insert: {
-                    "assessment_mode"?: string | null,"assigned_at"?: string | null,"assigned_to"?: string | null,"business_name"?: string | null,"campaign_id"?: string | null,"city_id"?: string | null,"created_at"?: string,"ctwa_clid"?: string | null,"customer_id"?: string | null,"customer_type"?: string | null,"demo_offer"?: string | null,"email"?: string | null,"enquirer_role"?: string | null,"estimated_units"?: number | null,"estimated_value"?: number | null,"firm_gstin"?: string | null,"google_lead_id"?: string | null,"id"?: string,"lost_note"?: string | null,"lost_reason_id"?: string | null,"meta_ad_id"?: string | null,"meta_form_id"?: string | null,"meta_leadgen_id"?: string | null,"name"?: string | null,"phone": string,"pincode"?: string | null,"previous_lead_id"?: string | null,"property_name"?: string | null,"raw_payload"?: Json | null,"score"?: number | null,"segment_id"?: string | null,"sla_due_at"?: string | null,"source_id": string,"status"?: Database["public"]['Enums']["lead_status"],"tier"?: string | null,"unit_count"?: number | null,"updated_at"?: string,"utm"?: Json | null
+                    "assessment_decided_at"?: string | null,"assessment_mode"?: string | null,"assessment_override_reason"?: string | null,"assigned_at"?: string | null,"assigned_to"?: string | null,"business_name"?: string | null,"campaign_id"?: string | null,"city_id"?: string | null,"created_at"?: string,"ctwa_clid"?: string | null,"customer_id"?: string | null,"customer_type"?: string | null,"demo_offer"?: string | null,"distance_band"?: string | null,"distance_km"?: number | null,"email"?: string | null,"enquirer_role"?: string | null,"estimated_units"?: number | null,"estimated_value"?: number | null,"firm_gstin"?: string | null,"google_lead_id"?: string | null,"id"?: string,"lost_note"?: string | null,"lost_reason_id"?: string | null,"meta_ad_id"?: string | null,"meta_form_id"?: string | null,"meta_leadgen_id"?: string | null,"name"?: string | null,"phone": string,"pincode"?: string | null,"previous_lead_id"?: string | null,"property_name"?: string | null,"raw_payload"?: Json | null,"score"?: number | null,"scored_at"?: string | null,"segment_id"?: string | null,"sla_due_at"?: string | null,"source_id": string,"status"?: Database["public"]['Enums']["lead_status"],"tier"?: string | null,"tier_override"?: string | null,"tier_override_reason"?: string | null,"unit_count"?: number | null,"updated_at"?: string,"utm"?: Json | null
                   }
                   Update: {
-                    "assessment_mode"?: string | null,"assigned_at"?: string | null,"assigned_to"?: string | null,"business_name"?: string | null,"campaign_id"?: string | null,"city_id"?: string | null,"created_at"?: string,"ctwa_clid"?: string | null,"customer_id"?: string | null,"customer_type"?: string | null,"demo_offer"?: string | null,"email"?: string | null,"enquirer_role"?: string | null,"estimated_units"?: number | null,"estimated_value"?: number | null,"firm_gstin"?: string | null,"google_lead_id"?: string | null,"id"?: string,"lost_note"?: string | null,"lost_reason_id"?: string | null,"meta_ad_id"?: string | null,"meta_form_id"?: string | null,"meta_leadgen_id"?: string | null,"name"?: string | null,"phone"?: string,"pincode"?: string | null,"previous_lead_id"?: string | null,"property_name"?: string | null,"raw_payload"?: Json | null,"score"?: number | null,"segment_id"?: string | null,"sla_due_at"?: string | null,"source_id"?: string,"status"?: Database["public"]['Enums']["lead_status"],"tier"?: string | null,"unit_count"?: number | null,"updated_at"?: string,"utm"?: Json | null
+                    "assessment_decided_at"?: string | null,"assessment_mode"?: string | null,"assessment_override_reason"?: string | null,"assigned_at"?: string | null,"assigned_to"?: string | null,"business_name"?: string | null,"campaign_id"?: string | null,"city_id"?: string | null,"created_at"?: string,"ctwa_clid"?: string | null,"customer_id"?: string | null,"customer_type"?: string | null,"demo_offer"?: string | null,"distance_band"?: string | null,"distance_km"?: number | null,"email"?: string | null,"enquirer_role"?: string | null,"estimated_units"?: number | null,"estimated_value"?: number | null,"firm_gstin"?: string | null,"google_lead_id"?: string | null,"id"?: string,"lost_note"?: string | null,"lost_reason_id"?: string | null,"meta_ad_id"?: string | null,"meta_form_id"?: string | null,"meta_leadgen_id"?: string | null,"name"?: string | null,"phone"?: string,"pincode"?: string | null,"previous_lead_id"?: string | null,"property_name"?: string | null,"raw_payload"?: Json | null,"score"?: number | null,"scored_at"?: string | null,"segment_id"?: string | null,"sla_due_at"?: string | null,"source_id"?: string,"status"?: Database["public"]['Enums']["lead_status"],"tier"?: string | null,"tier_override"?: string | null,"tier_override_reason"?: string | null,"unit_count"?: number | null,"updated_at"?: string,"utm"?: Json | null
                   }
                   Relationships: [
                     {
@@ -1209,6 +1247,19 @@ isOneToOne: false
       referencedRelation: "invoices"
       referencedColumns: ["id"]
     }
+                  ]
+                },"pincodes": {
+                  Row: {
+                    "code": string,"district": string,"lat": number,"lng": number,"state": string
+                  }
+                  Insert: {
+                    "code": string,"district": string,"lat": number,"lng": number,"state": string
+                  }
+                  Update: {
+                    "code"?: string,"district"?: string,"lat"?: number,"lng"?: number,"state"?: string
+                  }
+                  Relationships: [
+                    
                   ]
                 },"privacy_notices": {
                   Row: {
@@ -1509,6 +1560,19 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"scoring_rules": {
+                  Row: {
+                    "factor": string,"id": string,"is_active": boolean,"label": string,"operator": string,"points": number,"sort_order": number,"updated_at": string,"value": NonNullable<Json>
+                  }
+                  Insert: {
+                    "factor": string,"id"?: string,"is_active"?: boolean,"label": string,"operator": string,"points": number,"sort_order"?: number,"updated_at"?: string,"value"?: NonNullable<Json>
+                  }
+                  Update: {
+                    "factor"?: string,"id"?: string,"is_active"?: boolean,"label"?: string,"operator"?: string,"points"?: number,"sort_order"?: number,"updated_at"?: string,"value"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"segments": {
                   Row: {
                     "code": string,"id": string,"is_active": boolean,"is_b2c": boolean,"name": string,"sort_order": number
@@ -1518,6 +1582,19 @@ isOneToOne: false
                   }
                   Update: {
                     "code"?: string,"id"?: string,"is_active"?: boolean,"is_b2c"?: boolean,"name"?: string,"sort_order"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"service_areas": {
+                  Row: {
+                    "id": string,"is_active": boolean,"lat": number,"lng": number,"name": string,"near_km": number
+                  }
+                  Insert: {
+                    "id"?: string,"is_active"?: boolean,"lat": number,"lng": number,"name": string,"near_km": number
+                  }
+                  Update: {
+                    "id"?: string,"is_active"?: boolean,"lat"?: number,"lng"?: number,"name"?: string,"near_km"?: number
                   }
                   Relationships: [
                     
@@ -1711,13 +1788,13 @@ isOneToOne: false
                   ]
                 },"surveys": {
                   Row: {
-                    "booked_by": string | null,"cancel_reason": string | null,"created_at": string,"id": string,"lead_id": string | null,"property_id": string,"scheduled_at": string,"slot_end_at": string,"status": Database["public"]['Enums']["survey_status"],"submitted_at": string | null,"surveyor_id": string,"updated_at": string
+                    "booked_by": string | null,"cancel_reason": string | null,"created_at": string,"id": string,"info_request": string | null,"lead_id": string | null,"mode": string,"property_id": string,"review_due_at": string | null,"review_status": string | null,"reviewer_id": string | null,"scheduled_at": string,"sla_alerted_at": string | null,"slot_end_at": string,"status": Database["public"]['Enums']["survey_status"],"submitted_at": string | null,"surveyor_id": string | null,"updated_at": string
                   }
                   Insert: {
-                    "booked_by"?: string | null,"cancel_reason"?: string | null,"created_at"?: string,"id"?: string,"lead_id"?: string | null,"property_id": string,"scheduled_at": string,"slot_end_at": string,"status"?: Database["public"]['Enums']["survey_status"],"submitted_at"?: string | null,"surveyor_id": string,"updated_at"?: string
+                    "booked_by"?: string | null,"cancel_reason"?: string | null,"created_at"?: string,"id"?: string,"info_request"?: string | null,"lead_id"?: string | null,"mode"?: string,"property_id": string,"review_due_at"?: string | null,"review_status"?: string | null,"reviewer_id"?: string | null,"scheduled_at": string,"sla_alerted_at"?: string | null,"slot_end_at": string,"status"?: Database["public"]['Enums']["survey_status"],"submitted_at"?: string | null,"surveyor_id"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "booked_by"?: string | null,"cancel_reason"?: string | null,"created_at"?: string,"id"?: string,"lead_id"?: string | null,"property_id"?: string,"scheduled_at"?: string,"slot_end_at"?: string,"status"?: Database["public"]['Enums']["survey_status"],"submitted_at"?: string | null,"surveyor_id"?: string,"updated_at"?: string
+                    "booked_by"?: string | null,"cancel_reason"?: string | null,"created_at"?: string,"id"?: string,"info_request"?: string | null,"lead_id"?: string | null,"mode"?: string,"property_id"?: string,"review_due_at"?: string | null,"review_status"?: string | null,"reviewer_id"?: string | null,"scheduled_at"?: string,"sla_alerted_at"?: string | null,"slot_end_at"?: string,"status"?: Database["public"]['Enums']["survey_status"],"submitted_at"?: string | null,"surveyor_id"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -1737,6 +1814,12 @@ isOneToOne: false
       columns: ["property_id"]
 isOneToOne: false
       referencedRelation: "properties"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "surveys_reviewer_id_fkey"
+      columns: ["reviewer_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "surveys_surveyor_id_fkey"
@@ -2080,7 +2163,40 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "activate_rate_card":
+            "_decide_assessment":
+{ Args: { "p_lead": string }; Returns: undefined
+                           },
+"_my_open_self_survey":
+{ Args: { "p_survey": string }; Returns: {
+              "booked_by": string | null,
+"cancel_reason": string | null,
+"created_at": string,
+"id": string,
+"info_request": string | null,
+"lead_id": string | null,
+"mode": string,
+"property_id": string,
+"review_due_at": string | null,
+"review_status": string | null,
+"reviewer_id": string | null,
+"scheduled_at": string,
+"sla_alerted_at": string | null,
+"slot_end_at": string,
+"status": Database["public"]['Enums']["survey_status"],
+"submitted_at": string | null,
+"surveyor_id": string | null,
+"updated_at": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "surveys"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"_score_lead":
+{ Args: { "p_actor"?: string,"p_force"?: boolean,"p_lead": string }; Returns: Json
+                           },
+"activate_rate_card":
 { Args: { "p_id": string }; Returns: undefined
                            },
 "allocate_document_no":
@@ -2088,6 +2204,9 @@ isOneToOne: false
                            },
 "assign_lead":
 { Args: { "p_city_id": string }; Returns: string
+                           },
+"assign_self_assessment_reviewer":
+{ Args: { "p_reviewer": string,"p_survey": string }; Returns: undefined
                            },
 "authorize":
 { Args: { "requested": string }; Returns: boolean
@@ -2160,6 +2279,9 @@ isOneToOne: false
 "erasure_blockers":
 { Args: { "p_customer": string }; Returns: Json
                            },
+"evaluate_score":
+{ Args: { "p": Json }; Returns: Json
+                           },
 "expire_quotes":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
@@ -2205,6 +2327,9 @@ isOneToOne: false
 "link_to_pilot":
 { Args: { "p_job": string,"p_pilot": string }; Returns: undefined
                            },
+"locate":
+{ Args: { "p_city": string,"p_pincode": string }; Returns: Json
+                           },
 "log_call":
 { Args: { "p_call": Json }; Returns: string
                            },
@@ -2220,6 +2345,11 @@ isOneToOne: false
 "my_customer_ids":
 { Args: Record<PropertyKey, never>; Returns: (string)[]
                            },
+"my_self_assessment_offers":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "customer_name": string,"lead_id": string,"mode": string
+            }[]
+                           },
 "new_rate_card_version":
 { Args: { "p_effective_from": string,"p_from"?: string,"p_notes"?: string }; Returns: string
                            },
@@ -2231,6 +2361,15 @@ isOneToOne: false
                            },
 "notify_team":
 { Args: { "p_body": string,"p_dedup": string,"p_entity_id": string,"p_entity_type": string,"p_rule": string,"p_title": string,"p_user"?: string }; Returns: number
+                           },
+"override_assessment":
+{ Args: { "p_demo_offer": string,"p_lead": string,"p_mode": string,"p_reason": string }; Returns: undefined
+                           },
+"override_lead_tier":
+{ Args: { "p_lead": string,"p_reason": string,"p_tier": string }; Returns: Json
+                           },
+"portal_url":
+{ Args: { "p_path": string }; Returns: string
                            },
 "progress_service_request":
 { Args: { "p_id": string,"p_note"?: string,"p_to": string }; Returns: undefined
@@ -2271,8 +2410,32 @@ isOneToOne: false
 "request_quote_otp":
 { Args: { "p_channel": Database["public"]['Enums']["msg_channel"],"p_phone": string,"p_quote": string }; Returns: Json
                            },
+"request_self_assessment_info":
+{ Args: { "p_request": string,"p_survey": string }; Returns: undefined
+                           },
+"rescore_open_leads":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "rollup_job":
 { Args: { "p_job": string }; Returns: undefined
+                           },
+"score_lead":
+{ Args: { "p_lead": string }; Returns: Json
+                           },
+"self_assessment_add_photo":
+{ Args: { "p_bytes": number,"p_fitting": string,"p_height": number,"p_path": string,"p_sha256": string,"p_slot": string,"p_width": number }; Returns: string
+                           },
+"self_assessment_photo_path":
+{ Args: { "p_fitting": string,"p_slot": string }; Returns: string
+                           },
+"self_assessment_remove_fitting":
+{ Args: { "p_fitting": string }; Returns: undefined
+                           },
+"self_assessment_save_fitting":
+{ Args: { "p": Json,"p_fitting"?: string,"p_survey": string }; Returns: string
+                           },
+"self_assessment_turnaround_hours":
+{ Args: Record<PropertyKey, never>; Returns: number
                            },
 "set_invoice_pdf":
 { Args: { "p_invoice": string,"p_path": string,"p_sha256": string }; Returns: undefined
@@ -2289,10 +2452,19 @@ isOneToOne: false
 "stage_words":
 { Args: { "p": Database["public"]['Enums']["job_stage"] }; Returns: string
                            },
+"start_self_assessment":
+{ Args: { "p_lead": string,"p_mode"?: string }; Returns: string
+                           },
+"submit_self_assessment":
+{ Args: { "p_survey": string }; Returns: undefined
+                           },
 "submit_survey":
 { Args: { "p_survey_id": string }; Returns: undefined
                            },
 "sweep_job_delays":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"sweep_self_assessment_sla":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
 "sweep_sla":

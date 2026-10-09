@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, CheckCircle2, FileSignature, LifeBuoy, Receipt, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowRight, Camera, CheckCircle2, FileSignature, LifeBuoy, Receipt, ShieldCheck, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { BeforeAfter, formatWhen, JOB_STAGES, Money, StageTracker } from '@/components/patterns'
 import { createClient } from '@/lib/supabase/server'
@@ -9,6 +9,7 @@ import { loadRestoredFittings } from '@/lib/data/portal-fittings'
 import { unitNoun } from '@/lib/data/jobs'
 import { nowMs } from '@/lib/services/clock'
 import { PayButton } from './invoices/pay-button'
+import { StartSelfAssessmentButton } from './self-assessment-card'
 
 export const metadata: Metadata = { title: 'My REDUX' }
 
@@ -17,13 +18,17 @@ export default async function PortalHome({ searchParams }: PageProps<'/portal'>)
   const user = await requirePortalUser()
   const { welcome } = await searchParams
   const supabase = await createClient()
-  const [{ data: jobs }, { data: quotes }, { data: invoices }, { data: warranties }, fittings] = await Promise.all([
+  const [{ data: jobs }, { data: quotes }, { data: invoices }, { data: warranties }, fittings, { data: selfs }, { data: offers }] = await Promise.all([
     supabase.from('jobs').select('id, job_no, status, current_stage, is_pilot, customer:customers(type), property:properties(name), units:job_units(status)').order('created_at', { ascending: false }),
     quotesAwaitingApproval().then((data) => ({ data })),
     supabase.from('invoices').select('id, invoice_no, total, amount_paid, status, payment_route').in('status', ['issued', 'part_paid']),
     supabase.from('warranties').select('id, valid_until'),
     loadRestoredFittings(4),
+    supabase.from('surveys').select('id, status, review_status, info_request, property:properties(name), fittings(count)').neq('mode', 'onsite').neq('status', 'cancelled').order('created_at', { ascending: false }),
+    supabase.rpc('my_self_assessment_offers'),
   ])
+  const openSelf = ((selfs ?? []) as unknown as { id: string; status: string; review_status: string | null; info_request: string | null; property: { name: string } | null; fittings: { count: number }[] }[])
+    .filter((s) => s.status !== 'submitted' || s.review_status !== 'priced')
   const active = (jobs ?? []).filter((j) => j.status !== 'completed' && j.status !== 'cancelled')
   const done = (jobs ?? []).filter((j) => j.status === 'completed')
   const today = new Date(nowMs()).toISOString().slice(0, 10)
@@ -46,6 +51,28 @@ export default async function PortalHome({ searchParams }: PageProps<'/portal'>)
           <a href="/book-assessment" className="mt-3 inline-block text-sm font-semibold text-redux-blue hover:underline">Request an assessment →</a>
         </section>
       )}
+
+      {((offers ?? []) as { lead_id: string; mode: string; customer_name: string }[]).map((o) => (
+        <section key={o.lead_id} className="flex flex-wrap items-center gap-4 rounded-xl border-2 border-redux-blue bg-white p-5 shadow-card">
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-redux-lime text-redux-blue"><Camera className="size-6" aria-hidden /></span>
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold text-ink">Your free self-assessment</p>
+            <p className="text-sm text-muted-ink">Photograph each tap and mixer at {o.customer_name} from four angles — about two minutes a fitting. Your assessment report and proposal follow within a day.{o.mode === 'video' ? ' We’ll also set up a short video call.' : ''}</p>
+          </div>
+          <StartSelfAssessmentButton leadId={o.lead_id} />
+        </section>
+      ))}
+
+      {openSelf.map((s) => (
+        <Link key={s.id} href={`/portal/self-assessment/${s.id}`} className={`flex items-center gap-4 rounded-xl bg-white p-5 shadow-card transition hover:bg-select ${s.status === 'submitted' ? 'border border-line' : 'border-2 border-redux-blue'}`}>
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-pale text-redux-blue"><Camera className="size-6" aria-hidden /></span>
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold text-ink">{s.status === 'submitted' ? 'Self-assessment sent — we’re preparing your report' : s.review_status === 'needs_info' ? 'We need a little more for your self-assessment' : 'Continue your self-assessment'}</p>
+            <p className="text-sm text-muted-ink">{s.property?.name} · <span className="num">{s.fittings[0]?.count ?? 0}</span> fittings{s.review_status === 'needs_info' && s.info_request ? ` · ${s.info_request}` : ''}</p>
+          </div>
+          <ArrowRight className="size-5 shrink-0 text-redux-blue" aria-hidden />
+        </Link>
+      ))}
 
       {(quotes ?? []).map((q) => (
         <Link key={q.id} href={`/portal/quotes/${q.id}`} className="flex items-center gap-4 rounded-xl border-2 border-redux-blue bg-white p-5 shadow-card transition hover:bg-select">

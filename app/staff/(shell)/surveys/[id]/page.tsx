@@ -8,6 +8,8 @@ import { requireRole } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { photoUrls } from '@/lib/data/photos'
 import { CreateQuoteButton } from './create-quote-button'
+import { AskForInfo, PriceFitting, ReviewerSelect } from './review-controls'
+import { nowMs } from '@/lib/services/clock'
 
 export const metadata: Metadata = { title: 'Survey' }
 
@@ -19,7 +21,7 @@ type Fitting = {
   type: { name: string } | null; brand: { name: string } | null; finish: { name: string } | null
   photos: { id: string; slot: string; storage_path: string }[]
   conditions: { flag: { name: string } | null }[]
-  assessment: { recommended: string; price_recommended: string; price_replace_eurobrass: string; price_market_replacement: string; you_save: string | null; part_unavailable_note: string | null; surveyor_note: string | null; is_manual_override: boolean; target: { name: string } | null } | null
+  assessment: { recommended: string; finish_id: string | null; price_recommended: string; price_replace_eurobrass: string; price_market_replacement: string; you_save: string | null; part_unavailable_note: string | null; surveyor_note: string | null; is_manual_override: boolean; target: { name: string } | null } | null
 }
 
 // B17 — property, surveyor, check-in time and GPS accuracy (flagged >50 m or outside the geofence) ·
@@ -29,17 +31,18 @@ export default async function SurveyDetailPage({ params }: PageProps<'/staff/sur
   const { id } = await params
   const supabase = await createClient()
   const { data: s } = await supabase.from('surveys')
-    .select('id, status, scheduled_at, submitted_at, surveyor_id, property:properties(name, address, lat, lng), surveyor:profiles!surveys_surveyor_id_fkey(full_name), lead:leads(id, name, phone)')
+    .select('id, status, scheduled_at, slot_end_at, submitted_at, surveyor_id, mode, reviewer_id, review_status, review_due_at, info_request, property:properties(name, address, lat, lng), surveyor:profiles!surveys_surveyor_id_fkey(full_name), lead:leads(id, name, phone)')
     .eq('id', id).maybeSingle()
   if (!s) notFound()
-  const survey = s as unknown as { id: string; status: string; scheduled_at: string; submitted_at: string | null; surveyor_id: string
+  const survey = s as unknown as { id: string; status: string; scheduled_at: string; slot_end_at: string; submitted_at: string | null; surveyor_id: string | null
+    mode: string; reviewer_id: string | null; review_status: string | null; review_due_at: string | null; info_request: string | null
     property: { name: string; address: string; lat: number | null; lng: number | null } | null; surveyor: { full_name: string } | null; lead: { id: string; name: string | null; phone: string } | null }
 
   const [{ data: checkins }, { data: fits }, { data: quotes }] = await Promise.all([
     supabase.from('survey_checkins').select('id, checked_in_at, accuracy_m, geofence_ok, distance_m, flagged, flag_reason').eq('survey_id', id).order('checked_in_at'),
     supabase.from('fittings').select(`id, unit_label, model, notes, type:fitting_types(name), brand:brands(name), finish:finishes!fittings_current_finish_id_fkey(name),
       photos:fitting_photos(id, slot, storage_path), conditions:fitting_conditions(flag:condition_flags(name)),
-      assessment:assessments(recommended, price_recommended, price_replace_eurobrass, price_market_replacement, you_save, part_unavailable_note, surveyor_note, is_manual_override, target:finishes(name))`)
+      assessment:assessments(recommended, finish_id, price_recommended, price_replace_eurobrass, price_market_replacement, you_save, part_unavailable_note, surveyor_note, is_manual_override, target:finishes(name))`)
       .eq('survey_id', id).order('captured_at'),
     supabase.from('quotations').select('id, quote_no, version, status').eq('survey_id', id).order('created_at', { ascending: false }),
   ])
@@ -49,7 +52,17 @@ export default async function SurveyDetailPage({ params }: PageProps<'/staff/sur
   const urls = await photoUrls(fittings.flatMap((f) => f.photos.map((p) => p.storage_path)), 'survey-photos', 480)
   const units = [...new Set(fittings.map((f) => f.unit_label ?? '—'))]
   const checkin = checkins?.[0]
-  const canQuote = survey.status === 'submitted' && (user.role === 'super_admin' || survey.surveyor_id === user.id)
+  const isSelf = survey.mode !== 'onsite'
+  const canQuote = survey.status === 'submitted' && (user.role === 'super_admin' || survey.surveyor_id === user.id || survey.reviewer_id === user.id)
+  // BR-S10: the reviewer prices a submitted self-assessment until it is quoted
+  const canPrice = isSelf && survey.status === 'submitted' && survey.review_status !== 'priced' && (user.role === 'super_admin' || survey.reviewer_id === user.id)
+  const canAsk = isSelf && survey.status === 'submitted' && survey.review_status !== 'priced' && (user.role !== 'surveyor' || canPrice)
+  const [{ data: finishes }, { data: reviewers }] = isSelf ? await Promise.all([
+    supabase.from('finishes').select('id, name').eq('is_active', true).order('name'),
+    user.role === 'super_admin' ? supabase.from('user_roles').select('user_id').eq('role', 'surveyor') : Promise.resolve({ data: [] as { user_id: string }[] }),
+  ]) : [{ data: [] as { id: string; name: string }[] }, { data: [] as { user_id: string }[] }]
+  const { data: reviewerProfiles } = reviewers?.length ? await supabase.from('profiles').select('id, full_name').in('id', reviewers.map((r) => r.user_id)).eq('is_active', true) : { data: [] }
+  const overdue = isSelf && survey.review_status === 'awaiting' && !!survey.review_due_at && new Date(survey.review_due_at).getTime() < nowMs()
   const liveQuote = quotes?.find((q) => q.status !== 'superseded')
 
   return (
@@ -57,9 +70,9 @@ export default async function SurveyDetailPage({ params }: PageProps<'/staff/sur
       <Link href="/staff/surveys" className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-redux-blue hover:underline"><ArrowLeft className="size-4" aria-hidden /> Surveys</Link>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="eyebrow text-redux-blue">Free survey · {survey.status === 'submitted' ? 'submitted' : survey.status.replace('_', ' ')}</p>
+          <p className="eyebrow text-redux-blue">{isSelf ? (survey.mode === 'video' ? 'Self-assessment + video call' : 'Self-assessment') : 'Free survey'} · {survey.status === 'submitted' ? 'submitted' : survey.status.replace('_', ' ')}</p>
           <h1 className="mt-1 text-[28px] leading-tight font-semibold text-ink">{survey.property?.name}</h1>
-          <p className="mt-1 text-sm text-muted-ink">{survey.property?.address} · Surveyor {survey.surveyor?.full_name} · {formatWhen(survey.scheduled_at)}</p>
+          <p className="mt-1 text-sm text-muted-ink">{survey.property?.address} · {isSelf ? `Photographed by the customer · started ${formatWhen(survey.scheduled_at, false)}` : `Surveyor ${survey.surveyor?.full_name} · ${formatWhen(survey.scheduled_at)}`}</p>
         </div>
         {liveQuote ? (
           <Button variant="secondary" asChild><Link href={`/staff/quotes/${liveQuote.id}`}><FileText aria-hidden /> {liveQuote.quote_no} v{liveQuote.version}</Link></Button>
@@ -67,6 +80,17 @@ export default async function SurveyDetailPage({ params }: PageProps<'/staff/sur
       </div>
 
       <div className="mb-6 grid gap-4 md:grid-cols-3">
+        {isSelf ? (
+          <Panel title="Review">
+            <div className="space-y-2 text-sm">
+              <p>{survey.review_status === 'priced' ? 'Quoted' : survey.review_status === 'awaiting' ? 'Submitted — waiting for review' : survey.review_status === 'needs_info' ? 'Sent back for more' : 'The customer is still adding fittings'}</p>
+              {survey.review_status === 'awaiting' && survey.review_due_at && <p className={overdue ? 'font-semibold text-danger' : 'text-muted-ink'}>{overdue ? 'Overdue — was due ' : 'Report and proposal due '}{formatWhen(survey.review_due_at)}</p>}
+              {survey.info_request && survey.review_status === 'needs_info' && <p className="rounded-md bg-warning-bg px-2.5 py-1.5 text-xs text-warning">Asked: {survey.info_request}</p>}
+              {user.role === 'super_admin' && <div className="pt-1"><p className="mb-1 text-xs text-muted-ink">Reviewer</p><ReviewerSelect surveyId={id} current={survey.reviewer_id} people={reviewerProfiles ?? []} /></div>}
+              {canAsk && <div className="pt-1"><AskForInfo surveyId={id} /></div>}
+            </div>
+          </Panel>
+        ) : (
         <Panel title="Check-in">
           {checkin ? (
             <div className="space-y-2 text-sm">
@@ -79,6 +103,7 @@ export default async function SurveyDetailPage({ params }: PageProps<'/staff/sur
             </div>
           ) : <p className="text-sm text-muted-ink">Not checked in yet.</p>}
         </Panel>
+        )}
         <Panel title="Audit"><p className="num text-[26px] font-semibold text-ink">{fittings.length}</p><p className="text-sm text-muted-ink">fittings across {units.length} {units.length === 1 ? 'unit' : 'units'} · {fittings.length * 4} photos</p></Panel>
         <Panel title="Customer">
           <p className="font-medium text-ink">{survey.lead?.name}</p>
@@ -90,11 +115,13 @@ export default async function SurveyDetailPage({ params }: PageProps<'/staff/sur
       {fittings.length === 0 && (
         <div className="flex flex-col items-center rounded-lg border border-dashed border-line bg-white px-6 py-12 text-center">
           <IconCircle icon={Smartphone} size="lg" />
-          <p className="mt-4 font-semibold text-ink">{survey.status === 'scheduled' ? `Waiting for the visit on ${formatWhen(survey.scheduled_at)}` : 'The surveyor is on site'}</p>
+          <p className="mt-4 font-semibold text-ink">{isSelf ? 'Waiting for the customer' : survey.status === 'scheduled' ? `Waiting for the visit on ${formatWhen(survey.scheduled_at)}` : 'The surveyor is on site'}</p>
           <p className="mt-1 max-w-md text-sm text-muted-ink">
-            {survey.surveyor?.full_name ?? 'The surveyor'} records every fitting in the REDUX app — four photos, condition and the three prices. They appear here as soon as the phone syncs, even if the visit was offline.
+            {isSelf
+              ? `The customer adds each fitting with four photos from their REDUX portal. The link went to them on WhatsApp; it stays open until ${formatWhen(survey.slot_end_at, false)}.`
+              : `${survey.surveyor?.full_name ?? 'The surveyor'} records every fitting in the REDUX app — four photos, condition and the three prices. They appear here as soon as the phone syncs, even if the visit was offline.`}
           </p>
-          {survey.property?.address && (
+          {!isSelf && survey.property?.address && (
             <Button variant="outline" size="sm" className="mt-5" asChild>
               <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(survey.property.address)}`} target="_blank" rel="noreferrer"><MapPin aria-hidden /> Open address in Maps</a>
             </Button>
@@ -153,7 +180,9 @@ export default async function SurveyDetailPage({ params }: PageProps<'/staff/sur
                       </>
                     ) : user.role === 'cc_exec'
                       ? <p className="text-sm text-muted-ink">Prices appear on the quotation.</p>
-                      : <p className="text-sm text-warning">Not assessed yet — every fitting needs a recommendation before quoting.</p>}
+                      : <p className="text-sm text-warning">{isSelf && survey.status !== 'submitted' ? 'Priced once the customer submits.' : 'Not assessed yet — every fitting needs a recommendation before quoting.'}</p>}
+                    {canPrice && <PriceFitting surveyId={id} fittingId={f.id} finishes={finishes ?? []}
+                      current={f.assessment ? { recommended: f.assessment.recommended, finish_id: f.assessment.finish_id, note: f.assessment.surveyor_note } : null} />}
                   </div>
                 </li>
               ))}
