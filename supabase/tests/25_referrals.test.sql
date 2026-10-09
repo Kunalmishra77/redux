@@ -1,7 +1,7 @@
 -- CR-001 phase 6 · referrals and rewards · BR-R1…R6.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(22);
+select plan(23);
 
 insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-0000000007a1', 'admin.ref@test.local'),
@@ -123,6 +123,8 @@ set local role authenticated;
 set local request.jwt.claims = '{"role":"authenticated","sub":"00000000-0000-0000-0000-0000000007d1","user_role":"customer"}';
 select is((select count(*)::int from public.my_referrals()), 4, 'the referrer sees their referrals');
 select is((select count(*)::int from public.my_rewards() where status = 'redeemed'), 1, '…and their rewards with status');
+
+select is((public.referral_programme_terms() ->> 'referred_discount_pct')::int, 5, 'the portal reads the programme terms through a function');
 
 select * from finish();
 rollback;
