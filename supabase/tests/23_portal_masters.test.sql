@@ -1,7 +1,7 @@
 -- CR-001 phase 4c · the self-assessment form's lists for customers; settings stay staff-only.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(4);
+select plan(5);
 
 insert into public.fitting_types (code, name) values ('pm_test_live', 'Live type');
 insert into public.fitting_types (code, name, is_active) values ('pm_test_retired', 'Retired type', false);
@@ -13,6 +13,8 @@ select is((select count(*)::int from public.fitting_types where code = 'pm_test_
 select is((select count(*)::int from public.fitting_types where code = 'pm_test_retired'), 0, '…but not retired ones');
 select is((select count(*)::int from public.settings), 0, 'settings stay staff-only');
 select ok(public.self_assessment_turnaround_hours() > 0, 'the turnaround reaches the customer through a function');
+
+select is((select count(*)::int from public.my_self_assessment_offers()), 0, 'a customer with no account has no offers');
 
 select * from finish();
 rollback;

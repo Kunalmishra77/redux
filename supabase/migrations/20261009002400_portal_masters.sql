@@ -17,3 +17,18 @@ returns int language sql stable security definer set search_path = '' as $$
 $$;
 revoke execute on function public.self_assessment_turnaround_hours() from public, anon;
 grant execute on function public.self_assessment_turnaround_hours() to authenticated;
+
+-- The portal's "Start your self-assessment" offer: open enquiries of my accounts that the policy (or
+-- the team) sent to a remote assessment and that have no assessment yet. Customers cannot read leads.
+create or replace function public.my_self_assessment_offers()
+returns table (lead_id uuid, mode text, customer_name text) language sql stable security definer set search_path = '' as $$
+  select l.id, l.assessment_mode, c.name
+  from public.leads l join public.customers c on c.id = l.customer_id
+  where l.customer_id = any (public.my_customer_ids())
+    and l.assessment_mode in ('self', 'video')
+    and l.status not in ('won', 'lost')
+    and not exists (select 1 from public.surveys s where s.lead_id = l.id and s.status <> 'cancelled')
+  order by l.created_at desc;
+$$;
+revoke execute on function public.my_self_assessment_offers() from public, anon;
+grant execute on function public.my_self_assessment_offers() to authenticated;
