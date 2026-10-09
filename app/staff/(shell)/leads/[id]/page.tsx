@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ShieldCheck, ShieldX } from 'lucide-react'
-import { formatWhen, LEAD_STATUS, Panel, StatusPill, Timeline } from '@/components/patterns'
+import { formatWhen, LEAD_STATUS, Money, Panel, StatusPill, Timeline } from '@/components/patterns'
 import { SourceBadge, SlaTimer } from '@/components/features/leads/bits'
 import { LeadWorkPane } from '@/components/features/leads/work-pane'
 import { requireRole } from '@/lib/auth/session'
@@ -21,22 +21,24 @@ export default async function LeadDetailPage({ params }: PageProps<'/staff/leads
   const supabase = await createClient()
   const { data } = await supabase.from('leads')
     .select(`${LEAD_COLUMNS}, email, utm, ctwa_clid, meta_ad_id, meta_form_id, google_lead_id, lost_note,
-             campaign:campaigns(name), lost_reason:lost_reasons(name), previous_lead_id, customer_id, account:customers!leads_customer_id_fkey(name, is_prospect)`)
+             campaign:campaigns(name), lost_reason:lost_reasons(name), previous_lead_id, customer_id, account:customers!leads_customer_id_fkey(name, is_prospect, tier, next_action, next_action_at)`)
     .eq('id', id).maybeSingle()
   if (!data) notFound()
   const lead = data as unknown as LeadRow & {
     email: string | null; utm: Record<string, string> | null; ctwa_clid: string | null; meta_ad_id: string | null
     meta_form_id: string | null; google_lead_id: string | null; lost_note: string | null; campaign: { name: string } | null
     lost_reason: { name: string } | null; previous_lead_id: string | null
-    customer_id: string | null; account: { name: string; is_prospect: boolean } | null
+    customer_id: string | null; account: { name: string; is_prospect: boolean; tier: string | null; next_action: string | null; next_action_at: string | null } | null
   }
 
-  const [lists, timeline, consents, openSurvey] = await Promise.all([
+  const [lists, timeline, consents, openSurvey, summary] = await Promise.all([
     loadPickLists(),
     loadLeadTimeline(id),
     supabase.from('consent_records').select('id, purpose, granted, withdrawn_at, notice_version, method, granted_at').eq('lead_id', id).order('granted_at'),
     supabase.from('surveys').select('id').eq('lead_id', id).neq('status', 'cancelled').limit(1),
+    lead.customer_id ? supabase.from('v_account_summary').select('lifetime_billed, open_proposal_value, jobs_done, last_work_on').eq('customer_id', lead.customer_id).maybeSingle() : Promise.resolve({ data: null }),
   ])
+  const acct = summary.data
   const st = LEAD_STATUS[lead.status]
   // latest record per purpose wins (BR-P2)
   const consent = new Map<string, NonNullable<typeof consents.data>[number]>()
@@ -61,6 +63,18 @@ export default async function LeadDetailPage({ params }: PageProps<'/staff/leads
 
       <div className="grid gap-6 xl:grid-cols-[18rem_minmax(0,1fr)_24rem]">
         <div className="space-y-5">
+          {lead.customer_id && lead.account && (
+            <Panel title="Account" action={<Link href={`/staff/accounts/${lead.customer_id}`} className="text-xs font-medium text-redux-blue hover:underline">Open 360° →</Link>}>
+              <dl className="space-y-3 text-sm">
+                <Row label="Account">{lead.account.name}{lead.account.tier && <span className="num ml-1.5 rounded-sm bg-pale px-1.5 text-xs font-bold text-redux-blue">{lead.account.tier}</span>}</Row>
+                <Row label="Stage">{lead.account.is_prospect ? 'Prospect' : 'Customer'}</Row>
+                <Row label="Billed so far"><Money value={Number(acct?.lifetime_billed ?? 0).toFixed(0)} paise="never" /></Row>
+                {Number(acct?.open_proposal_value ?? 0) > 0 && <Row label="Open proposals"><Money value={Number(acct?.open_proposal_value).toFixed(0)} paise="never" /></Row>}
+                <Row label="Last work">{acct?.last_work_on ? formatWhen(acct.last_work_on, false) : '—'}</Row>
+                {lead.account.next_action && <Row label="Next action">{lead.account.next_action}{lead.account.next_action_at ? ` · ${formatWhen(lead.account.next_action_at, false)}` : ''}</Row>}
+              </dl>
+            </Panel>
+          )}
           <Panel title="Enquiry">
             <dl className="space-y-3 text-sm">
               <Row label="Type">{lead.customer_type === 'hotel' ? 'Hotel' : lead.customer_type === 'home' ? 'Home' : lead.customer_type === 'dealer' ? 'Dealer' : '—'}</Row>

@@ -23,6 +23,12 @@ isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "account_activities_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
       foreignKeyName: "account_activities_lead_id_fkey"
       columns: ["lead_id"]
 isOneToOne: false
@@ -155,6 +161,12 @@ isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "calls_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
       foreignKeyName: "calls_lead_id_fkey"
       columns: ["lead_id"]
 isOneToOne: false
@@ -256,6 +268,12 @@ isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "consent_records_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
       foreignKeyName: "consent_records_lead_id_fkey"
       columns: ["lead_id"]
 isOneToOne: false
@@ -311,6 +329,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "customer_contacts_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
     }
                   ]
                 },"customer_groups": {
@@ -334,13 +358,13 @@ isOneToOne: false
                   ]
                 },"customers": {
                   Row: {
-                    "account_owner_id": string | null,"billing_address": string | null,"billing_city_id": string | null,"billing_state_code": string | null,"converted_at": string | null,"created_at": string,"group_id": string | null,"gstin": string | null,"id": string,"is_prospect": boolean,"kind": string,"lead_id": string | null,"legal_name": string | null,"name": string,"segment_id": string | null,"size_units": number | null,"tier": string | null,"type": string,"updated_at": string,"verified_at": string | null,"verified_by": string | null
+                    "account_owner_id": string | null,"billing_address": string | null,"billing_city_id": string | null,"billing_state_code": string | null,"converted_at": string | null,"created_at": string,"current_requirements": string | null,"future_requirements": string | null,"group_id": string | null,"gstin": string | null,"id": string,"is_prospect": boolean,"kind": string,"lead_id": string | null,"legal_name": string | null,"name": string,"next_action": string | null,"next_action_at": string | null,"segment_id": string | null,"size_units": number | null,"tier": string | null,"type": string,"updated_at": string,"verified_at": string | null,"verified_by": string | null,"website": string | null
                   }
                   Insert: {
-                    "account_owner_id"?: string | null,"billing_address"?: string | null,"billing_city_id"?: string | null,"billing_state_code"?: string | null,"converted_at"?: string | null,"created_at"?: string,"group_id"?: string | null,"gstin"?: string | null,"id"?: string,"is_prospect"?: boolean,"kind"?: string,"lead_id"?: string | null,"legal_name"?: string | null,"name": string,"segment_id"?: string | null,"size_units"?: number | null,"tier"?: string | null,"type": string,"updated_at"?: string,"verified_at"?: string | null,"verified_by"?: string | null
+                    "account_owner_id"?: string | null,"billing_address"?: string | null,"billing_city_id"?: string | null,"billing_state_code"?: string | null,"converted_at"?: string | null,"created_at"?: string,"current_requirements"?: string | null,"future_requirements"?: string | null,"group_id"?: string | null,"gstin"?: string | null,"id"?: string,"is_prospect"?: boolean,"kind"?: string,"lead_id"?: string | null,"legal_name"?: string | null,"name": string,"next_action"?: string | null,"next_action_at"?: string | null,"segment_id"?: string | null,"size_units"?: number | null,"tier"?: string | null,"type": string,"updated_at"?: string,"verified_at"?: string | null,"verified_by"?: string | null,"website"?: string | null
                   }
                   Update: {
-                    "account_owner_id"?: string | null,"billing_address"?: string | null,"billing_city_id"?: string | null,"billing_state_code"?: string | null,"converted_at"?: string | null,"created_at"?: string,"group_id"?: string | null,"gstin"?: string | null,"id"?: string,"is_prospect"?: boolean,"kind"?: string,"lead_id"?: string | null,"legal_name"?: string | null,"name"?: string,"segment_id"?: string | null,"size_units"?: number | null,"tier"?: string | null,"type"?: string,"updated_at"?: string,"verified_at"?: string | null,"verified_by"?: string | null
+                    "account_owner_id"?: string | null,"billing_address"?: string | null,"billing_city_id"?: string | null,"billing_state_code"?: string | null,"converted_at"?: string | null,"created_at"?: string,"current_requirements"?: string | null,"future_requirements"?: string | null,"group_id"?: string | null,"gstin"?: string | null,"id"?: string,"is_prospect"?: boolean,"kind"?: string,"lead_id"?: string | null,"legal_name"?: string | null,"name"?: string,"next_action"?: string | null,"next_action_at"?: string | null,"segment_id"?: string | null,"size_units"?: number | null,"tier"?: string | null,"type"?: string,"updated_at"?: string,"verified_at"?: string | null,"verified_by"?: string | null,"website"?: string | null
                   }
                   Relationships: [
                     {
@@ -423,6 +447,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "dsr_requests_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
     }
                   ]
                 },"finishes": {
@@ -713,6 +743,12 @@ isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "invoices_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
       foreignKeyName: "invoices_job_id_fkey"
       columns: ["job_id"]
 isOneToOne: false
@@ -854,6 +890,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "jobs_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
     },{
       foreignKeyName: "jobs_parent_job_id_fkey"
       columns: ["parent_job_id"]
@@ -1017,6 +1059,12 @@ isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "leads_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
       foreignKeyName: "leads_lost_reason_id_fkey"
       columns: ["lost_reason_id"]
 isOneToOne: false
@@ -1117,6 +1165,12 @@ isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "messages_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
       foreignKeyName: "messages_lead_id_fkey"
       columns: ["lead_id"]
 isOneToOne: false
@@ -1211,6 +1265,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "properties_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
     }
                   ]
                 },"property_units": {
@@ -1304,6 +1364,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotations_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
     },{
       foreignKeyName: "quotations_lead_id_fkey"
       columns: ["lead_id"]
@@ -1479,6 +1545,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "service_requests_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
     },{
       foreignKeyName: "service_requests_job_unit_id_fkey"
       columns: ["job_unit_id"]
@@ -1805,6 +1877,12 @@ isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "whatsapp_conversations_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
       foreignKeyName: "whatsapp_conversations_lead_id_fkey"
       columns: ["lead_id"]
 isOneToOne: false
@@ -1847,7 +1925,20 @@ isOneToOne: false
                 }
           }
           Views: {
-            "v_account_timeline": {
+            "v_account_summary": {
+                  Row: {
+                    "approved_value": number | null,"assessments_done": number | null,"customer_id": string | null,"discount_total": number | null,"first_enquiry_at": string | null,"first_source": string | null,"fittings_ordered": number | null,"jobs_done": number | null,"jobs_total": number | null,"last_work_on": string | null,"lifetime_billed": number | null,"lifetime_paid": number | null,"open_proposal_value": number | null,"open_service_requests": number | null,"rooms_restored": number | null
+                  }
+                  Insert: {
+                           "approved_value"?: never,"assessments_done"?: never,"customer_id"?: string | null,"discount_total"?: never,"first_enquiry_at"?: never,"first_source"?: never,"fittings_ordered"?: never,"jobs_done"?: never,"jobs_total"?: never,"last_work_on"?: never,"lifetime_billed"?: never,"lifetime_paid"?: never,"open_proposal_value"?: never,"open_service_requests"?: never,"rooms_restored"?: never
+                         }
+                        Update: {
+                           "approved_value"?: never,"assessments_done"?: never,"customer_id"?: string | null,"discount_total"?: never,"first_enquiry_at"?: never,"first_source"?: never,"fittings_ordered"?: never,"jobs_done"?: never,"jobs_total"?: never,"last_work_on"?: never,"lifetime_billed"?: never,"lifetime_paid"?: never,"open_proposal_value"?: never,"open_service_requests"?: never,"rooms_restored"?: never
+                         }
+                        Relationships: [
+                    
+                  ]
+                },"v_account_timeline": {
                   Row: {
                     "actor_id": string | null,"customer_id": string | null,"detail": string | null,"entity_id": string | null,"entity_type": string | null,"kind": string | null,"lead_id": string | null,"occurred_at": string | null,"title": string | null
                   }
@@ -1909,6 +2000,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "jobs_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
     }
                   ]
                 },"v_low_stock": {
@@ -1947,6 +2044,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "properties_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
     }
                   ]
                 },"v_service_requests_overdue": {
@@ -1966,6 +2069,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "customers"
       referencedColumns: ["id"]
+    },{
+      foreignKeyName: "service_requests_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
     }
                   ]
                 }
@@ -1999,6 +2108,9 @@ isOneToOne: false
                            },
 "can_run_job":
 { Args: { "p_job": string }; Returns: boolean
+                           },
+"can_work_account":
+{ Args: { "p_customer": string }; Returns: boolean
                            },
 "cancel_invoice":
 { Args: { "p_invoice": string,"p_reason": string }; Returns: string
@@ -2194,6 +2306,9 @@ isOneToOne: false
                            },
 "unit_noun":
 { Args: { "p_customer": string }; Returns: string
+                           },
+"update_account_requirements":
+{ Args: { "p": Json,"p_customer": string }; Returns: undefined
                            },
 "upsert_assessment":
 { Args: { "p": Json }; Returns: string

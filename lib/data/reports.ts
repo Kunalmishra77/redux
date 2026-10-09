@@ -52,16 +52,16 @@ export async function loadAssessmentReport(surveyId: string) {
   if (!visible) return null
   const admin = createAdminClient()
   const { data: s } = await admin.from('surveys')
-    .select('id, submitted_at, scheduled_at, property:properties(name, address, customer:customers(name, type)), surveyor:profiles!surveys_surveyor_id_fkey(full_name), quotations(id, quote_no, version, status, total, market_total, you_save, created_at)')
+    .select('id, submitted_at, scheduled_at, property:properties(name, address, customer_id, customer:customers(name, type)), surveyor:profiles!surveys_surveyor_id_fkey(full_name), quotations(id, quote_no, version, status, total, market_total, you_save, created_at)')
     .eq('id', surveyId).single()
   const survey = s as unknown as { id: string; submitted_at: string | null; scheduled_at: string
-    property: { name: string; address: string; customer: { name: string; type: string } | null } | null; surveyor: { full_name: string } | null
+    property: { name: string; address: string; customer_id: string; customer: { name: string; type: string } | null } | null; surveyor: { full_name: string } | null
     quotations: { id: string; quote_no: string; version: number; status: string; total: number; market_total: number; you_save: number; created_at: string }[] }
   // the latest proposal the customer has been sent (never a draft, BR-Q7 / item 12)
   const quote = survey.quotations.filter((q) => !['draft', 'pending_approval'].includes(q.status)).sort((a, b) => b.created_at.localeCompare(a.created_at))[0] ?? null
   if (!quote) return null
   const fittings = await fittingsFor([surveyId], quote.id, false)
-  return { survey, quote, fittings }
+  return { survey, quote, fittings, customerId: survey.property?.customer_id ?? null }
 }
 
 /** Completion report or warranty certificate for one job, if the caller can see it and it is complete. */
@@ -71,9 +71,9 @@ export async function loadJobReport(jobId: string) {
   if (!visible) return null
   const admin = createAdminClient()
   const { data: j } = await admin.from('jobs')
-    .select('id, job_no, status, actual_start, actual_end, quotation_id, property:properties(name, address, customer:customers(name, type)), quote:quotations(quote_no, version, survey_id, terms_text), units:job_units(id, back_in_service_at, pu:property_units(label), handover:handovers(customer_name, leak_check, operation_check, finish_check, completed_at))')
+    .select('id, job_no, status, actual_start, actual_end, quotation_id, customer_id, property:properties(name, address, customer:customers(name, type)), quote:quotations(quote_no, version, survey_id, terms_text), units:job_units(id, back_in_service_at, pu:property_units(label), handover:handovers(customer_name, leak_check, operation_check, finish_check, completed_at))')
     .eq('id', jobId).single()
-  const job = j as unknown as { id: string; job_no: string; status: string; actual_start: string | null; actual_end: string | null; quotation_id: string
+  const job = j as unknown as { id: string; job_no: string; status: string; actual_start: string | null; actual_end: string | null; quotation_id: string; customer_id: string
     property: { name: string; address: string; customer: { name: string; type: string } | null } | null
     quote: { quote_no: string; version: number; survey_id: string; terms_text: string | null } | null
     units: { id: string; back_in_service_at: string | null; pu: { label: string } | null; handover: { customer_name: string; leak_check: boolean; operation_check: boolean; finish_check: boolean; completed_at: string } | { customer_name: string; leak_check: boolean; operation_check: boolean; finish_check: boolean; completed_at: string }[] | null }[] }
@@ -81,6 +81,6 @@ export async function loadJobReport(jobId: string) {
     .select('id, card_no, kind, valid_from, valid_until, job_unit_id, fitting_id, terms_text, fitting:fittings(unit_label, ft:fitting_types(name), finish:finishes(name))')
     .eq('job_id', jobId).order('card_no')
   const fittings = job.quote ? await fittingsFor([job.quote.survey_id], job.quotation_id, true) : []
-  return { job, fittings, warranties: (warranties ?? []) as unknown as { id: string; card_no: string; kind: string; valid_from: string; valid_until: string; terms_text: string
+  return { job, fittings, customerId: job.customer_id, warranties: (warranties ?? []) as unknown as { id: string; card_no: string; kind: string; valid_from: string; valid_until: string; terms_text: string
     fitting: { unit_label: string | null; ft: { name: string } | null; finish: { name: string } | null } | null }[] }
 }

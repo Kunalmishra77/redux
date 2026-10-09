@@ -60,3 +60,25 @@ export async function addAccountActivityAction(customerId: string, kind: 'meetin
   revalidatePath(`/staff/accounts/${customerId}`)
   return { ok: true, data: null }
 }
+
+// D26 — what the account needs now and later, and the next step. The RPC decides who may edit
+// (Super Admin, the account owner, or the executive working one of its leads).
+const Requirements = z.object({
+  current_requirements: z.string().trim().max(2000),
+  future_requirements: z.string().trim().max(2000),
+  next_action: z.string().trim().max(300),
+  next_action_at: z.string().trim().refine((s) => s === '' || !Number.isNaN(Date.parse(s)), 'Pick a valid date'),
+  website: z.string().trim().max(200).refine((s) => s === '' || /^(https?:\/\/)?[\w-]+(\.[\w-]+)+(\/\S*)?$/i.test(s), 'Enter a website like hotel.com'),
+})
+
+export async function updateAccountRequirementsAction(id: string, input: z.input<typeof Requirements>): Promise<Result<null>> {
+  await requireRole(['super_admin', 'cc_exec'])
+  const parsed = Requirements.safeParse(input)
+  if (!parsed.success) return { ok: false, code: 'INVALID', message: parsed.error.issues[0]?.message ?? 'Check the form.' }
+  const p = { ...parsed.data, next_action_at: parsed.data.next_action_at ? new Date(`${parsed.data.next_action_at}T10:00:00+05:30`).toISOString() : '' }
+  const supabase = await createClient()
+  const { error } = await supabase.rpc('update_account_requirements', { p_customer: id, p })
+  if (error) return { ok: false, code: error.code ?? 'FAILED', message: error.code === '42501' ? 'Only the account owner, its executive or the Super Admin can edit this.' : 'That didn’t save. Try again.' }
+  revalidatePath(`/staff/accounts/${id}`)
+  return { ok: true, data: null }
+}

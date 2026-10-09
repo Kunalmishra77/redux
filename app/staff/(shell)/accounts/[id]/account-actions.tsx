@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { addAccountActivityAction, createGroupAction, setAccountVerifiedAction, updateAccountProfileAction } from '@/lib/actions/accounts'
+import { addAccountActivityAction, createGroupAction, setAccountVerifiedAction, updateAccountProfileAction, updateAccountRequirementsAction } from '@/lib/actions/accounts'
 
 type Opt = { id: string; name: string }
 type Profile = { legal_name: string; segment_id: string | null; group_id: string | null; account_owner_id: string | null; size_units: number | null }
@@ -98,6 +98,40 @@ export function ActivityButton({ customerId }: { customerId: string }) {
             <div className="space-y-1.5"><Label htmlFor="act-body">Details (optional)</Label><Textarea id="act-body" rows={3} value={body} onChange={(e) => setBody(e.target.value)} /></div>
           </div>
           <DialogFooter><Button disabled={pending || title.trim().length < 2} onClick={save}>{pending && <Loader2 className="animate-spin" />} Add</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}
+
+type Reqs = { current_requirements: string; future_requirements: string; next_action: string; next_action_at: string; website: string }
+
+// D26 — requirements now / later and the next step, editable by whoever works the account
+export function RequirementsButton({ customerId, value }: { customerId: string; value: Reqs }) {
+  const router = useRouter()
+  const [open, setOpen] = useState(false)
+  const [r, setR] = useState(value)
+  const [pending, start] = useTransition()
+  const save = () => start(async () => {
+    const res = await updateAccountRequirementsAction(customerId, r)
+    if (res.ok) { toast.success('Saved'); setOpen(false); router.refresh() } else toast.error(res.message)
+  })
+  return (
+    <>
+      <Button size="xs" variant="outline" onClick={() => { setR(value); setOpen(true) }}><Pencil aria-hidden /> Edit</Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Requirements & next step</DialogTitle><DialogDescription>Internal — what this business needs, and what we do next.</DialogDescription></DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5"><Label htmlFor="r-now">Needs now</Label><Textarea id="r-now" rows={3} value={r.current_requirements} onChange={(e) => setR({ ...r, current_requirements: e.target.value })} placeholder="e.g. 48 rooms, chrome dulling on mixers, wants it before the wedding season" /></div>
+            <div className="space-y-1.5"><Label htmlFor="r-later">Later / pipeline</Label><Textarea id="r-later" rows={2} value={r.future_requirements} onChange={(e) => setR({ ...r, future_requirements: e.target.value })} placeholder="e.g. Second property in Gurugram, refurb planned for 2027" /></div>
+            <div className="grid gap-3 sm:grid-cols-[1fr_11rem]">
+              <div className="space-y-1.5"><Label htmlFor="r-next">Next action</Label><Input id="r-next" value={r.next_action} onChange={(e) => setR({ ...r, next_action: e.target.value })} placeholder="e.g. Send the pilot proposal" /></div>
+              <div className="space-y-1.5"><Label htmlFor="r-when">By</Label><Input id="r-when" type="date" value={r.next_action_at} onChange={(e) => setR({ ...r, next_action_at: e.target.value })} /></div>
+            </div>
+            <div className="space-y-1.5"><Label htmlFor="r-web">Website</Label><Input id="r-web" value={r.website} onChange={(e) => setR({ ...r, website: e.target.value })} placeholder="hotel.com" /></div>
+          </div>
+          <DialogFooter><Button disabled={pending} onClick={save}>{pending && <Loader2 className="animate-spin" />} Save</Button></DialogFooter>
         </DialogContent>
       </Dialog>
     </>
