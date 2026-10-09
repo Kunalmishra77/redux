@@ -515,4 +515,15 @@ Append one line per working session. This is how the next session (or the next p
             banner. Verified live over HTTP with real sessions (browser on this machine can't
             open any site). Demo account "Hotel Silver Lotus" (unverified) left on staging.
             Demo report waits for demos (phase 5). Awaiting approval of phase 2 before phase 3.
+2026-10-09  CR-001 PHASE 3 (E20, D26) built: migration 20261009002100_profiling (requirements now /
+            later, next action + date, website on customers; can_work_account +
+            update_account_requirements — Super Admin, owner, or exec on one of its leads;
+            v_account_summary security-invoker; timeline + WhatsApp messages + follow-ups).
+            pgTAP 20 (9). Account page is now a 360° with tabs (overview, timeline, work & money,
+            assessments & reports, follow-ups & messages); staff report pages
+            /staff/reports/[kind]/[id] reuse the customer documents; accounts list gets owner
+            filter, billed / open proposals / next action columns, overdue + no-next filters; lead
+            page gets an account card. Six demo accounts given requirements and next actions.
+            Verified live over HTTP as Super Admin and care executive. Score breakdown waits for
+            phase 4; referrals panel is a placeholder until phase 6. Awaiting phase 4 approval.
 ```
