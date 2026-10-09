@@ -17,15 +17,16 @@ const sel = 'h-9 w-full rounded-md border border-line bg-white px-2 text-sm'
 const TREATMENTS = [['restore_finish', 'Restore finish'], ['repair_function', 'Repair function'], ['replace_eurobrass', 'Replace (Eurobrass)'], ['no_action', 'No action']] as const
 
 /** One fitting's recommendation, priced on the server from the active rate card. */
-export function PriceFitting({ surveyId, fittingId, finishes, current }: {
-  surveyId: string; fittingId: string; finishes: { id: string; name: string }[]
+export function PriceFitting({ surveyId, fittingId, finishes, current, finishKnown }: {
+  surveyId: string; fittingId: string; finishes: { id: string; name: string }[]; finishKnown: boolean
   current: { recommended: string; finish_id: string | null; note: string | null } | null
 }) {
   const router = useRouter()
   const [pending, start] = useTransition()
   const [open, setOpen] = useState(!current)
   const [rec, setRec] = useState(current?.recommended ?? 'restore_finish')
-  const [finish, setFinish] = useState(current?.finish_id ?? '')
+  // prices are by finish: when the customer did not know theirs, start from Chrome (the usual one)
+  const [finish, setFinish] = useState(current?.finish_id ?? (finishKnown ? '' : finishes.find((f) => /chrome/i.test(f.name))?.id ?? finishes[0]?.id ?? ''))
   const [note, setNote] = useState(current?.note ?? '')
   const [manual, setManual] = useState(false)
   const [price, setPrice] = useState('')
@@ -43,7 +44,7 @@ export function PriceFitting({ surveyId, fittingId, finishes, current }: {
       <p className="eyebrow text-muted-ink">{current ? 'Change recommendation' : 'Your recommendation'}</p>
       <div className="grid grid-cols-2 gap-2">
         <select aria-label="Recommendation" className={sel} value={rec} onChange={(e) => setRec(e.target.value)}>{TREATMENTS.map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
-        <select aria-label="Finish" className={sel} value={finish} onChange={(e) => setFinish(e.target.value)}><option value="">Same finish</option>{finishes.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}</select>
+        <select aria-label="Finish" className={sel} value={finish} onChange={(e) => setFinish(e.target.value)}>{finishKnown && <option value="">Same finish</option>}{finishes.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}</select>
       </div>
       <Input aria-label="Note for the customer" className="h-9" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note (optional)" />
       <label className="flex items-center gap-1.5 text-xs text-muted-ink"><input type="checkbox" className="size-3.5 accent-redux-blue" checked={manual} onChange={(e) => setManual(e.target.checked)} /> Manual price (not on the rate card)</label>

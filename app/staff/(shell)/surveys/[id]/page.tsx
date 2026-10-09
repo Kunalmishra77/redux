@@ -181,7 +181,7 @@ export default async function SurveyDetailPage({ params }: PageProps<'/staff/sur
                     ) : user.role === 'cc_exec'
                       ? <p className="text-sm text-muted-ink">Prices appear on the quotation.</p>
                       : <p className="text-sm text-warning">{isSelf && survey.status !== 'submitted' ? 'Priced once the customer submits.' : 'Not assessed yet — every fitting needs a recommendation before quoting.'}</p>}
-                    {canPrice && <PriceFitting surveyId={id} fittingId={f.id} finishes={finishes ?? []}
+                    {canPrice && <PriceFitting surveyId={id} fittingId={f.id} finishes={finishes ?? []} finishKnown={!!f.finish}
                       current={f.assessment ? { recommended: f.assessment.recommended, finish_id: f.assessment.finish_id, note: f.assessment.surveyor_note } : null} />}
                   </div>
                 </li>

@@ -21,7 +21,7 @@ export default async function QuotePage({ params }: PageProps<'/staff/quotes/[id
   if (!q) notFound()
   const supabase = await createClient()
   // BR-R2: a referred business's first quote carries a pre-approved referral discount
-  const { data: ref } = await supabase.from('quotations').select('referral_discount_pct, referral:referrals(referrer:customers!referrals_referrer_customer_id_fkey(name))').eq('id', id).maybeSingle()
+  const { data: ref } = await supabase.from('quotations').select('referral_discount_pct, referral:referrals!quotations_referral_id_fkey(referrer:customers!referrals_referrer_customer_id_fkey(name))').eq('id', id).maybeSingle()
   const referral = ref?.referral_discount_pct ? { pct: Number(ref.referral_discount_pct), by: (ref.referral as unknown as { referrer: { name: string } | null } | null)?.referrer?.name ?? null } : null
   const [{ data: threshold }, { data: approval }, { data: job }, { data: discount }, { data: versions }] = await Promise.all([
     supabase.from('settings').select('value').eq('key', 'discount_threshold_pct').maybeSingle(),
