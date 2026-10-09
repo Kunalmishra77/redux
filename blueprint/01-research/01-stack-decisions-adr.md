@@ -394,6 +394,12 @@ the customer's own open self-survey.
 **What would change this.** Self-assessments that never lead to a quote (pure lead-qualification
 questionnaires) at high volume.
 
+**As built (9 Oct 2026).** The customer writes through SECURITY DEFINER functions
+(`self_assessment_save_fitting`, `…_photo_path`, `…_add_photo`, `submit_self_assessment`) that check
+the account and the open state explicitly, instead of new customer write policies. Photos upload
+through the app (`/api/self-assessment/photo`) to the same `surveys/{sid}/{fid}/{slot}/{sha}.jpg`
+path. The reviewer is the Super Admin or a surveyor named on the survey.
+
 ---
 
 ## ADR-016 — Portal access by account membership, prospects included
