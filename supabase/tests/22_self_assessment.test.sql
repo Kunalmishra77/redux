@@ -1,7 +1,7 @@
 -- CR-001 phase 4b · self-assessment as a survey mode · BR-S10, BR-S11, ADR-015.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(19);
+select plan(20);
 
 insert into auth.users (id, email, phone) values
   ('00000000-0000-0000-0000-0000000004a1', 'admin.self@test.local', null),
@@ -97,6 +97,16 @@ select is((select review_status from public.surveys where id = (select id from s
 update public.surveys set review_status = 'awaiting', review_due_at = now() - interval '1 hour' where id = (select id from sv);
 select is(public.sweep_self_assessment_sla(), 1, 'BR-S11: an overdue self-assessment raises an alert');
 select is(public.sweep_self_assessment_sla(), 0, '…once');
+
+-- staff start a remote assessment for a brand-new enquiry: no address needed (BR-S8 is on-site only)
+insert into public.leads (id, phone, name, source_id, customer_type, business_name, assigned_to) values
+  ('20000000-0000-0000-0000-0000000004b2', '+919700000493', 'Raj', (select id from public.lead_sources where code = 'call'), 'hotel',
+   'Hotel Faraway', '00000000-0000-0000-0000-0000000004c1');
+set local role authenticated;
+set local request.jwt.claims = '{"role":"authenticated","sub":"00000000-0000-0000-0000-0000000004c1","user_role":"cc_exec"}';
+select lives_ok($$ select public.start_self_assessment('20000000-0000-0000-0000-0000000004b2') $$,
+  'the executive starts a self-assessment for a new enquiry without an address');
+reset role;
 
 select * from finish();
 rollback;
