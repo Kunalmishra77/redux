@@ -352,6 +352,9 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-10-09 | Reviewer = Super Admin or a surveyor assigned as reviewer; care executives can ask for more info but not price | Executives do not see prices (roles: pricing only on a quote) | migration 002300 |
 | 2026-10-09 | A remote assessment's site may be recorded with the address "to be confirmed" | BR-S8 (address required) is the on-site rule — the surveyor navigates there | migration 002500 |
 | 2026-10-09 | Website CTA wording (C1: "Request an assessment") left for phase 8 | Website copy is phase 8 (premium website) | — |
+| 2026-10-09 | Demos are staff-only in RLS; customers read theirs through `my_demos()` (no internal cost, exception reason or approver) | Column-level hiding is not possible with row policies | migration 002600 |
+| 2026-10-09 | Demo warranty days and terms come from the `warranty_terms` setting in force on the handover day | A demo has no quotation to freeze terms on (BR-D3: same warranty as paid) | migration 002600 |
+| 2026-10-09 | `create_invoice_from_job` redefined: refuses demo jobs and treats a missing quote as not approved | The old `q.status <> 'approved'` let a NULL quote through silently | migration 002600 |
 
 ### Open review items (27 Sep 2026) — each fixed in the migration for its section
 
@@ -548,4 +551,18 @@ Append one line per working session. This is how the next session (or the next p
             outbox -> review queue. Demo state: Maple Crest (Jaipur) submitted and waiting for review;
             Silver Lotus (B, 18 rooms) sees the Start offer. Open: SLA alert needs install_schedules() on
             the worker (no cron on staging yet). Awaiting phase 5 approval.
+2026-10-09  CR-001 PHASE 5 (E22, D28) built. Migration 002600: jobs.kind (project/pilot/demo, quote
+            optional only for demo), demo_types (room / single-fitting; scope, cost guide, tiers),
+            demos + demo_items, propose/decide/schedule/record_outcome/close/rate_my_demo/my_demos,
+            demo job follows its job status, conversion on quote approval (BR-D4), demo warranty from
+            the terms in force, no invoicing, CN23 + TN19/20, demos on the account timeline. pgTAP 24
+            (22); all 25 files green. App: /staff/demos board (investment numbers, conversion) and
+            detail (approve/reject, schedule, outcome + cost, close), demo types editor, Propose demo
+            from lead and account (fittings from the account's assessments), demo badge on jobs, demo
+            report, portal demo card with rating. Verified live end to end: Maple Crest room demo
+            proposed -> approved -> scheduled (job J-2026-0181, no quote) -> stages -> handover ->
+            warranty -> completed; cost ₹6,500; invoice refused; customer rated 5 without seeing cost.
+            Demo state: Maple Crest demo done and waiting for the order (its self-assessment is still
+            unpriced — pricing + approving that quote converts the demo); Grand Orchid room demo waiting
+            for approval. Awaiting phase 6 approval.
 ```
