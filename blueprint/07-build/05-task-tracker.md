@@ -346,6 +346,12 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-09-28 | New table `quote_otps` (OTP lifecycle, hashes only) | BR-Q5 needs attempts/expiry somewhere | migration 000900 |
 | 2026-09-28 | **`audit_log.actor_id` → auth.users** (was profiles) | Customers have no profile; their audited actions would fail the FK | migration 000900 |
 | 2026-09-28 | `assessments.you_save` generated (null = hidden); `updated_at`; no cascade from fittings | BR-A4 "hidden, never negative"; rule 8 | migration 000800 |
+| 2026-10-09 | `pincodes` seeded at 3-digit sorting-district level (33 rows), 6-digit rows win when imported | Enough for the 150 km band without a paid geocoder; full master can be loaded later | migration 002200 |
+| 2026-10-09 | Customer writes to a self-assessment go through SECURITY DEFINER functions (`self_assessment_*`), not new customer write policies on fittings/photos | Same guarantee as ADR-015's "through RLS", one place to read the checks (account, open state, path) | migration 002300, ADR-015 note |
+| 2026-10-09 | Self-assessment photos upload through the app (`/api/self-assessment/photo`), not signed upload URLs | Works on networks that block *.supabase.co; the server hashes the exact bytes it stored | route + CR §3.4 |
+| 2026-10-09 | Reviewer = Super Admin or a surveyor assigned as reviewer; care executives can ask for more info but not price | Executives do not see prices (roles: pricing only on a quote) | migration 002300 |
+| 2026-10-09 | A remote assessment's site may be recorded with the address "to be confirmed" | BR-S8 (address required) is the on-site rule — the surveyor navigates there | migration 002500 |
+| 2026-10-09 | Website CTA wording (C1: "Request an assessment") left for phase 8 | Website copy is phase 8 (premium website) | — |
 
 ### Open review items (27 Sep 2026) — each fixed in the migration for its section
 
@@ -526,4 +532,20 @@ Append one line per working session. This is how the next session (or the next p
             page gets an account card. Six demo accounts given requirements and next actions.
             Verified live over HTTP as Super Admin and care executive. Score breakdown waits for
             phase 4; referrals panel is a placeholder until phase 6. Awaiting phase 4 approval.
+2026-10-09  CR-001 PHASE 4 (E21, D27) built. Migrations 002200 scoring (pincodes, service_areas, scoring_rules
+            + version, tier thresholds, assessment_policies 3x3, lead_scores append-only, evaluate_score /
+            locate / _score_lead / _decide_assessment, overrides, triggers on lead + account inputs,
+            nightly rescore in install_schedules), 002300 self-assessment (surveys.mode/reviewer/review_*,
+            reviewer in policies + upsert_assessment + create_quote_from_survey, CN20-22 + TN17-18,
+            start/save/remove/photo/submit/request-info/assign-reviewer, SLA sweep), 002400 customer
+            reads of fitting lists + my_self_assessment_offers, 002500 remote site fix. pgTAP 21 (17),
+            22 (20), 23 (5); all 24 files green. App: lead Qualification panel (tier, points breakdown,
+            distance, mode, demo, overrides, send self-assessment), /staff/admin/scoring (rules, thresholds,
+            service area, policy matrix, test-a-lead, rescore), surveys review queue + self-assessment
+            review (price per fitting, ask for more, reviewer), portal start offer + wizard (four slots,
+            on-phone resize, upload route). Verified live end to end over HTTP: Jaipur A-tier lead ->
+            video/self-assessment -> customer adds 2 fittings + 8 photos -> submits -> TN17, CN20/21 in
+            outbox -> review queue. Demo state: Maple Crest (Jaipur) submitted and waiting for review;
+            Silver Lotus (B, 18 rooms) sees the Start offer. Open: SLA alert needs install_schedules() on
+            the worker (no cron on staging yet). Awaiting phase 5 approval.
 ```
