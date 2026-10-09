@@ -355,6 +355,10 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-10-09 | Demos are staff-only in RLS; customers read theirs through `my_demos()` (no internal cost, exception reason or approver) | Column-level hiding is not possible with row policies | migration 002600 |
 | 2026-10-09 | Demo warranty days and terms come from the `warranty_terms` setting in force on the handover day | A demo has no quotation to freeze terms on (BR-D3: same warranty as paid) | migration 002600 |
 | 2026-10-09 | `create_invoice_from_job` redefined: refuses demo jobs and treats a missing quote as not approved | The old `q.status <> 'approved'` let a NULL quote through silently | migration 002600 |
+| 2026-10-09 | Referral programme numbers in one setting (`referral_programme`) instead of `referral_benefits` / `reward_rules` tables | One benefit and two reward rules today; tables when a second programme exists | migration 002700 |
+| 2026-10-09 | A referral credit is redeemed as a settlement on an issued invoice (payment by `reward_credit`), not as a quote discount | Keeps the tax invoice and GST unchanged; redemption still references the invoice (BR-R6) | migration 002700 |
+| 2026-10-09 | Referrer credit = 5% of the first order's taxable value (before GST) | "5% of the order" read as the value of the work, not the tax | migration 002700 |
+| 2026-10-09 | BR-R5 (no stacking) enforced as "one discount on the quote": the referral sets the discount to the larger of the two | Campaign offers arrive in phase 9 and will use the same rule | migration 002700 |
 
 ### Open review items (27 Sep 2026) — each fixed in the migration for its section
 
@@ -565,4 +569,20 @@ Append one line per working session. This is how the next session (or the next p
             Demo state: Maple Crest demo done and waiting for the order (its self-assessment is still
             unpriced — pricing + approving that quote converts the demo); Grand Orchid room demo waiting
             for approval. Awaiting phase 6 approval.
+2026-10-09  CR-001 PHASE 6 (E23, D29) built. Migrations 002700 referrals (referral_codes, referrals,
+            rewards + reward_redemptions append-only, v_rewards; capture from a code on any lead incl.
+            registration "referred by" and the /r/{code} cookie; manual record; self-referral blocked,
+            same chain allowed; first quote gets the pre-approved 5% (set_quote_discount threshold
+            raised to it); conversion on approval; free fitting every 3 conversions; credit 5% on
+            payment + CN24; redeem once; my_referrals/my_rewards; CN13 skipped for credits; scoring
+            counts recorded referrals) and 002800 programme terms for the portal. pgTAP 25 (23); all
+            26 files green; unit test for the referral code on enquiries. App: /r/[code], register
+            prefill, /staff/referrals (needs linking, referrals, ledger with Use, programme settings),
+            account Referrals panel, lead "Referred by", quote referral note, portal Refer & earn
+            (code, link, WhatsApp share, referred list, rewards). Demo data: group "Silver Hotels"
+            (Birch -> Oak referral), Lakeview code LAKE631 referred Maple Crest and (by registration)
+            Hotel Amber Residency; Maple Crest's self-assessment priced -> Q-2026-0290 draft with 5%
+            referral discount. Fix: reviewer form defaults to Chrome when the customer did not know
+            the finish (rate card prices by finish). Awaiting phase 7 approval (catalog — needs the
+            client's catalog).
 ```
