@@ -10,8 +10,8 @@ import { RepeatButton } from '../repeat-button'
 export const metadata: Metadata = { title: 'History' }
 
 const TABS = [
-  ['all', 'Everything'], ['assessments', 'Assessments'], ['proposals', 'Proposals'], ['work', 'Work done'],
-  ['money', 'Invoices & payments'], ['service', 'Service'],
+  ['all', 'Everything'], ['assessments', 'Assessments'], ['demos', 'Demos'], ['proposals', 'Proposals'], ['work', 'Work done'],
+  ['money', 'Invoices & payments'], ['service', 'Service'], ['referrals', 'Referrals & rewards'],
 ] as const
 type Tab = (typeof TABS)[number][0]
 
@@ -38,6 +38,8 @@ export default async function HistoryPage({ searchParams }: PageProps<'/portal/h
     : tab === 'work' ? (user.verified ? await work(ctx) : <Locked />)
     : tab === 'money' ? (user.verified ? await money(ctx) : <Locked />)
     : tab === 'service' ? await service(ctx)
+    : tab === 'demos' ? await demos(ctx)
+    : tab === 'referrals' ? await referrals(ctx)
     : await everything(ctx)
 
   return (
@@ -94,6 +96,54 @@ async function assessments({ supabase, user, accountName }: Ctx) {
         )
       })}
     </ul>
+  )
+}
+
+// CR-001 phase 5 (D28) — the account's free demos (customer-safe view: no internal cost)
+async function demos({ supabase, user }: Ctx) {
+  const { data } = await supabase.rpc('my_demos')
+  const rows = (data ?? []) as { id: string; demo_no: string; type_name: string; status: string; property_name: string; scheduled_for: string | null; job_id: string | null; fittings: number; customer_rating: number | null }[]
+  if (!rows.length) return <Card><Empty text="No demos yet. After an assessment, qualifying properties are offered a free room or fitting demo." /></Card>
+  const label: Record<string, string> = { approved: 'Approved — date to confirm', scheduled: 'Scheduled', in_progress: 'In progress', completed: 'Done', converted: 'Done — you ordered', not_converted: 'Done' }
+  return (
+    <ul className="space-y-3">
+      {rows.map((d) => (
+        <li key={d.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-4 shadow-card">
+          <div><p className="font-semibold text-ink">Free {d.type_name.toLowerCase()} <span className="num text-sm font-normal text-muted-ink">{d.demo_no}</span></p>
+            <p className="text-sm text-muted-ink">{d.property_name} · <span className="num">{d.fittings}</span> {d.fittings === 1 ? 'fitting' : 'fittings'}{d.scheduled_for ? ` · ${formatWhen(d.scheduled_for, false)}` : ''}</p></div>
+          <span className="flex flex-wrap items-center gap-3">
+            {d.job_id && ['completed', 'converted', 'not_converted'].includes(d.status) && user.verified && <Link href={`/portal/reports/completion/${d.job_id}`} className="text-sm font-semibold text-redux-blue hover:underline">Demo report →</Link>}
+            {d.job_id && ['scheduled', 'in_progress'].includes(d.status) && <Link href={`/portal/jobs/${d.job_id}`} className="text-sm font-semibold text-redux-blue hover:underline">Follow it →</Link>}
+            <StatusPill tone={['completed', 'converted', 'not_converted'].includes(d.status) ? 'positive' : 'progress'}>{label[d.status] ?? d.status}</StatusPill>
+          </span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+// CR-001 phase 6 (D29) — who the account referred and what it earned
+async function referrals({ supabase }: Ctx) {
+  const [{ data: refs }, { data: rewards }] = await Promise.all([supabase.rpc('my_referrals'), supabase.rpc('my_rewards')])
+  const r = (refs ?? []) as { id: string; business: string; status: string; created_at: string; converted_at: string | null; credit: number | null }[]
+  const w = (rewards ?? []) as { id: string; kind: string; amount: number | null; description: string; issued_at: string; status: string }[]
+  if (!r.length && !w.length) return <Card><Empty text="No referrals yet. Your referral link is under Refer & earn." /></Card>
+  return (
+    <div className="space-y-3">
+      {r.map((x) => (
+        <div key={x.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-4 shadow-card">
+          <div><p className="font-semibold text-ink">{x.business}</p><p className="text-sm text-muted-ink">Referred {formatWhen(x.created_at, false)}{x.converted_at ? ` · ordered ${formatWhen(x.converted_at, false)}` : ''}</p></div>
+          <StatusPill tone={x.status === 'converted' ? 'positive' : 'waiting'}>{x.status === 'converted' ? 'Ordered' : 'Not ordered yet'}</StatusPill>
+        </div>
+      ))}
+      {w.map((x) => (
+        <div key={x.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-4 shadow-card">
+          <div><p className="font-semibold text-ink">{x.kind === 'credit' ? <><Money value={x.amount} paise="never" /> credit</> : 'One fitting restored free'}</p><p className="text-sm text-muted-ink">{x.description} · {formatWhen(x.issued_at, false)}</p></div>
+          <StatusPill tone={x.status === 'available' ? 'positive' : 'neutral'}>{x.status === 'available' ? 'To use' : x.status === 'redeemed' ? 'Used' : 'Expired'}</StatusPill>
+        </div>
+      ))}
+      <Link href="/portal/referrals" className="inline-block text-sm font-semibold text-redux-blue hover:underline">Refer &amp; earn →</Link>
+    </div>
   )
 }
 

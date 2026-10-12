@@ -3,6 +3,7 @@ import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import {
   Gauge,
+  Package,
   BadgePercent, Banknote, BarChart3, Bell, Boxes, FileClock, IndianRupee, ListTree, MapPinned, PlugZap, Receipt,
   ShieldCheck, SlidersHorizontal, Users,
 } from 'lucide-react'
@@ -36,6 +37,7 @@ export default async function AdminHub() {
       { href: '/staff/admin/reports', title: 'Reports', body: 'Funnel, sources, teams, revenue', icon: BarChart3 },
       { href: '/staff/admin/users', title: 'Users & roles', body: 'Care executives, surveyors, admins', icon: Users },
       { href: '/staff/admin/assignment', title: 'Cities & assignment', body: 'Who gets new leads, city by city', icon: MapPinned },
+      { href: '/staff/admin/catalog', title: 'Catalog', body: 'Products on the website and in self-assessments; import from a spreadsheet', icon: Package },
       { href: '/staff/admin/scoring', title: 'Lead scoring', body: 'A/B/C rules, service area, who gets which assessment', icon: Gauge },
     ] },
     { title: 'Configuration', tiles: [

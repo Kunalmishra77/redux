@@ -6,6 +6,7 @@ import { requirePortalUser } from '@/lib/data/portal'
 import { photoUrls } from '@/lib/data/photos'
 import { createClient } from '@/lib/supabase/server'
 import { SelfAssessmentWizard, type WizardFitting } from './wizard'
+import { mediaUrl } from '@/lib/data/catalog'
 
 export const metadata: Metadata = { title: 'Self-assessment' }
 
@@ -21,13 +22,20 @@ export default async function SelfAssessmentPage({ params }: PageProps<'/portal/
   if (!s) notFound()
   const survey = s as unknown as { id: string; mode: string; status: string; review_status: string | null; info_request: string | null; slot_end_at: string; submitted_at: string | null
     property: { name: string; unit_label: string } | null }
-  const [{ data: fits }, { data: types }, { data: finishes }, { data: flags }, { data: hours }] = await Promise.all([
+  const [{ data: fits }, { data: types }, { data: finishes }, { data: flags }, { data: hours }, { data: catalog }] = await Promise.all([
     supabase.from('fittings').select('id, unit_label, fitting_type_id, current_finish_id, notes, conds:fitting_conditions(condition_flag_id), photos:fitting_photos(slot, storage_path, uploaded_at)').eq('survey_id', id).order('created_at'),
     supabase.from('fitting_types').select('id, name').eq('is_active', true).order('sort_order'),
     supabase.from('finishes').select('id, name').eq('is_active', true).order('name'),
     supabase.from('condition_flags').select('id, name').eq('is_active', true).order('sort_order'),
     supabase.rpc('self_assessment_turnaround_hours'),
+    // CR-001 phase 7: the catalog pictures help the customer say which fitting it is
+    supabase.from('products').select('fitting_type_id, media:product_media(kind, path, sort_order)').eq('is_published', true).not('fitting_type_id', 'is', null),
   ])
+  const pictureOf = new Map<string, string>()
+  for (const p of (catalog ?? []) as unknown as { fitting_type_id: string; media: { kind: string; path: string; sort_order: number }[] }[]) {
+    const m = p.media.find((x) => x.kind === 'after') ?? p.media.find((x) => x.kind === 'image')
+    if (m && !pictureOf.has(p.fitting_type_id)) pictureOf.set(p.fitting_type_id, mediaUrl(m.path))
+  }
   const rows = (fits ?? []) as unknown as { id: string; unit_label: string | null; fitting_type_id: string; current_finish_id: string | null; notes: string | null
     conds: { condition_flag_id: string }[]; photos: { slot: string; storage_path: string; uploaded_at: string }[] }[]
   // the latest photo per slot (a retake adds a newer one; nothing is deleted)
@@ -42,7 +50,7 @@ export default async function SelfAssessmentPage({ params }: PageProps<'/portal/
     condition_ids: r.conds.map((c) => c.condition_flag_id),
     photos: Object.fromEntries([...latest(r.photos)].map(([slot, path]) => [slot, urls.get(path) ?? ''])),
   }))
-  const masters = (types ?? []) as { id: string; name: string }[]
+  const masters = ((types ?? []) as { id: string; name: string }[]).map((t) => ({ ...t, image: pictureOf.get(t.id) }))
   const noun = survey.property?.unit_label === 'Bathroom' ? 'Bathroom' : 'Room'
   const open = survey.status === 'scheduled' || survey.status === 'in_progress'
   const sla = Number(hours ?? 24)

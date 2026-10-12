@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { SLOT_LABEL, SLOTS } from '@/lib/constants/assessment'
+import { shrinkImage as shrink } from '@/lib/shrink-image'
 import { removeFittingAction, saveFittingAction, submitSelfAssessmentAction } from '@/lib/actions/self-assessment'
 
 // CR-001 phase 4 (D27) — the customer's self-assessment (ADR-015, BR-S10): fittings, each with the
@@ -20,25 +21,14 @@ export type WizardFitting = {
   condition_ids: string[]; photos: Record<string, string>
 }
 type Opt = { id: string; name: string }
+type TypeOpt = Opt & { image?: string }
 
 const HINT: Record<string, string> = {
   front: 'Straight on, the whole fitting', side: 'From the left or right', top: 'From above — handles and cartridge', close_up: 'The worst spot: wear, leak or scale',
 }
 
-/** Resize to at most 1600 px on the long side and re-encode as JPEG. */
-async function shrink(file: File): Promise<{ blob: Blob; width: number; height: number }> {
-  const bitmap = await createImageBitmap(file)
-  const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height))
-  const width = Math.round(bitmap.width * scale), height = Math.round(bitmap.height * scale)
-  const canvas = document.createElement('canvas')
-  canvas.width = width; canvas.height = height
-  canvas.getContext('2d')!.drawImage(bitmap, 0, 0, width, height)
-  const blob = await new Promise<Blob>((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error('encode'))), 'image/jpeg', 0.85))
-  return { blob, width, height }
-}
-
 export function SelfAssessmentWizard({ surveyId, open, noun, fittings, types, finishes, flags }: {
-  surveyId: string; open: boolean; noun: string; fittings: WizardFitting[]; types: Opt[]; finishes: Opt[]; flags: Opt[]
+  surveyId: string; open: boolean; noun: string; fittings: WizardFitting[]; types: TypeOpt[]; finishes: Opt[]; flags: Opt[]
 }) {
   const router = useRouter()
   const [editing, setEditing] = useState<WizardFitting | 'new' | null>(fittings.length === 0 && open ? 'new' : null)
@@ -153,7 +143,7 @@ export function SelfAssessmentWizard({ surveyId, open, noun, fittings, types, fi
 }
 
 function FittingDialog({ surveyId, noun, fitting, types, finishes, flags, lastUnit, onClose }: {
-  surveyId: string; noun: string; fitting: WizardFitting | null; types: Opt[]; finishes: Opt[]; flags: Opt[]; lastUnit: string; onClose: () => void
+  surveyId: string; noun: string; fitting: WizardFitting | null; types: TypeOpt[]; finishes: Opt[]; flags: Opt[]; lastUnit: string; onClose: () => void
 }) {
   const router = useRouter()
   const [f, setF] = useState({
@@ -176,7 +166,9 @@ function FittingDialog({ surveyId, noun, fitting, types, finishes, flags, lastUn
             <legend className="text-sm font-medium text-ink">What is it?</legend>
             <div className="grid grid-cols-2 gap-2">
               {types.map((t) => <button key={t.id} type="button" aria-pressed={f.fitting_type_id === t.id} onClick={() => setF({ ...f, fitting_type_id: t.id })}
-                className={`rounded-lg px-3 py-2.5 text-left text-sm ring-1 ${f.fitting_type_id === t.id ? 'bg-redux-blue text-white ring-redux-blue' : 'text-ink ring-line hover:bg-surface'}`}>{t.name}</button>)}
+                className={`flex items-center gap-2 rounded-lg p-2 text-left text-sm ring-1 ${f.fitting_type_id === t.id ? 'bg-redux-blue text-white ring-redux-blue' : 'text-ink ring-line hover:bg-surface'}`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {t.image && <img src={t.image} alt="" className="size-10 shrink-0 rounded-md bg-white object-cover" />}{t.name}</button>)}
             </div>
           </fieldset>
           <div className="space-y-1.5"><Label htmlFor="fx-finish">Finish today</Label>

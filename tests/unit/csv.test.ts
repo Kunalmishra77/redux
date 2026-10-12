@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { toCsv } from '@/lib/services/csv'
+import { parseCsv, toCsv } from '@/lib/services/csv'
 
 // CR-001 phase 10 (D33) — report exports
 describe('toCsv', () => {
@@ -18,5 +18,19 @@ describe('toCsv', () => {
   })
   it('leaves empty values empty', () => {
     expect(toCsv([{ a: null, b: undefined }], [{ key: 'a', label: 'A' }, { key: 'b', label: 'B' }])).toBe('﻿A,B\r\n,\r\n')
+  })
+})
+
+describe('parseCsv', () => {
+  it('reads headers, quoted commas, escaped quotes and CRLF', () => {
+    const rows = parseCsv('﻿SKU,Name,Benefits\r\nEB-1,"Mixer, single lever","Says ""quiet""|Fast"\r\n\r\nEB-2,Spout,\n')
+    expect(rows).toEqual([
+      { sku: 'EB-1', name: 'Mixer, single lever', benefits: 'Says "quiet"|Fast' },
+      { sku: 'EB-2', name: 'Spout', benefits: '' },
+    ])
+  })
+  it('round-trips what toCsv writes', () => {
+    const out = toCsv([{ a: 'x, "y"', b: 'line\nbreak' }])
+    expect(parseCsv(out)).toEqual([{ a: 'x, "y"', b: 'line\nbreak' }])
   })
 })
