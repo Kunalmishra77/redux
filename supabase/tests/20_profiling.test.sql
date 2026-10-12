@@ -35,7 +35,7 @@ select is((select count(*)::int from public.v_account_timeline
   where customer_id = '30000000-0000-0000-0000-0000000002a1' and kind = 'whatsapp' and title = 'WhatsApp from the customer'), 1,
   'timeline: an inbound WhatsApp shows on the account');
 select is((select count(*)::int from public.v_account_timeline
-  where customer_id = '30000000-0000-0000-0000-0000000002a1' and kind = 'follow_up'), 1, 'timeline: follow-ups show on the account');
+  where customer_id = '30000000-0000-0000-0000-0000000002a1' and kind = 'follow_up' and detail = 'Call the GM'), 1, 'timeline: follow-ups show on the account');
 
 -- who may edit requirements and next action
 set local role authenticated;
