@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   ...pageMetadata({
     title: 'Bath fittings restoration in India — REDUX by Eurobrass',
     description:
-      'Your existing fittings may have more service life ahead. REDUX repairs worn bathroom fittings and restores their finish — backed by 50 years of Eurobrass manufacturing. Book a free assessment.',
+      'Your existing fittings may have more service life ahead. REDUX repairs worn bathroom fittings and restores their finish — backed by 50 years of Eurobrass manufacturing. Request a free assessment.',
     path: '/',
   }),
   title: { absolute: 'REDUX — Bath fittings restoration by Eurobrass | Free assessment' },
@@ -390,7 +390,7 @@ export default async function HomePage() {
           <div>
             <SectionHeading
               id="enquiry-title"
-              eyebrow="Book free assessment"
+              eyebrow="Request an assessment"
               title="A technical walkthrough is the first step."
               intro="Bring your recurring faults and difficult-to-source parts. Together, we'll review representative fittings and maintenance records, then identify whether a selected restoration pilot is suitable."
             />

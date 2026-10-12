@@ -55,7 +55,8 @@ insert into public.quotation_lines (quotation_id, fitting_id, description, unit_
 select is((select p.sku from public.quotation_lines l join public.products p on p.id = l.product_id where l.quotation_id = '60000000-0000-0000-0000-000000000af1'),
   'EB-TEST-101', 'a quote line takes its fitting''s catalog product');
 
-select ok((select count(*) from public.products where sku like 'GEN-%') >= 1, 'the generic entries per fitting type are seeded');
+select is((select count(*)::int from public.product_categories where slug in ('mixers', 'showers', 'diverters', 'spouts-faucets', 'valves-accessories')), 5,
+  'the catalog categories are seeded (works on an empty database too)');
 
 select * from finish();
 rollback;

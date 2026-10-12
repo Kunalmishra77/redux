@@ -32,7 +32,7 @@ export const SITE = {
   serviceAreas: ['Delhi', 'Gurugram', 'Noida', 'Ghaziabad', 'Faridabad'],
 } as const
 
-export const PRIMARY_CTA = 'Book free assessment'
+export const PRIMARY_CTA = 'Request an assessment'
 export const SECONDARY_CTA = 'Dealer enquiry'
 
 export type NavItem = { href: string; label: string; description?: string; b2c?: boolean }
@@ -49,6 +49,7 @@ export const SERVICE_NAV: NavItem[] = [
 export const MAIN_NAV: NavItem[] = [
   { href: '/hotels', label: 'For hotels' },
   { href: '/homes', label: 'For homes', b2c: true },
+  { href: '/products', label: 'What we restore' },
   { href: '/work', label: 'Our work' },
   { href: '/process', label: 'Process' },
   { href: '/why-redux', label: 'Why REDUX' },
@@ -71,6 +72,10 @@ export const FOOTER_NAV: { title: string; items: NavItem[] }[] = [
     items: [
       { href: '/why-redux', label: 'Why REDUX' },
       { href: '/process', label: 'Assessment & pilot' },
+      { href: '/assessment', label: 'How the assessment works' },
+      { href: '/demo-programme', label: 'Free demo programme' },
+      { href: '/referral-programme', label: 'Referral programme' },
+      { href: '/products', label: 'What we restore' },
       { href: '/work', label: 'Before & after' },
       { href: '/contact', label: 'Contact' },
     ],
@@ -96,8 +101,12 @@ const PAGE_NAMES: [prefix: string, name: string][] = [
   ['/why-redux', 'Why REDUX'],
   ['/work', 'Before & after'],
   ['/process', 'Assessment & pilot process'],
+  ['/assessment', 'How the assessment works'],
+  ['/demo-programme', 'Free demo programme'],
+  ['/referral-programme', 'Referral programme'],
+  ['/products', 'What we restore'],
   ['/contact', 'Contact'],
-  ['/book-assessment', 'Book free assessment'],
+  ['/book-assessment', 'Request an assessment'],
   ['/thank-you', 'Thank you'],
 ]
 

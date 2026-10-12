@@ -369,7 +369,7 @@ export function EnquiryForm({ cities, noticeVersion, defaultKind, lockKind = fal
         ) : kind === 'dealer' ? (
           'Send dealer enquiry'
         ) : (
-          'Book my free assessment'
+          'Request my free assessment'
         )}
       </Button>
       <p className="text-center text-[13px] text-muted-ink">

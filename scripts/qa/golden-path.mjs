@@ -33,7 +33,7 @@ const ctx = () => browser.newContext({ viewport: { width: 1440, height: 900 } })
   await form.locator('[name="units"]').fill(CUSTOMER.rooms)
   await form.locator('[name="message"]').fill('Mixers in most rooms are stiff and the chrome is peeling. Want to see a pilot room first.')
   await form.locator('[name="consentService"]').check()
-  await form.getByRole('button', { name: /Book my free assessment/ }).last().click()
+  await form.getByRole('button', { name: /my free assessment/ }).last().click()
   await p.waitForURL(/thank-you/, { timeout: 60000 })
   log('1 website enquiry → thank-you ✓')
 }

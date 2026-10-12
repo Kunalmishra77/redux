@@ -55,7 +55,7 @@ export function EnquiryProvider({
           <div className="pr-8">
             <p className="eyebrow text-redux-blue">Free · no obligation</p>
             <DialogTitle className="mt-1 text-[22px] leading-tight font-semibold text-ink">
-              {state.kind === 'dealer' ? 'Dealer enquiry' : 'Book a free assessment'}
+              {state.kind === 'dealer' ? 'Dealer enquiry' : 'Request a free assessment'}
             </DialogTitle>
             <DialogDescription className="mt-1.5 text-sm text-muted-ink">
               Tell us about the fittings. We&apos;ll call within 2 working hours to arrange a visit.

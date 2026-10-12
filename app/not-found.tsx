@@ -23,11 +23,11 @@ export default async function NotFound() {
               We couldn&apos;t find that page.
             </h1>
             <p className="mt-4 text-lg text-muted-ink">
-              It may have moved. These will get you back on track — or book a free assessment and we&apos;ll call you.
+              It may have moved. These will get you back on track — or request a free assessment and we&apos;ll call you.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild size="lg">
-                <Link href="/book-assessment">Book free assessment</Link>
+                <Link href="/book-assessment">Request an assessment</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
                 <Link href="/">Go to the home page</Link>

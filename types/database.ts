@@ -706,13 +706,13 @@ isOneToOne: false
                   ]
                 },"fittings": {
                   Row: {
-                    "brand_id": string | null,"captured_at": string,"created_at": string,"current_finish_id": string | null,"fitting_type_id": string,"id": string,"idem_key": string,"model": string | null,"notes": string | null,"property_unit_id": string | null,"survey_id": string,"unit_label": string | null
+                    "brand_id": string | null,"captured_at": string,"created_at": string,"current_finish_id": string | null,"fitting_type_id": string,"id": string,"idem_key": string,"model": string | null,"notes": string | null,"product_id": string | null,"property_unit_id": string | null,"survey_id": string,"unit_label": string | null
                   }
                   Insert: {
-                    "brand_id"?: string | null,"captured_at": string,"created_at"?: string,"current_finish_id"?: string | null,"fitting_type_id": string,"id"?: string,"idem_key": string,"model"?: string | null,"notes"?: string | null,"property_unit_id"?: string | null,"survey_id": string,"unit_label"?: string | null
+                    "brand_id"?: string | null,"captured_at": string,"created_at"?: string,"current_finish_id"?: string | null,"fitting_type_id": string,"id"?: string,"idem_key": string,"model"?: string | null,"notes"?: string | null,"product_id"?: string | null,"property_unit_id"?: string | null,"survey_id": string,"unit_label"?: string | null
                   }
                   Update: {
-                    "brand_id"?: string | null,"captured_at"?: string,"created_at"?: string,"current_finish_id"?: string | null,"fitting_type_id"?: string,"id"?: string,"idem_key"?: string,"model"?: string | null,"notes"?: string | null,"property_unit_id"?: string | null,"survey_id"?: string,"unit_label"?: string | null
+                    "brand_id"?: string | null,"captured_at"?: string,"created_at"?: string,"current_finish_id"?: string | null,"fitting_type_id"?: string,"id"?: string,"idem_key"?: string,"model"?: string | null,"notes"?: string | null,"product_id"?: string | null,"property_unit_id"?: string | null,"survey_id"?: string,"unit_label"?: string | null
                   }
                   Relationships: [
                     {
@@ -732,6 +732,12 @@ isOneToOne: false
       columns: ["fitting_type_id"]
 isOneToOne: false
       referencedRelation: "fitting_types"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fittings_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "products"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "fittings_property_unit_id_fkey"
@@ -1546,6 +1552,75 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"product_categories": {
+                  Row: {
+                    "id": string,"is_active": boolean,"name": string,"parent_id": string | null,"slug": string,"sort_order": number
+                  }
+                  Insert: {
+                    "id"?: string,"is_active"?: boolean,"name": string,"parent_id"?: string | null,"slug": string,"sort_order"?: number
+                  }
+                  Update: {
+                    "id"?: string,"is_active"?: boolean,"name"?: string,"parent_id"?: string | null,"slug"?: string,"sort_order"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "product_categories_parent_id_fkey"
+      columns: ["parent_id"]
+isOneToOne: false
+      referencedRelation: "product_categories"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"product_media": {
+                  Row: {
+                    "alt": string,"id": string,"kind": string,"path": string,"product_id": string,"sort_order": number
+                  }
+                  Insert: {
+                    "alt": string,"id"?: string,"kind"?: string,"path": string,"product_id": string,"sort_order"?: number
+                  }
+                  Update: {
+                    "alt"?: string,"id"?: string,"kind"?: string,"path"?: string,"product_id"?: string,"sort_order"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "product_media_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"products": {
+                  Row: {
+                    "applications": string | null,"benefits": (string)[],"brand_id": string | null,"category_id": string | null,"created_at": string,"description": string | null,"finish_ids": (string)[],"fitting_type_id": string | null,"id": string,"is_published": boolean,"name": string,"restore_info": string | null,"sku": string,"slug": string,"sort_order": number,"specs": NonNullable<Json>,"updated_at": string
+                  }
+                  Insert: {
+                    "applications"?: string | null,"benefits"?: (string)[],"brand_id"?: string | null,"category_id"?: string | null,"created_at"?: string,"description"?: string | null,"finish_ids"?: (string)[],"fitting_type_id"?: string | null,"id"?: string,"is_published"?: boolean,"name": string,"restore_info"?: string | null,"sku": string,"slug": string,"sort_order"?: number,"specs"?: NonNullable<Json>,"updated_at"?: string
+                  }
+                  Update: {
+                    "applications"?: string | null,"benefits"?: (string)[],"brand_id"?: string | null,"category_id"?: string | null,"created_at"?: string,"description"?: string | null,"finish_ids"?: (string)[],"fitting_type_id"?: string | null,"id"?: string,"is_published"?: boolean,"name"?: string,"restore_info"?: string | null,"sku"?: string,"slug"?: string,"sort_order"?: number,"specs"?: NonNullable<Json>,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "products_brand_id_fkey"
+      columns: ["brand_id"]
+isOneToOne: false
+      referencedRelation: "brands"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "products_category_id_fkey"
+      columns: ["category_id"]
+isOneToOne: false
+      referencedRelation: "product_categories"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "products_fitting_type_id_fkey"
+      columns: ["fitting_type_id"]
+isOneToOne: false
+      referencedRelation: "fitting_types"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"profiles": {
                   Row: {
                     "avatar_url": string | null,"city_id": string | null,"created_at": string,"email": string | null,"full_name": string,"id": string,"is_active": boolean,"phone": string | null,"recording_consent_at": string | null,"updated_at": string
@@ -1617,13 +1692,13 @@ isOneToOne: false
                   ]
                 },"quotation_lines": {
                   Row: {
-                    "assessment_id": string | null,"cgst": number,"description": string,"finish_id": string | null,"fitting_id": string | null,"gst_rate": number,"hsn_sac": string | null,"id": string,"igst": number,"line_total": number,"market_price": number,"price_replace_eurobrass": number | null,"qty": number,"quotation_id": string,"sgst": number,"sort_order": number,"taxable_value": number,"unit_label": string | null,"unit_price": number,"work_type_id": string | null
+                    "assessment_id": string | null,"cgst": number,"description": string,"finish_id": string | null,"fitting_id": string | null,"gst_rate": number,"hsn_sac": string | null,"id": string,"igst": number,"line_total": number,"market_price": number,"price_replace_eurobrass": number | null,"product_id": string | null,"qty": number,"quotation_id": string,"sgst": number,"sort_order": number,"taxable_value": number,"unit_label": string | null,"unit_price": number,"work_type_id": string | null
                   }
                   Insert: {
-                    "assessment_id"?: string | null,"cgst"?: number,"description": string,"finish_id"?: string | null,"fitting_id"?: string | null,"gst_rate": number,"hsn_sac"?: string | null,"id"?: string,"igst"?: number,"line_total": number,"market_price"?: number,"price_replace_eurobrass"?: number | null,"qty"?: number,"quotation_id": string,"sgst"?: number,"sort_order"?: number,"taxable_value"?: number,"unit_label"?: string | null,"unit_price": number,"work_type_id"?: string | null
+                    "assessment_id"?: string | null,"cgst"?: number,"description": string,"finish_id"?: string | null,"fitting_id"?: string | null,"gst_rate": number,"hsn_sac"?: string | null,"id"?: string,"igst"?: number,"line_total": number,"market_price"?: number,"price_replace_eurobrass"?: number | null,"product_id"?: string | null,"qty"?: number,"quotation_id": string,"sgst"?: number,"sort_order"?: number,"taxable_value"?: number,"unit_label"?: string | null,"unit_price": number,"work_type_id"?: string | null
                   }
                   Update: {
-                    "assessment_id"?: string | null,"cgst"?: number,"description"?: string,"finish_id"?: string | null,"fitting_id"?: string | null,"gst_rate"?: number,"hsn_sac"?: string | null,"id"?: string,"igst"?: number,"line_total"?: number,"market_price"?: number,"price_replace_eurobrass"?: number | null,"qty"?: number,"quotation_id"?: string,"sgst"?: number,"sort_order"?: number,"taxable_value"?: number,"unit_label"?: string | null,"unit_price"?: number,"work_type_id"?: string | null
+                    "assessment_id"?: string | null,"cgst"?: number,"description"?: string,"finish_id"?: string | null,"fitting_id"?: string | null,"gst_rate"?: number,"hsn_sac"?: string | null,"id"?: string,"igst"?: number,"line_total"?: number,"market_price"?: number,"price_replace_eurobrass"?: number | null,"product_id"?: string | null,"qty"?: number,"quotation_id"?: string,"sgst"?: number,"sort_order"?: number,"taxable_value"?: number,"unit_label"?: string | null,"unit_price"?: number,"work_type_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -1650,6 +1725,12 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "v_incomplete_fittings"
       referencedColumns: ["fitting_id"]
+    },{
+      foreignKeyName: "quotation_lines_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
     },{
       foreignKeyName: "quotation_lines_quotation_id_fkey"
       columns: ["quotation_id"]
@@ -2144,16 +2225,22 @@ isOneToOne: false
                   ]
                 },"stock_items": {
                   Row: {
-                    "below_min_since": string | null,"category": string | null,"created_at": string,"id": string,"is_active": boolean,"last_alert_at": string | null,"min_level": number,"name": string,"quantity": number,"sku": string,"uom": string,"updated_at": string
+                    "below_min_since": string | null,"category": string | null,"created_at": string,"id": string,"is_active": boolean,"last_alert_at": string | null,"min_level": number,"name": string,"product_id": string | null,"quantity": number,"sku": string,"uom": string,"updated_at": string
                   }
                   Insert: {
-                    "below_min_since"?: string | null,"category"?: string | null,"created_at"?: string,"id"?: string,"is_active"?: boolean,"last_alert_at"?: string | null,"min_level"?: number,"name": string,"quantity"?: number,"sku": string,"uom"?: string,"updated_at"?: string
+                    "below_min_since"?: string | null,"category"?: string | null,"created_at"?: string,"id"?: string,"is_active"?: boolean,"last_alert_at"?: string | null,"min_level"?: number,"name": string,"product_id"?: string | null,"quantity"?: number,"sku": string,"uom"?: string,"updated_at"?: string
                   }
                   Update: {
-                    "below_min_since"?: string | null,"category"?: string | null,"created_at"?: string,"id"?: string,"is_active"?: boolean,"last_alert_at"?: string | null,"min_level"?: number,"name"?: string,"quantity"?: number,"sku"?: string,"uom"?: string,"updated_at"?: string
+                    "below_min_since"?: string | null,"category"?: string | null,"created_at"?: string,"id"?: string,"is_active"?: boolean,"last_alert_at"?: string | null,"min_level"?: number,"name"?: string,"product_id"?: string | null,"quantity"?: number,"sku"?: string,"uom"?: string,"updated_at"?: string
                   }
                   Relationships: [
-                    
+                    {
+      foreignKeyName: "stock_items_product_id_fkey"
+      columns: ["product_id"]
+isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"stock_movements": {
                   Row: {
@@ -2795,6 +2882,9 @@ isOneToOne: false
                            },
 "has_consent":
 { Args: { "p_customer": string,"p_phone": string,"p_purpose": Database["public"]['Enums']["consent_purpose"] }; Returns: boolean
+                           },
+"import_products":
+{ Args: { "p": Json }; Returns: Json
                            },
 "ingest_lead":
 { Args: { "p_lead": Json }; Returns: Json
