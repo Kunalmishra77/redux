@@ -8,7 +8,7 @@ import { requireRole } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { loadQuote } from '@/lib/data/quotes'
 import { QUOTE_STATUS } from '@/lib/constants/statuses'
-import { DiscountControl, IssueButton, NewVersionButton } from './quote-actions'
+import { DiscountControl, IssueButton, NewVersionButton, OfferControl } from './quote-actions'
 
 export const metadata: Metadata = { title: 'Quotation' }
 
@@ -21,7 +21,8 @@ export default async function QuotePage({ params }: PageProps<'/staff/quotes/[id
   if (!q) notFound()
   const supabase = await createClient()
   // BR-R2: a referred business's first quote carries a pre-approved referral discount
-  const { data: ref } = await supabase.from('quotations').select('referral_discount_pct, referral:referrals!quotations_referral_id_fkey(referrer:customers!referrals_referrer_customer_id_fkey(name))').eq('id', id).maybeSingle()
+  const { data: ref } = await supabase.from('quotations').select('referral_discount_pct, offer_discount_pct, offer:offers(code, title), referral:referrals!quotations_referral_id_fkey(referrer:customers!referrals_referrer_customer_id_fkey(name))').eq('id', id).maybeSingle()
+  const offer = ref?.offer_discount_pct ? { pct: Number(ref.offer_discount_pct), ...(ref.offer as unknown as { code: string; title: string }) } : null
   const referral = ref?.referral_discount_pct ? { pct: Number(ref.referral_discount_pct), by: (ref.referral as unknown as { referrer: { name: string } | null } | null)?.referrer?.name ?? null } : null
   const [{ data: threshold }, { data: approval }, { data: job }, { data: discount }, { data: versions }] = await Promise.all([
     supabase.from('settings').select('value').eq('key', 'discount_threshold_pct').maybeSingle(),
@@ -94,9 +95,11 @@ export default async function QuotePage({ params }: PageProps<'/staff/quotes/[id
             <dl className="space-y-1.5 text-sm">
               <Line label="Subtotal" value={q.subtotal} />
               {canEdit && q.status === 'draft'
-                ? <DiscountControl quoteId={id} current={Number(q.discount_pct)} threshold={Math.max(Number(threshold?.value ?? 5), referral?.pct ?? 0)} isAdmin={user.role === 'super_admin'} />
+                ? <DiscountControl quoteId={id} current={Number(q.discount_pct)} threshold={Math.max(Number(threshold?.value ?? 5), referral?.pct ?? 0, offer?.pct ?? 0)} isAdmin={user.role === 'super_admin'} />
                 : Number(q.discount_amount) > 0 && <Line label={`Discount (${Number(q.discount_pct)}%)`} value={`-${q.discount_amount}`} />}
-              {referral && <p className="rounded-sm bg-pale px-2 py-1 text-xs text-redux-blue">First order of a referred business{referral.by ? ` (by ${referral.by})` : ''}: {referral.pct}% is pre-approved and does not stack with other offers.</p>}
+              {canEdit && q.status === 'draft' && <OfferControl quoteId={id} />}
+              {offer && <p className="rounded-sm bg-pale px-2 py-1 text-xs text-redux-blue">Offer {offer.code} — {offer.title}: {offer.pct}% (pre-approved; replaces any smaller referral discount).</p>}
+              {referral && !offer && <p className="rounded-sm bg-pale px-2 py-1 text-xs text-redux-blue">First order of a referred business{referral.by ? ` (by ${referral.by})` : ''}: {referral.pct}% is pre-approved and does not stack with other offers.</p>}
               <Line label="Taxable value" value={q.taxable_value} />
               {intra ? <><Line label="CGST" value={q.cgst} /><Line label="SGST" value={q.sgst} /></> : <Line label="IGST" value={q.igst} />}
               <div className="flex justify-between border-t border-line pt-2 text-base font-semibold"><dt>Total incl. GST</dt><dd><Money value={q.total} paise="always" /></dd></div>

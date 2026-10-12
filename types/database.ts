@@ -137,6 +137,31 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"cadence_runs": {
+                  Row: {
+                    "cadence_id": string,"lead_id": string,"started_at": string
+                  }
+                  Insert: {
+                    "cadence_id": string,"lead_id": string,"started_at"?: string
+                  }
+                  Update: {
+                    "cadence_id"?: string,"lead_id"?: string,"started_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "cadence_runs_cadence_id_fkey"
+      columns: ["cadence_id"]
+isOneToOne: false
+      referencedRelation: "followup_cadences"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cadence_runs_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"call_outcomes": {
                   Row: {
                     "code": string,"id": string,"is_active": boolean,"marks_contacted": boolean,"name": string,"requires_note": boolean,"sort_order": number
@@ -724,13 +749,13 @@ isOneToOne: false
                   ]
                 },"follow_ups": {
                   Row: {
-                    "assigned_to": string,"completed_at": string | null,"created_at": string,"due_at": string,"id": string,"lead_id": string,"note": string | null
+                    "assigned_to": string,"cadence_id": string | null,"completed_at": string | null,"created_at": string,"due_at": string,"id": string,"lead_id": string,"note": string | null
                   }
                   Insert: {
-                    "assigned_to": string,"completed_at"?: string | null,"created_at"?: string,"due_at": string,"id"?: string,"lead_id": string,"note"?: string | null
+                    "assigned_to": string,"cadence_id"?: string | null,"completed_at"?: string | null,"created_at"?: string,"due_at": string,"id"?: string,"lead_id": string,"note"?: string | null
                   }
                   Update: {
-                    "assigned_to"?: string,"completed_at"?: string | null,"created_at"?: string,"due_at"?: string,"id"?: string,"lead_id"?: string,"note"?: string | null
+                    "assigned_to"?: string,"cadence_id"?: string | null,"completed_at"?: string | null,"created_at"?: string,"due_at"?: string,"id"?: string,"lead_id"?: string,"note"?: string | null
                   }
                   Relationships: [
                     {
@@ -740,12 +765,31 @@ isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "follow_ups_cadence_id_fkey"
+      columns: ["cadence_id"]
+isOneToOne: false
+      referencedRelation: "followup_cadences"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "follow_ups_lead_id_fkey"
       columns: ["lead_id"]
 isOneToOne: false
       referencedRelation: "leads"
       referencedColumns: ["id"]
     }
+                  ]
+                },"followup_cadences": {
+                  Row: {
+                    "id": string,"is_active": boolean,"name": string,"on_status": Database["public"]['Enums']["lead_status"],"sort_order": number,"steps": NonNullable<Json>,"tier": string | null
+                  }
+                  Insert: {
+                    "id"?: string,"is_active"?: boolean,"name": string,"on_status": Database["public"]['Enums']["lead_status"],"sort_order"?: number,"steps": NonNullable<Json>,"tier"?: string | null
+                  }
+                  Update: {
+                    "id"?: string,"is_active"?: boolean,"name"?: string,"on_status"?: Database["public"]['Enums']["lead_status"],"sort_order"?: number,"steps"?: NonNullable<Json>,"tier"?: string | null
+                  }
+                  Relationships: [
+                    
                   ]
                 },"handover_photos": {
                   Row: {
@@ -1358,6 +1402,105 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"offers": {
+                  Row: {
+                    "code": string,"created_at": string,"created_by": string | null,"description": string | null,"discount_pct": number,"eligible_segments": (string)[] | null,"eligible_tiers": (string)[],"id": string,"is_active": boolean,"max_redemptions": number | null,"title": string,"valid_from": string,"valid_until": string
+                  }
+                  Insert: {
+                    "code": string,"created_at"?: string,"created_by"?: string | null,"description"?: string | null,"discount_pct": number,"eligible_segments"?: (string)[] | null,"eligible_tiers"?: (string)[],"id"?: string,"is_active"?: boolean,"max_redemptions"?: number | null,"title": string,"valid_from"?: string,"valid_until": string
+                  }
+                  Update: {
+                    "code"?: string,"created_at"?: string,"created_by"?: string | null,"description"?: string | null,"discount_pct"?: number,"eligible_segments"?: (string)[] | null,"eligible_tiers"?: (string)[],"id"?: string,"is_active"?: boolean,"max_redemptions"?: number | null,"title"?: string,"valid_from"?: string,"valid_until"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "offers_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"outreach_campaigns": {
+                  Row: {
+                    "audience": NonNullable<Json>,"channel": Database["public"]['Enums']["msg_channel"],"created_at": string,"created_by": string | null,"id": string,"launched_at": string | null,"name": string,"offer_id": string | null,"scheduled_at": string | null,"status": string,"template_code": string,"updated_at": string
+                  }
+                  Insert: {
+                    "audience"?: NonNullable<Json>,"channel": Database["public"]['Enums']["msg_channel"],"created_at"?: string,"created_by"?: string | null,"id"?: string,"launched_at"?: string | null,"name": string,"offer_id"?: string | null,"scheduled_at"?: string | null,"status"?: string,"template_code": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "audience"?: NonNullable<Json>,"channel"?: Database["public"]['Enums']["msg_channel"],"created_at"?: string,"created_by"?: string | null,"id"?: string,"launched_at"?: string | null,"name"?: string,"offer_id"?: string | null,"scheduled_at"?: string | null,"status"?: string,"template_code"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "outreach_campaigns_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "outreach_campaigns_offer_id_fkey"
+      columns: ["offer_id"]
+isOneToOne: false
+      referencedRelation: "offers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "outreach_campaigns_template_code_fkey"
+      columns: ["template_code"]
+isOneToOne: false
+      referencedRelation: "message_templates"
+      referencedColumns: ["code"]
+    }
+                  ]
+                },"outreach_recipients": {
+                  Row: {
+                    "address": string,"campaign_id": string,"created_at": string,"customer_id": string | null,"id": string,"lead_id": string | null,"message_id": string | null,"name": string | null,"reactivated_lead_id": string | null,"replied_at": string | null,"skip_reason": string | null,"status": string
+                  }
+                  Insert: {
+                    "address": string,"campaign_id": string,"created_at"?: string,"customer_id"?: string | null,"id"?: string,"lead_id"?: string | null,"message_id"?: string | null,"name"?: string | null,"reactivated_lead_id"?: string | null,"replied_at"?: string | null,"skip_reason"?: string | null,"status": string
+                  }
+                  Update: {
+                    "address"?: string,"campaign_id"?: string,"created_at"?: string,"customer_id"?: string | null,"id"?: string,"lead_id"?: string | null,"message_id"?: string | null,"name"?: string | null,"reactivated_lead_id"?: string | null,"replied_at"?: string | null,"skip_reason"?: string | null,"status"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "outreach_recipients_campaign_id_fkey"
+      columns: ["campaign_id"]
+isOneToOne: false
+      referencedRelation: "outreach_campaigns"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "outreach_recipients_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "customers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "outreach_recipients_customer_id_fkey"
+      columns: ["customer_id"]
+isOneToOne: false
+      referencedRelation: "v_account_summary"
+      referencedColumns: ["customer_id"]
+    },{
+      foreignKeyName: "outreach_recipients_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "outreach_recipients_message_id_fkey"
+      columns: ["message_id"]
+isOneToOne: false
+      referencedRelation: "messages"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "outreach_recipients_reactivated_lead_id_fkey"
+      columns: ["reactivated_lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"payments": {
                   Row: {
                     "amount": number,"captured_at": string | null,"created_at": string,"id": string,"invoice_id": string,"method": string | null,"provider": string,"provider_payment_id": string,"raw_payload": Json | null,"status": Database["public"]['Enums']["payment_status"]
@@ -1523,13 +1666,13 @@ isOneToOne: false
                   ]
                 },"quotations": {
                   Row: {
-                    "cgst": number,"created_at": string,"created_by": string | null,"customer_id": string,"discount_amount": number,"discount_pct": number,"id": string,"igst": number,"issued_at": string | null,"lead_id": string | null,"market_total": number,"pdf_path": string | null,"pdf_sha256": string | null,"place_of_supply_state_code": string | null,"property_id": string,"quote_no": string,"rate_card_id": string,"referral_discount_pct": number | null,"referral_id": string | null,"sgst": number,"status": Database["public"]['Enums']["quote_status"],"subtotal": number,"supersedes_id": string | null,"supplier_state_code": string | null,"survey_id": string,"taxable_value": number,"terms_text": string | null,"terms_version": string | null,"total": number,"updated_at": string,"valid_until": string | null,"version": number,"warranty_finish_days": number | null,"warranty_mechanical_days": number | null,"you_save": number
+                    "cgst": number,"created_at": string,"created_by": string | null,"customer_id": string,"discount_amount": number,"discount_pct": number,"id": string,"igst": number,"issued_at": string | null,"lead_id": string | null,"market_total": number,"offer_discount_pct": number | null,"offer_id": string | null,"pdf_path": string | null,"pdf_sha256": string | null,"place_of_supply_state_code": string | null,"property_id": string,"quote_no": string,"rate_card_id": string,"referral_discount_pct": number | null,"referral_id": string | null,"sgst": number,"status": Database["public"]['Enums']["quote_status"],"subtotal": number,"supersedes_id": string | null,"supplier_state_code": string | null,"survey_id": string,"taxable_value": number,"terms_text": string | null,"terms_version": string | null,"total": number,"updated_at": string,"valid_until": string | null,"version": number,"warranty_finish_days": number | null,"warranty_mechanical_days": number | null,"you_save": number
                   }
                   Insert: {
-                    "cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id": string,"discount_amount"?: number,"discount_pct"?: number,"id"?: string,"igst"?: number,"issued_at"?: string | null,"lead_id"?: string | null,"market_total"?: number,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code"?: string | null,"property_id": string,"quote_no": string,"rate_card_id": string,"referral_discount_pct"?: number | null,"referral_id"?: string | null,"sgst"?: number,"status"?: Database["public"]['Enums']["quote_status"],"subtotal"?: number,"supersedes_id"?: string | null,"supplier_state_code"?: string | null,"survey_id": string,"taxable_value"?: number,"terms_text"?: string | null,"terms_version"?: string | null,"total"?: number,"updated_at"?: string,"valid_until"?: string | null,"version"?: number,"warranty_finish_days"?: number | null,"warranty_mechanical_days"?: number | null,"you_save"?: number
+                    "cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id": string,"discount_amount"?: number,"discount_pct"?: number,"id"?: string,"igst"?: number,"issued_at"?: string | null,"lead_id"?: string | null,"market_total"?: number,"offer_discount_pct"?: number | null,"offer_id"?: string | null,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code"?: string | null,"property_id": string,"quote_no": string,"rate_card_id": string,"referral_discount_pct"?: number | null,"referral_id"?: string | null,"sgst"?: number,"status"?: Database["public"]['Enums']["quote_status"],"subtotal"?: number,"supersedes_id"?: string | null,"supplier_state_code"?: string | null,"survey_id": string,"taxable_value"?: number,"terms_text"?: string | null,"terms_version"?: string | null,"total"?: number,"updated_at"?: string,"valid_until"?: string | null,"version"?: number,"warranty_finish_days"?: number | null,"warranty_mechanical_days"?: number | null,"you_save"?: number
                   }
                   Update: {
-                    "cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id"?: string,"discount_amount"?: number,"discount_pct"?: number,"id"?: string,"igst"?: number,"issued_at"?: string | null,"lead_id"?: string | null,"market_total"?: number,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code"?: string | null,"property_id"?: string,"quote_no"?: string,"rate_card_id"?: string,"referral_discount_pct"?: number | null,"referral_id"?: string | null,"sgst"?: number,"status"?: Database["public"]['Enums']["quote_status"],"subtotal"?: number,"supersedes_id"?: string | null,"supplier_state_code"?: string | null,"survey_id"?: string,"taxable_value"?: number,"terms_text"?: string | null,"terms_version"?: string | null,"total"?: number,"updated_at"?: string,"valid_until"?: string | null,"version"?: number,"warranty_finish_days"?: number | null,"warranty_mechanical_days"?: number | null,"you_save"?: number
+                    "cgst"?: number,"created_at"?: string,"created_by"?: string | null,"customer_id"?: string,"discount_amount"?: number,"discount_pct"?: number,"id"?: string,"igst"?: number,"issued_at"?: string | null,"lead_id"?: string | null,"market_total"?: number,"offer_discount_pct"?: number | null,"offer_id"?: string | null,"pdf_path"?: string | null,"pdf_sha256"?: string | null,"place_of_supply_state_code"?: string | null,"property_id"?: string,"quote_no"?: string,"rate_card_id"?: string,"referral_discount_pct"?: number | null,"referral_id"?: string | null,"sgst"?: number,"status"?: Database["public"]['Enums']["quote_status"],"subtotal"?: number,"supersedes_id"?: string | null,"supplier_state_code"?: string | null,"survey_id"?: string,"taxable_value"?: number,"terms_text"?: string | null,"terms_version"?: string | null,"total"?: number,"updated_at"?: string,"valid_until"?: string | null,"version"?: number,"warranty_finish_days"?: number | null,"warranty_mechanical_days"?: number | null,"you_save"?: number
                   }
                   Relationships: [
                     {
@@ -1555,6 +1698,12 @@ isOneToOne: false
       columns: ["lead_id"]
 isOneToOne: false
       referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "quotations_offer_id_fkey"
+      columns: ["offer_id"]
+isOneToOne: false
+      referencedRelation: "offers"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "quotations_property_id_fkey"
@@ -2531,11 +2680,17 @@ isOneToOne: false
 "_score_lead":
 { Args: { "p_actor"?: string,"p_force"?: boolean,"p_lead": string }; Returns: Json
                            },
+"_start_cadence":
+{ Args: { "p_lead": string }; Returns: number
+                           },
 "activate_rate_card":
 { Args: { "p_id": string }; Returns: undefined
                            },
 "allocate_document_no":
 { Args: { "p_code": string,"p_date": string }; Returns: Json
+                           },
+"apply_offer":
+{ Args: { "p_code": string,"p_quote": string }; Returns: Json
                            },
 "assign_lead":
 { Args: { "p_city_id": string }; Returns: string
@@ -2665,6 +2820,12 @@ isOneToOne: false
 "issue_invoice":
 { Args: { "p_invoice": string }; Returns: string
                            },
+"launch_campaign":
+{ Args: { "p_campaign": string }; Returns: Json
+                           },
+"launch_due_campaigns":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "link_to_pilot":
 { Args: { "p_job": string,"p_pilot": string }; Returns: undefined
                            },
@@ -2726,6 +2887,9 @@ isOneToOne: false
                            },
 "portal_url":
 { Args: { "p_path": string }; Returns: string
+                           },
+"preview_audience":
+{ Args: { "p": Json,"p_channel": Database["public"]['Enums']["msg_channel"] }; Returns: Json
                            },
 "progress_service_request":
 { Args: { "p_id": string,"p_note"?: string,"p_to": string }; Returns: undefined
@@ -2798,6 +2962,11 @@ isOneToOne: false
                            },
 "rescore_open_leads":
 { Args: Record<PropertyKey, never>; Returns: number
+                           },
+"resolve_audience":
+{ Args: { "p": Json,"p_channel": Database["public"]['Enums']["msg_channel"] }; Returns: {
+              "address": string,"customer_id": string,"eligible": boolean,"lead_id": string,"name": string,"skip_reason": string
+            }[]
                            },
 "rollup_job":
 { Args: { "p_job": string }; Returns: undefined

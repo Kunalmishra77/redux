@@ -7,6 +7,7 @@ import { CopyPlus, Loader2, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { issueQuoteAction, newVersionAction, setDiscountAction } from '@/lib/actions/quotes'
+import { applyOfferAction } from '@/lib/actions/outreach'
 
 export function IssueButton({ quoteId }: { quoteId: string }) {
   const router = useRouter()
@@ -57,6 +58,24 @@ export function DiscountControl({ quoteId, current, threshold, isAdmin }: { quot
           const r = await setDiscountAction(quoteId, n, reason)
           if (r.ok) { toast.success(r.data.status === 'pending_approval' ? 'Sent for approval' : 'Discount applied'); router.refresh() } else toast.error(r.message)
         })}>Apply</Button>
+    </div>
+  )
+}
+
+// CR-001 phase 9 (BR-R5) — an offer code on a draft; the larger of offer and referral discount wins
+export function OfferControl({ quoteId }: { quoteId: string }) {
+  const router = useRouter()
+  const [code, setCode] = useState('')
+  const [pending, start] = useTransition()
+  return (
+    <div className="flex items-center gap-2 pt-1">
+      <Input aria-label="Offer code" className="num h-8 uppercase" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="Offer code" />
+      <Button size="xs" variant="outline" disabled={pending || code.trim().length < 3} onClick={() => start(async () => {
+        const r = await applyOfferAction(quoteId, code)
+        if (!r.ok) toast.error(r.message)
+        else if (!r.data.applied) toast.message(r.data.reason ?? 'Not applied')
+        else { toast.success('Offer applied'); setCode(''); router.refresh() }
+      })}>{pending && <Loader2 className="animate-spin" />} Apply</Button>
     </div>
   )
 }
