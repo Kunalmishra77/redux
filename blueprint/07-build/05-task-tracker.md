@@ -363,6 +363,8 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-10-12 | Outreach statuses (delivered/read) come from `messages`; recipients keep queued/skipped/replied/reactivated/opted_out | One source of delivery truth, written by the worker | migration 002900 |
 | 2026-10-12 | STOP and reply handling is a trigger on `whatsapp_messages` (inbound) | Works whatever writes the inbound message (webhook worker today, demo button) | migration 002900 |
 | 2026-10-12 | Phase 7 (catalog) skipped for now; phase 9 built first | Client has not supplied the catalog or photos | — |
+| 2026-10-12 | Lifecycle reports are SQL functions returning jsonb, not materialised views | Milliseconds at today's volume; one function feeds both the screen and the CSV, so they cannot disagree. Materialise past ~300 ms | migration 003000 |
+| 2026-10-12 | Product report groups by fitting type and work until the catalog exists | Phase 7 (catalog) waits for the client | lib/data/lifecycle-reports.ts |
 
 ### Open review items (27 Sep 2026) — each fixed in the migration for its section
 
@@ -608,4 +610,18 @@ Append one line per working session. This is how the next session (or the next p
             back (October)" with Imran still waiting for a reply. Open: Meta approval of the marketing
             templates; email provider; scheduled sends need install_schedules() on the worker.
             Awaiting phase 10 approval.
+2026-10-12  CR-001 PHASE 10 (E27, D33) built. Migration 003000: report_tiers (tier, segment, source with
+            referral, tier drift), report_assessments (mode mix, conversion, self-assessment median
+            turnaround vs the 24 h promise), report_demos (funnel, cost, cost per order won, by type and
+            tier, rating), report_people (executives, surveyors/reviewers), report_accounts (repeat
+            customers and value, top accounts, groups), report_referrals (totals, rewards issued/used,
+            top referrers, channels), report_campaigns (sent/skipped/delivered/read/replied/reactivated/
+            opted out, cost, orders after), report_products (fitting x work); Super Admin or system only.
+            pgTAP 27 (12); all 28 files green. App: Reports page gains 8 tabs over the same range
+            selector, every table downloadable as CSV (/api/reports/export, BOM, formula-safe; unit
+            tests); portal demo card links the demo report. Verified live: all 9 tabs 200 with data,
+            CSV by tier A 10/3, B 9/4, C 16/1 (1 year), executive refused (403). CR-001 build phases
+            done except 7 (catalog) and 8 (website content), both waiting on client material. Next:
+            QA & release (golden path extended: registration -> self-assessment -> demo -> referral ->
+            repeat).
 ```
