@@ -29,15 +29,15 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-line/70 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/85">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:h-[72px] lg:px-8">
         <Link href="/" className="shrink-0 rounded-sm" aria-label="REDUX — Bath Restorations by Eurobrass, home">
-          <Logo withTagline className="hidden sm:inline-flex" />
-          <Logo className="sm:hidden" />
+          <Logo withTagline className="hidden xl:inline-flex" />
+          <Logo className="xl:hidden" />
         </Link>
 
-        <nav aria-label="Main" className="ml-4 hidden items-center gap-1 lg:flex">
+        <nav aria-label="Main" className="ml-2 hidden items-center gap-0.5 lg:flex xl:ml-4 xl:gap-1">
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger
               className={cn(
-                'inline-flex h-10 items-center gap-1 rounded-md px-3 text-sm font-medium transition-colors hover:bg-surface hover:text-redux-blue data-[state=open]:bg-surface',
+                'inline-flex h-10 items-center gap-1 rounded-md px-2 text-sm font-medium whitespace-nowrap xl:px-3 transition-colors hover:bg-surface hover:text-redux-blue data-[state=open]:bg-surface',
                 servicesActive ? 'text-redux-blue' : 'text-ink',
               )}
             >
@@ -63,7 +63,7 @@ export function SiteHeader() {
               href={item.href}
               aria-current={isActive(pathname, item.href) ? 'page' : undefined}
               className={cn(
-                'inline-flex h-10 items-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors hover:bg-surface hover:text-redux-blue',
+                'inline-flex h-10 items-center rounded-md px-2 text-sm font-medium whitespace-nowrap xl:px-3 transition-colors hover:bg-surface hover:text-redux-blue',
                 isActive(pathname, item.href) ? 'text-redux-blue' : 'text-ink',
               )}
             >
