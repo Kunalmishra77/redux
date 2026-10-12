@@ -73,8 +73,8 @@ async function everything({ supabase, user, accountName }: Ctx) {
 }
 
 async function assessments({ supabase, user, accountName }: Ctx) {
-  const { data } = await supabase.from('surveys').select('id, status, scheduled_at, submitted_at, property:properties(name, customer_id), quotations(id, status)').order('scheduled_at', { ascending: false })
-  const rows = (data ?? []) as unknown as { id: string; status: string; scheduled_at: string; submitted_at: string | null; property: { name: string; customer_id: string } | null; quotations: { id: string; status: string }[] }[]
+  const { data } = await supabase.from('surveys').select('id, status, mode, scheduled_at, submitted_at, property:properties(name, customer_id), quotations(id, status)').order('scheduled_at', { ascending: false })
+  const rows = (data ?? []) as unknown as { id: string; status: string; mode: string; scheduled_at: string; submitted_at: string | null; property: { name: string; customer_id: string } | null; quotations: { id: string; status: string }[] }[]
   if (!rows.length) return <Card><Empty text="No assessments yet." /></Card>
   return (
     <ul className="space-y-3">
@@ -82,11 +82,14 @@ async function assessments({ supabase, user, accountName }: Ctx) {
         const sent = s.quotations.some((q) => q.status !== 'draft' && q.status !== 'pending_approval')
         return (
           <li key={s.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-4 shadow-card">
-            <div><p className="font-semibold text-ink">{s.property?.name}</p>
-              <p className="text-sm text-muted-ink">{s.status === 'submitted' ? `Completed ${formatWhen(s.submitted_at ?? s.scheduled_at, false)}` : `Booked for ${formatWhen(s.scheduled_at)}`}{accountName(s.property?.customer_id ?? null) ? ` · ${accountName(s.property!.customer_id)}` : ''}</p></div>
-            {s.status === 'submitted' && sent && user.verified
-              ? <Link href={`/portal/reports/assessment/${s.id}`} className="text-sm font-semibold text-redux-blue hover:underline">Assessment report →</Link>
-              : <StatusPill tone={s.status === 'submitted' ? 'positive' : 'progress'}>{s.status === 'submitted' ? 'Completed' : 'Scheduled'}</StatusPill>}
+            <div><p className="font-semibold text-ink">{s.property?.name}{s.mode !== 'onsite' && <span className="ml-1.5 text-xs font-normal text-muted-ink">self-assessment</span>}</p>
+              <p className="text-sm text-muted-ink">{s.status === 'submitted' ? `Completed ${formatWhen(s.submitted_at ?? s.scheduled_at, false)}` : s.mode !== 'onsite' ? 'In progress' : `Booked for ${formatWhen(s.scheduled_at)}`}{accountName(s.property?.customer_id ?? null) ? ` · ${accountName(s.property!.customer_id)}` : ''}</p></div>
+            <span className="flex flex-wrap items-center gap-3">
+              {s.mode !== 'onsite' && <Link href={`/portal/self-assessment/${s.id}`} className="text-sm font-medium text-redux-blue hover:underline">{s.status === 'submitted' ? 'Your photos' : 'Continue'} →</Link>}
+              {s.status === 'submitted' && sent && user.verified
+                ? <Link href={`/portal/reports/assessment/${s.id}`} className="text-sm font-semibold text-redux-blue hover:underline">Assessment report →</Link>
+                : <StatusPill tone={s.status === 'submitted' ? 'positive' : 'progress'}>{s.status === 'submitted' ? 'Completed' : s.mode !== 'onsite' ? 'In progress' : 'Scheduled'}</StatusPill>}
+            </span>
           </li>
         )
       })}

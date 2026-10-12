@@ -134,7 +134,7 @@ export async function requestRepeatAction(jobId: string, note: string): Promise<
       source: 'portal', phone: user.phone, name: user.name, city_id: j.property?.city_id ?? undefined,
       customer_type: account?.type ?? 'other', property_name: j.property?.name, unit_count: account?.size_units ?? undefined,
       raw_payload: {
-        form: 'repeat_request', repeat_of_job: j.job_no, property_id: j.property_id, note: note.trim() || null,
+        form: 'repeat_request', repeat_of_job: j.job_no, property_id: j.property_id, note: note.trim().slice(0, 1000) || null,
         fittings: (j.quote?.lines ?? []).map((l) => `${l.unit_label ?? ''} ${l.description}`.trim()).slice(0, 60),
       },
     },
