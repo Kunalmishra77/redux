@@ -129,6 +129,9 @@ with users on the system costs more than a reverted release.
       and cost guides, referral programme numbers, follow-up cadences, outreach frequency cap
 - [ ] `warranty_terms` set (demo warranties read it)
 - [ ] Optional: full 6-digit pincode master imported into `pincodes` (3-digit prefixes ship by default)
+- [ ] REDUX catalog imported (Admin → Catalog, CSV) and the generic `GEN-` entries unpublished
+- [ ] Note: staging already runs `self_assessment_sla`, `outreach_due`, `lead_rescore` on pg_cron;
+      production gets all jobs from `install_schedules()`
 - [ ] Demo-only data is **not** carried over: the WhatsApp marketing opt-ins recorded for two demo leads
       exist on staging only
 

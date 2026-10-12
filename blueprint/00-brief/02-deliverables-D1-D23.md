@@ -208,8 +208,8 @@ Approved to start on 8 Oct 2026. Full design: `../08-change-requests/CR-001-b2b-
 | D27 | Lead scoring, assessment decision engine & self-assessment | 4 |
 | D28 | Demo programme management | 5 |
 | D29 | Referral & reward system | 6 |
-| D30 | Product catalog | 7 |
-| D31 | Process content & premium website redesign | 8 |
+| D30 | Product catalog | 7 — machinery built 12 Oct 2026; REDUX catalog to import |
+| D31 | Process content & premium website redesign | 8 — programme pages + CTA built 12 Oct 2026; process story and redesign wait for content |
 | D32 | Follow-up cadences & outreach campaigns | 9 |
 | D33 | Lifecycle reporting | 10 |
 

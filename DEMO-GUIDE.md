@@ -13,7 +13,7 @@ customer would receive appears in the **Demo outbox** (`/demo/outbox`), with its
 | Morning of the demo | In the repo: `pnpm demo:refresh` — moves every demo date to today (SLA timers, today's survey visits, follow-ups, quote validity). Safe to run any time; it does nothing if already current. |
 | 15 min before | Open the tabs below once each (the first load after a quiet spell takes a few seconds — do it before the client is watching). |
 | Phone (for the surveyor app) | Android phone with **Expo Go** installed, on **mobile data** (home Wi-Fi ISPs may block Supabase), or set Private DNS to `dns.google`. On the laptop: `cd mobile && npx expo start`, scan the QR in Expo Go, sign in as Ankit. |
-| Pick a fresh phone number | For a live enquiry or registration, use a mobile number that has **never** been used in the demo (each number can hold only one open lead). Already used: up to 98112 04612. Use 98112 04620, 98112 04621, 98112 04622 … |
+| Pick a fresh phone number | For a live enquiry or registration, use a mobile number that has **never** been used in the demo (each number can hold only one open lead). Already used: up to 98112 04621. Use 98112 04630, 98112 04631, 98112 04632 … |
 
 **Tabs to keep open** (one browser profile per role, or use a private window for the customer):
 
@@ -211,6 +211,13 @@ live demo on 12 Oct 2026.
   that goes. Utility templates are not offered (Meta would charge them as marketing).
 - **Follow-up cadences**: the tasks each tier's lead gives its executive (see Priya → Follow-ups).
 
+### Act H2 — The website and catalog (3 min) · *Website tab*
+- Header: **Products** → the fittings REDUX restores, by category → a product → **Assess this fitting**.
+- **/assessment** (on site, self-assessment, video), **/demo-programme**, **/referral-programme** — the
+  numbers on these pages come from the admin settings.
+- Vikram → **Admin → Catalog**: download the template, import a spreadsheet, add a picture, publish.
+- In the customer's self-assessment, the "What is it?" buttons show the catalog pictures.
+
 ### Act I — The account 360° and reports (5 min) · *Vikram*
 - **Accounts → Hotel Lakeview Residency**: lifetime billed, next action, requirements, services
   taken, timeline, work & money, reports, demos, referrals.
@@ -229,6 +236,7 @@ live demo on 12 Oct 2026.
 - **Surveyor app needs** the visit booked for **Ankit** (or sign in as Sunil for his visits).
 - **After many demos**, the data can be reset completely: `scripts/demo/README.md`.
 - **Campaigns:** only contacts who agreed to marketing receive them; in the demo two lost leads were
-  given a WhatsApp opt-in so a campaign has someone to reach. "Send later" needs the scheduler, which
-  is not running on the demo — use *Send now*.
-- **Website copy** still says "Book free assessment"; the B2B website refresh is phase 8 (waiting for content).
+  given a WhatsApp opt-in so a campaign has someone to reach. "Send later" works on the demo — the
+  scheduler checks every 5 minutes. A campaign named "QA — scheduled referral invite" is a test run.
+- **Catalog:** the products on the website are generic (one per fitting type) until REDUX's catalog is
+  imported from a spreadsheet at Admin → Catalog. The premium website redesign waits for content.

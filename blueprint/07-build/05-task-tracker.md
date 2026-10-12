@@ -365,6 +365,10 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-10-12 | Phase 7 (catalog) skipped for now; phase 9 built first | Client has not supplied the catalog or photos | — |
 | 2026-10-12 | Lifecycle reports are SQL functions returning jsonb, not materialised views | Milliseconds at today's volume; one function feeds both the screen and the CSV, so they cannot disagree. Materialise past ~300 ms | migration 003000 |
 | 2026-10-12 | Product report groups by fitting type and work until the catalog exists | Phase 7 (catalog) waits for the client | lib/data/lifecycle-reports.ts |
+| 2026-10-12 | Catalog seeded with one generic entry per fitting type (GEN-…) instead of invented products | No client catalog yet; nothing branded is made up. The real catalog replaces them by CSV import | migration 003100 |
+| 2026-10-12 | Catalog pages use /products?category= instead of /products/[category] | /products/[category] and /products/[slug] cannot share one dynamic level | app/(marketing)/products |
+| 2026-10-12 | Phase 8 built without the premium redesign: assessment, demo and referral programme pages, CTA "Request an assessment" (C1), nav and footer | The redesign and the process story need the client's content and design sign-off | app/(marketing) |
+| 2026-10-12 | Staging runs the three CR-001 database jobs on pg_cron (self-assessment SLA, scheduled campaigns, nightly rescore); worker-dependent jobs wait for the worker | They need nothing but the database; production still uses install_schedules() | staging only |
 
 ### Open review items (27 Sep 2026) — each fixed in the migration for its section
 
@@ -640,4 +644,24 @@ Append one line per working session. This is how the next session (or the next p
             Remaining before production: owner items in the runbook (Meta template approvals, email
             provider, worker + install_schedules, production portal_base_url, REDUX sign-off of rules)
             and client UAT; phases 7 and 8 wait for client material.
+2026-10-12  CR-001 REMAINING WORK (no client input needed) built and tested end to end.
+            Phase 7 machinery (D30): migration 003100 — product_categories, products, product_media,
+            product links on quote lines (filled from the fitting), fittings and stock; import_products
+            (CSV rows, upsert by SKU, per-row errors); generic GEN- entries per fitting type with the
+            site's illustrations; pgTAP 28 (9). Admin /staff/admin/catalog (CSV import with template,
+            image upload resized on the device, publish), website /products and /products/[slug]
+            ("Assess this fitting"), catalog pictures on the self-assessment "What is it?" buttons.
+            Phase 8 without client content (D31 partial): /assessment, /demo-programme,
+            /referral-programme (numbers from settings), CTA "Request an assessment", nav "Products",
+            footer, sitemap; header fits from 1024 px. Portal History gains Demos and Referrals &
+            rewards tabs. Staging pg_cron: self_assessment_sla, outreach_due, lead_rescore.
+            Process note: CI failed once on the catalog test (expected seeded products on an empty
+            database) after the migration had already been pushed — the push script did not stop on a
+            failed run. Test fixed, CI green; the push step now must read the conclusion first.
+            E2E, all green in a real browser: golden path J-A…H (98112 04621), B2B golden path J-I
+            (98112 04620, Hotel Amaltas Inn), catalog/website/scheduler extras (CSV import → publish →
+            website → unpublish → cleaned; scheduled campaign sent by pg_cron in < 5 min: 3 sent, 7
+            skipped for no consent), page audit 112/114 (the 2 = intended /homes 404); pgTAP 29 files,
+            unit 112, CI green. Left: client material (catalog, process content, design sign-off),
+            Meta template approvals, email provider, worker + production schedules, client UAT.
 ```
