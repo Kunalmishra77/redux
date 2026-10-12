@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Download } from 'lucide-react'
 import { Kpi, Money, PageHeader, Panel } from '@/components/patterns'
+import { isReportKind, loadReport, pick, rangeDays, REPORTS, type ReportDef, type ReportKind } from '@/lib/data/lifecycle-reports'
 import { requireRole } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { SOURCES } from '@/lib/constants/sources'
@@ -19,12 +21,29 @@ const FUNNEL = [
 ] as const
 const RANK: Record<string, number> = { new: 0, contacted: 1, survey_booked: 2, surveyed: 3, quoted: 4, won: 5, lost: -1 }
 
-// B36 — the funnel, where leads come from and what they cost, and money in. Every figure links to
-// its records. Range: the last 90 days by default.
+const TABS: [string, string][] = [['overview', 'Overview'], ...(Object.entries(REPORTS) as [ReportKind, ReportDef][]).map(([k, v]) => [k, v.label] as [string, string])]
+
+// B36 + CR-001 phase 10 (D33) — the overview funnel and money, then one tab per lifecycle report
+// (tiers, assessments, demos, people, accounts, referrals, campaigns, products), each table exportable
+// as CSV. Range: the last 90 days by default.
 export default async function ReportsPage({ searchParams }: PageProps<'/staff/admin/reports'>) {
   await requireRole(['super_admin'])
-  const { days: d } = await searchParams
-  const days = [30, 90, 365].includes(Number(d)) ? Number(d) : 90
+  const { days: d, tab: t } = await searchParams
+  const days = rangeDays(d)
+  const tab = isReportKind(t) ? t : 'overview'
+  const q = (k: string, n: number) => `/staff/admin/reports?${k === 'overview' ? '' : `tab=${k}&`}days=${n}`
+  const header = (
+    <>
+      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Reports" description="From first enquiry to money in the bank — and everything in between."
+        actions={<nav className="flex gap-1.5" aria-label="Range">{[30, 90, 365].map((n) => (
+          <Link key={n} href={q(tab, n)} className={`rounded-full px-3 py-1.5 text-sm font-medium ${days === n ? 'bg-redux-blue text-white' : 'bg-white text-muted-ink ring-1 ring-line'}`}>{n === 365 ? '1 year' : `${n} days`}</Link>
+        ))}</nav>} />
+      <nav aria-label="Reports" className="mb-6 flex gap-2 overflow-x-auto pb-1">
+        {TABS.map(([k, label]) => <Link key={k} href={q(k, days)} aria-current={tab === k ? 'page' : undefined} className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium ${tab === k ? 'bg-ink text-white' : 'bg-white text-muted-ink ring-1 ring-line hover:text-ink'}`}>{label}</Link>)}
+      </nav>
+    </>
+  )
+  if (tab !== 'overview') return <>{header}<LifecycleReport kind={tab} days={days} /></>
   const since = new Date(nowMs() - days * 86_400_000).toISOString()
   const supabase = await createClient()
   const [{ data: leads }, { data: history }, { data: campaigns }, { data: quotes }, { data: invoices }, { data: visitCost }, { data: surveys }] = await Promise.all([
@@ -66,10 +85,7 @@ export default async function ReportsPage({ searchParams }: PageProps<'/staff/ad
 
   return (
     <>
-      <PageHeader back={{ href: '/staff/admin', label: 'Admin' }} title="Reports" description="From first enquiry to money in the bank."
-        actions={<nav className="flex gap-1.5" aria-label="Range">{[30, 90, 365].map((n) => (
-          <Link key={n} href={`/staff/admin/reports?days=${n}`} className={`rounded-full px-3 py-1.5 text-sm font-medium ${days === n ? 'bg-redux-blue text-white' : 'bg-white text-muted-ink ring-1 ring-line'}`}>{n === 365 ? '1 year' : `${n} days`}</Link>
-        ))}</nav>} />
+      {header}
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Kpi label="Enquiries" value={L.length} hint={`${won} won · ${L.length ? Math.round((won / L.length) * 100) : 0}% conversion`} />
         <Kpi label="Survey → order" value={`${doneSurveys ? Math.round((won / doneSurveys) * 100) : 0}%`} hint={`${doneSurveys} free surveys done`} />
@@ -133,4 +149,50 @@ export default async function ReportsPage({ searchParams }: PageProps<'/staff/ad
       </div>
     </>
   )
+}
+
+async function LifecycleReport({ kind, days }: { kind: ReportKind; days: number }) {
+  const def: ReportDef = REPORTS[kind]
+  const { data, error } = await loadReport(kind, days)
+  if (error || !data) return <p className="text-sm text-danger">This report could not be prepared. Try again.</p>
+  return (
+    <div className="space-y-6">
+      {!def.since && <p className="text-xs text-muted-ink">All time — this report is not limited by the date range.</p>}
+      {def.facts && (
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {def.facts.map((f) => <Kpi key={f.path} label={f.label} value={show(pick(data, f.path), f.kind)} />)}
+        </div>
+      )}
+      <div className="grid gap-6 xl:grid-cols-2">
+        {def.tables.map((t) => {
+          const rows = (pick(data, t.key) ?? []) as Record<string, unknown>[]
+          return (
+            <Panel key={t.key} title={t.title} className={t.columns.length > 6 ? 'xl:col-span-2' : undefined}
+              action={rows.length ? <a href={`/api/reports/export?kind=${kind}&table=${t.key}&days=${days}`} className="inline-flex items-center gap-1 text-xs font-medium text-redux-blue hover:underline"><Download className="size-3.5" aria-hidden /> CSV</a> : null}>
+              {t.note && <p className="mb-2 text-xs text-muted-ink">{t.note}</p>}
+              {rows.length ? (
+                <table className="w-full text-sm" style={{ minWidth: `${Math.max(24, t.columns.length * 6.5)}rem` }}>
+                  <thead><tr className="border-b border-line text-left">{t.columns.map((c) => <th key={c.key} className={`eyebrow px-2 py-2 text-muted-ink ${c.kind === 'money' || c.kind === 'num' ? 'text-right' : ''}`}>{c.label}</th>)}</tr></thead>
+                  <tbody>
+                    {rows.map((r, i) => (
+                      <tr key={i} className="border-b border-line last:border-0">
+                        {t.columns.map((c) => <td key={c.key} className={`px-2 py-2 ${c.kind === 'money' || c.kind === 'num' ? 'num text-right' : 'text-ink'} ${c.key === t.columns[0]!.key ? 'font-medium' : ''}`}>{show(r[c.key], c.kind)}</td>)}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : <p className="text-sm text-muted-ink">Nothing in this period yet.</p>}
+            </Panel>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function show(v: unknown, kind?: string): React.ReactNode {
+  if (v === null || v === undefined || v === '') return '—'
+  if (kind === 'money') return <Money value={Number(v).toFixed(0)} paise="never" />
+  if (kind === 'num') return Number(v).toLocaleString('en-IN')
+  return typeof v === 'string' ? v.replaceAll('_', ' ') : String(v)
 }

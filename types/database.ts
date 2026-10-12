@@ -2647,6 +2647,9 @@ isOneToOne: false
             "_decide_assessment":
 { Args: { "p_lead": string }; Returns: undefined
                            },
+"_lead_won_value":
+{ Args: { "p_lead": string }; Returns: number
+                           },
 "_my_open_self_survey":
 { Args: { "p_survey": string }; Returns: {
               "booked_by": string | null,
@@ -2676,6 +2679,9 @@ isOneToOne: false
       } },
 "_record_referral":
 { Args: { "p_actor": string,"p_channel": string,"p_customer": string,"p_lead": string,"p_referrer": string }; Returns: string
+                           },
+"_report_guard":
+{ Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "_score_lead":
 { Args: { "p_actor"?: string,"p_force"?: boolean,"p_lead": string }; Returns: Json
@@ -2953,6 +2959,30 @@ isOneToOne: false
                            },
 "reject_referral":
 { Args: { "p_reason": string,"p_referral": string }; Returns: undefined
+                           },
+"report_accounts":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"report_assessments":
+{ Args: { "p_since": string }; Returns: Json
+                           },
+"report_campaigns":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"report_demos":
+{ Args: { "p_since": string }; Returns: Json
+                           },
+"report_people":
+{ Args: { "p_since": string }; Returns: Json
+                           },
+"report_products":
+{ Args: { "p_since": string }; Returns: Json
+                           },
+"report_referrals":
+{ Args: { "p_since": string }; Returns: Json
+                           },
+"report_tiers":
+{ Args: { "p_since": string }; Returns: Json
                            },
 "request_quote_otp":
 { Args: { "p_channel": Database["public"]['Enums']["msg_channel"],"p_phone": string,"p_quote": string }; Returns: Json

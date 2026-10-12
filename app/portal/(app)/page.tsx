@@ -90,6 +90,7 @@ export default async function PortalHome({ searchParams }: PageProps<'/portal'>)
             </div>
             {d.job_id && <Link href={`/portal/jobs/${d.job_id}`} className="shrink-0 text-sm font-semibold text-redux-blue hover:underline">Follow it →</Link>}
           </div>
+          {['completed', 'converted'].includes(d.status) && d.job_id && user.verified && <Link href={`/portal/reports/completion/${d.job_id}`} className="mt-3 inline-block text-sm font-medium text-redux-blue hover:underline">Demo report →</Link>}
           {['completed', 'converted'].includes(d.status) && !d.customer_rating && (<><p className="mt-3 text-sm text-ink">How did it turn out?</p><RateDemo demoId={d.id} /></>)}
         </section>
       ))}
