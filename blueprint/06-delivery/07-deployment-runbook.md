@@ -117,6 +117,21 @@ with users on the system costs more than a reverted release.
 - [ ] Grievance officer details live
 - [ ] Customer contacts imported; first logins tested
 
+### CR-001 · B2B lifecycle (with or after Phase 3)
+- [ ] Migrations 20261008001900 … 20261012003000 applied in order; `pnpm db:test` green on production
+- [ ] `select public.install_schedules();` run once the worker is live (adds lead rescoring, the 24 h
+      self-assessment alert and scheduled campaigns to the existing jobs)
+- [ ] Setting `portal_base_url` = the production portal domain (demo staging points it at the demo URL)
+- [ ] Meta: the three **marketing** templates (`outreach_*`) and `self_assessment_*`, `demo_scheduled`,
+      `referral_credit`, `portal_invite` utility templates approved; `approved_at` filled in
+- [ ] Email provider connected for email campaigns (Q15) — until then email campaigns stay queued
+- [ ] REDUX confirms: tier thresholds and rules, 150 km service area, assessment policy matrix, demo types
+      and cost guides, referral programme numbers, follow-up cadences, outreach frequency cap
+- [ ] `warranty_terms` set (demo warranties read it)
+- [ ] Optional: full 6-digit pincode master imported into `pincodes` (3-digit prefixes ship by default)
+- [ ] Demo-only data is **not** carried over: the WhatsApp marketing opt-ins recorded for two demo leads
+      exist on staging only
+
 ---
 
 ## 6. Incident response

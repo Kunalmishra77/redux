@@ -13,7 +13,7 @@ customer would receive appears in the **Demo outbox** (`/demo/outbox`), with its
 | Morning of the demo | In the repo: `pnpm demo:refresh` — moves every demo date to today (SLA timers, today's survey visits, follow-ups, quote validity). Safe to run any time; it does nothing if already current. |
 | 15 min before | Open the tabs below once each (the first load after a quiet spell takes a few seconds — do it before the client is watching). |
 | Phone (for the surveyor app) | Android phone with **Expo Go** installed, on **mobile data** (home Wi-Fi ISPs may block Supabase), or set Private DNS to `dns.google`. On the laptop: `cd mobile && npx expo start`, scan the QR in Expo Go, sign in as Ankit. |
-| Pick a fresh phone number | For the live enquiry, use a mobile number that has **never** been used in the demo (each number can hold only one open lead). Keep a list: 98112 04518, 98112 04519, 98112 04520 … |
+| Pick a fresh phone number | For a live enquiry or registration, use a mobile number that has **never** been used in the demo (each number can hold only one open lead). Already used: up to 98112 04612. Use 98112 04620, 98112 04621, 98112 04622 … |
 
 **Tabs to keep open** (one browser profile per role, or use a private window for the customer):
 
@@ -36,7 +36,10 @@ customer would receive appears in the **Demo outbox** (`/demo/outbox`), with its
 | Sunil Rawat — Surveyor | same | `sunil@redux.demo` + demo password |
 | Anita Sharma — The Grand Orchid (hotel, job in progress) | `/portal/login` | Mobile **98100 11001** → the 6-digit code shows on screen |
 | Rohit Mehra — home owner (job complete, warranty, invoices) | `/portal/login` | Mobile **98100 11002** |
-| Any new customer you create live | `/portal/login` | The phone number they enquired with |
+| Kavita Bhalla — Hotel Lakeview Residency (referrer, code LAKE631, credit) | `/portal/login` | Mobile **98100 11003** |
+| Maple Crest, Jaipur (self-assessment, demo done, referred) | `/portal/login` | Mobile **98100 11028** |
+| Meenal Joshi — Hotel Silver Lotus (B-tier, sees "Start self-assessment") | `/portal/login` | Mobile **98112 04595** |
+| Any new customer you create live | `/portal/login` | The phone number they registered or enquired with |
 
 The demo password is the `DEMO_PASSWORD` value in `.env.local` (not written here — the repository is public).
 
@@ -144,10 +147,79 @@ between them live.
 | Part-paid invoice | Vikram → Invoices → RDX/2627/00002 |
 | Low stock | Vikram → Stock |
 | Open service request | Priya → Service requests |
+| Account 360° with requirements, next action, timeline | Vikram → Accounts → **Hotel Lakeview Residency** |
+| Self-assessment waiting / done | Vikram → Surveys → *Self-assessments* · Maple Crest (Jaipur) |
+| Demo waiting for approval · demo done | Vikram → Demos → **Grand Orchid** · **Maple Crest** |
+| Referral programme and reward ledger | Vikram → Referrals · Kavita's portal → Refer & earn |
+| Campaign with a reactivated lost lead | Vikram → Campaigns → **Lost leads — come back (October)** |
+| Same-chain referral | Accounts → **Silver Oak** (referred by Silver Birch, group *Silver Hotels*) |
 
 ---
 
-## 4. Good to know
+## 4. The B2B story — account, self-assessment, demo, referral (CR-001, 30–40 min)
+
+Tell it as one new hotel that a happy customer referred. Everything below was run end to end on the
+live demo on 12 Oct 2026.
+
+### Act A — The referral link (3 min) · *Kavita's portal (98100 11003), then a private window*
+- Kavita → **Refer & earn**: her code **LAKE631**, the link, *Share on WhatsApp*, who she referred, her ₹ credit.
+- Copy her link and open it in a private window → **/register** opens with **LAKE631** already filled in.
+
+### Act B — Register a business (4 min) · *Private window, phone size*
+- Fill the form (Hotel, 18 rooms, Delhi, pincode 110055, a fresh mobile), tick the service consent
+  (and marketing if you want to show campaigns later) → the demo code shows on screen → **Create my account**.
+- The portal opens with "Your business account is ready" — work history and reports stay locked until REDUX verifies.
+
+### Act C — The team sees a qualified lead (5 min) · *Vikram*
+- **Accounts** → filter *Not verified* → open the new hotel → **Verify account**.
+- Open its enquiry: the **Qualification** box — **Tier B**, the points behind it, "Inside the service
+  area", **Self-assessment**, **Free single-fitting demo**. "Referred by Hotel Lakeview Residency" sits beside the source.
+- Show **Admin → Lead scoring**: the rules, the A/B/C thresholds, the 150 km service area, the
+  tier × distance table, *Test a lead* (try 45 rooms, pincode 411001 → A, outside → video call).
+- Back on the lead: **Send self-assessment** → the WhatsApp link appears in the outbox.
+
+### Act D — The customer photographs their fittings (5 min) · *Customer portal on the phone*
+- Home → **Continue your self-assessment** → room 101, Basin mixer, Chrome, "Worn finish" →
+  **Take photo** four times (front, side, top, close-up) → **Send to REDUX**.
+- Outbox: "We have received your self-assessment… within 24 hours".
+
+### Act E — Review and the referral discount (4 min) · *Vikram*
+- **Surveys** → *Self-assessments* (with the 24-hour due time) → open it → **Price it** → **Create quotation**.
+- The quotation already carries **5% off** — "First order of a referred business (by Hotel Lakeview
+  Residency): pre-approved". Try an offer code (COMEBACK10): the larger single discount wins, never both.
+- **Issue & send**.
+
+### Act F — The free demo (6 min) · *Vikram*
+- On the lead: **Propose demo** → Single-fitting demo → tick the fitting → send for approval.
+- The demo page: **Approve** (only the Super Admin can) → pick a date → **Schedule** → a demo job opens
+  (no quotation, never invoiced) and the customer is told on WhatsApp.
+- Run the job (stages → handover) → warranty cards are issued, the same as paid work. Record the
+  result and the internal cost (₹1,800).
+- **Demos** page: spent on demos, conversion, cost per order won. **Grand Orchid** is waiting for approval — approve it live too.
+
+### Act G — Approval converts everything (4 min) · *Customer portal*
+- Approve the quotation with the OTP → on Vikram's side the demo turns **Converted** and the referral **Ordered**.
+- Run the job, raise and issue the invoice, the customer pays → **Kavita gets 5% credit** and a WhatsApp
+  (show her Refer & earn again). Referrals page → ledger → **Use** the credit on her next invoice.
+- Customer → History → Work → **Request again** → a new enquiry lands on the same account.
+
+### Act H — Bringing lost leads back (4 min) · *Vikram → Campaigns*
+- Open **Lost leads — come back (October)**: 2 sent, Neha skipped (*no marketing consent*), Shalini
+  replied and her lost lead **reopened**. Press **Reply "Yes"** for Imran live → his lead reopens too;
+  or **"STOP"** → his marketing consent is withdrawn.
+- **New campaign**: change the filters and watch the count — the number shown is exactly the number
+  that goes. Utility templates are not offered (Meta would charge them as marketing).
+- **Follow-up cadences**: the tasks each tier's lead gives its executive (see Priya → Follow-ups).
+
+### Act I — The account 360° and reports (5 min) · *Vikram*
+- **Accounts → Hotel Lakeview Residency**: lifetime billed, next action, requirements, services
+  taken, timeline, work & money, reports, demos, referrals.
+- **Reports** → 1 year: Tiers & sources, Assessments (self-assessment turnaround), Demos, People,
+  Accounts & repeat (Silver Hotels group), Referrals, Campaigns, Products — every table has **CSV**.
+
+---
+
+## 5. Good to know
 
 - **One-way steps:** approving a quotation, issuing an invoice and recording a payment cannot be
   undone (that is the product's rule). Use your freshly created customer for these, and keep
@@ -156,3 +228,7 @@ between them live.
 - **"That surveyor already has a survey in this slot"** — pick another slot; double-booking is blocked on purpose.
 - **Surveyor app needs** the visit booked for **Ankit** (or sign in as Sunil for his visits).
 - **After many demos**, the data can be reset completely: `scripts/demo/README.md`.
+- **Campaigns:** only contacts who agreed to marketing receive them; in the demo two lost leads were
+  given a WhatsApp opt-in so a campaign has someone to reach. "Send later" needs the scheduler, which
+  is not running on the demo — use *Send now*.
+- **Website copy** still says "Book free assessment"; the B2B website refresh is phase 8 (waiting for content).

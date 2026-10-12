@@ -91,6 +91,12 @@ Every rule in `../02-product/05-business-rules.md` has a test. The ones that mat
 | J-F | Customer OTP login → view job → pay invoice → warranty visible | 3 |
 | J-G | Service request → acknowledged within 48 h | 3 |
 | J-H | **Full lifecycle, all three phases, once, before final go-live** | 3 |
+| J-I | CR-001: referral link → business registration → tier B, self-assessment → customer photos (4 slots) → review → quote with the pre-approved referral 5% → free demo (approve → schedule → job → warranty) → OTP approval converts demo and referral → job → invoice → payment → referrer credit → "Request again" | CR-001 |
+| J-J | CR-001: lost leads → campaign (consent gate, frequency cap, marketing template only) → reply reopens the lead; STOP withdraws consent | CR-001 |
+
+J-I and J-A…J-H are automated in the browser against the live demo (`scripts/qa/`); last full run 12 Oct 2026, both green. Every page of the demo is audited on desktop and
+phone for errors, sideways scroll, clipped text and broken images (94/96 clean; the 2 are the
+intended `/homes` 404 while B2C is off).
 
 ---
 
@@ -175,6 +181,15 @@ plus free exploration. Every issue is logged with role, steps, expected, actual 
 5. Run three reports at three date ranges; export each
 6. Reconcile dashboard figures against the underlying records
 7. Export my data; withdraw marketing consent; confirm service messages still arrive
+
+### CR-001 scenarios (UAT before the B2B release)
+1. A hotel registers through a customer's referral link; REDUX verifies it; history and reports open.
+2. A Jaipur hotel (outside 150 km) gets a self-assessment + video call; the executive overrides to on-site with a reason.
+3. The customer photographs fittings on a phone; the reviewer asks for one more photo; the customer adds it; report and proposal within 24 h.
+4. A tier-A account gets a room demo; the Super Admin approves; the demo is done; the account orders → demo converted.
+5. The referred business pays its first invoice → the referrer's credit appears in their portal and is applied to their next invoice.
+6. A lost-on-price campaign with an offer: only consenting contacts receive it; one replies and is reopened; one sends STOP.
+7. Reports for the period reconcile with the screens (tiers, demos, referrals, campaigns) and export to CSV.
 
 ### Sign-off
 Each phase is accepted when **every S1 and S2 is closed** and REDUX signs the acceptance criteria

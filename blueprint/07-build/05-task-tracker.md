@@ -624,4 +624,20 @@ Append one line per working session. This is how the next session (or the next p
             done except 7 (catalog) and 8 (website content), both waiting on client material. Next:
             QA & release (golden path extended: registration -> self-assessment -> demo -> referral ->
             repeat).
+2026-10-12  CR-001 QA. The local browser works again, so QA ran in a real browser. New golden path
+            J-I (scripts/qa/golden-path-b2b.mjs) green first run: /r/LAKE631 -> registration (referral
+            via registration) -> tier B, self, fitting demo -> verify -> send self-assessment -> phone
+            wizard, 4 photos -> price -> Q-2026-0321 with referral 5% -> issue -> fitting demo D-2026-0025
+            approve/schedule/job/handover/cost -> OTP approval: demo converted, referral converted -> job
+            J-2026-0227 -> invoice -> paid -> Lakeview credit ₹104.50 -> Request again -> referrer
+            portal shows it (22 WhatsApps). Original golden path J-A…H re-run green (15 WhatsApps, won).
+            Page audit of every CR-001 page, desktop + phone: 94/96 clean (the 2 = intended /homes
+            404). demo:refresh --check passes over 65 tables. Security pass over every service-role use
+            in the new code: all gated (role, demo mode, or the caller's own RLS read first). Fixes: the
+            portal History now links back to a self-assessment; repeat-request note capped at 1,000
+            characters. Docs: DEMO-GUIDE §4 (B2B story, logins, ready-made data), QA plan J-I/J-J and
+            CR-001 UAT scenarios, deployment runbook CR-001 go-live checklist, scripts/qa/ with README.
+            Remaining before production: owner items in the runbook (Meta template approvals, email
+            provider, worker + install_schedules, production portal_base_url, REDUX sign-off of rules)
+            and client UAT; phases 7 and 8 wait for client material.
 ```
