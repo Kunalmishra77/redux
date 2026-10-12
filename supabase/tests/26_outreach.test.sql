@@ -54,7 +54,7 @@ select throws_ok($$ insert into public.outreach_campaigns (name, channel, templa
 
 -- ── an offer, launched ─────────────────────────────────────────────────────
 insert into public.offers (id, code, title, discount_pct, valid_until, eligible_tiers) values
-  ('38000000-0000-0000-0000-0000000008a1', 'COMEBACK10', 'Come-back offer', 10, current_date + 30, '{A,B,C}');
+  ('38000000-0000-0000-0000-0000000008a1', 'CBTEST10', 'Come-back offer', 10, current_date + 30, '{A,B,C}');
 insert into public.outreach_campaigns (id, name, channel, template_code, offer_id, audience) values
   ('39000000-0000-0000-0000-0000000008a1', 'Lost on price', 'whatsapp', 'outreach_reactivation', '38000000-0000-0000-0000-0000000008a1', (select a from aud));
 select is((public.launch_campaign('39000000-0000-0000-0000-0000000008a1') ->> 'queued')::int, 1, 'BR-C3: launch queues exactly the previewed count');
@@ -62,7 +62,7 @@ reset role;
 select is((select count(*)::int from public.outreach_recipients where campaign_id = '39000000-0000-0000-0000-0000000008a1' and status = 'skipped'), 2,
   'the skipped contacts are recorded with their reason');
 select is((select row(category, template_code, variables ->> 'code')::text from public.messages where entity_id = '39000000-0000-0000-0000-0000000008a1'),
-  '(marketing,outreach_reactivation,COMEBACK10)', 'the message is a marketing message carrying the offer code');
+  '(marketing,outreach_reactivation,CBTEST10)', 'the message is a marketing message carrying the offer code');
 select ok((select send_after >= queued_at from public.messages where entity_id = '39000000-0000-0000-0000-0000000008a1'), 'BR-C2: quiet hours decide the send time');
 set local role authenticated;
 set local request.jwt.claims = '{"role":"authenticated","sub":"00000000-0000-0000-0000-0000000008a1","user_role":"super_admin"}';
@@ -91,9 +91,9 @@ insert into public.quotations (id, quote_no, survey_id, customer_id, property_id
   ('60000000-0000-0000-0000-0000000008f2', 'Q-OFF2', '32000000-0000-0000-0000-0000000008a1', '30000000-0000-0000-0000-0000000008a1', '31000000-0000-0000-0000-0000000008a1', '42000000-0000-0000-0000-0000000008f1', '00000000-0000-0000-0000-0000000008a1', 12, 12);
 set local role authenticated;
 set local request.jwt.claims = '{"role":"authenticated","sub":"00000000-0000-0000-0000-0000000008a1","user_role":"super_admin"}';
-select is((public.apply_offer('60000000-0000-0000-0000-0000000008f1', 'comeback10') ->> 'applied')::boolean, true, 'BR-R5: a 10% offer beats a 5% referral');
+select is((public.apply_offer('60000000-0000-0000-0000-0000000008f1', 'cbtest10') ->> 'applied')::boolean, true, 'BR-R5: a 10% offer beats a 5% referral');
 select is((select discount_pct from public.quotations where id = '60000000-0000-0000-0000-0000000008f1'), 10.00::numeric, '…and replaces it — not 15%');
-select is((public.apply_offer('60000000-0000-0000-0000-0000000008f2', 'COMEBACK10') ->> 'applied')::boolean, false, 'BR-R5: a larger referral discount stays');
+select is((public.apply_offer('60000000-0000-0000-0000-0000000008f2', 'CBTEST10') ->> 'applied')::boolean, false, 'BR-R5: a larger referral discount stays');
 select throws_ok($$ select public.apply_offer('60000000-0000-0000-0000-0000000008f1', 'NOSUCH') $$, '22023', null, 'an unknown code is refused');
 
 select * from finish();
