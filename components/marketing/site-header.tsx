@@ -63,7 +63,7 @@ export function SiteHeader() {
               href={item.href}
               aria-current={isActive(pathname, item.href) ? 'page' : undefined}
               className={cn(
-                'inline-flex h-10 items-center rounded-md px-3 text-sm font-medium transition-colors hover:bg-surface hover:text-redux-blue',
+                'inline-flex h-10 items-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors hover:bg-surface hover:text-redux-blue',
                 isActive(pathname, item.href) ? 'text-redux-blue' : 'text-ink',
               )}
             >

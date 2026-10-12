@@ -49,7 +49,7 @@ export const SERVICE_NAV: NavItem[] = [
 export const MAIN_NAV: NavItem[] = [
   { href: '/hotels', label: 'For hotels' },
   { href: '/homes', label: 'For homes', b2c: true },
-  { href: '/products', label: 'What we restore' },
+  { href: '/products', label: 'Products' },
   { href: '/work', label: 'Our work' },
   { href: '/process', label: 'Process' },
   { href: '/why-redux', label: 'Why REDUX' },

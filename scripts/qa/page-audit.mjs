@@ -114,7 +114,7 @@ async function firstHref(ctx, path, prefix) {
 
 const browser = await chromium.launch()
 const pub = await browser.newContext()
-await audit(pub, 'web', [['/', 'home'], ['/hotels', 'hotels'], ['/register', 'register'], ['/r/LAKE631', 'ref-link'], ['/book-assessment', 'book'], ['/homes', 'homes-404']])
+await audit(pub, 'web', [['/', 'home'], ['/hotels', 'hotels'], ['/register', 'register'], ['/r/LAKE631', 'ref-link'], ['/book-assessment', 'book'], ['/homes', 'homes-404'], ['/products', 'products'], ['/products?category=mixers', 'products-mixers'], ['/products/basin-mixer', 'product'], ['/assessment', 'assessment'], ['/demo-programme', 'demo-programme'], ['/referral-programme', 'referral-programme']])
 
 const LAKE = '3f6754af-d2d4-470f-bd98-10aab12ef1da', SA = 'af56d47b-3f57-4bfa-bc35-1f8ad78f5c62'
 const admin = await staff(browser, 'Vikram Sethi')
@@ -126,16 +126,16 @@ await audit(admin, 'admin', [['/staff/accounts', 'accounts'], [`/staff/accounts/
   [`/staff/accounts/${LAKE}?tab=work`, 'acc-work'], [`/staff/accounts/${LAKE}?tab=assessments`, 'acc-ass'], [`/staff/accounts/${LAKE}?tab=comms`, 'acc-comms'],
   ['/staff/surveys', 'surveys'], [`/staff/surveys/${SA}`, 'self-review'], ['/staff/demos', 'demos'], [demo, 'demo'], [dJob, 'demo-job'],
   ['/staff/referrals', 'referrals'], ['/staff/campaigns', 'campaigns'], ['/staff/campaigns/new', 'camp-new'], [camp, 'camp'],
-  ['/staff/admin/scoring', 'scoring'], ['/staff/admin', 'admin'], ['/staff/leads', 'leads'], ['/staff', 'dash'], ...reports,
+  ['/staff/admin/scoring', 'scoring'], ['/staff/admin/catalog', 'catalog'], ['/staff/admin', 'admin'], ['/staff/leads', 'leads'], ['/staff', 'dash'], ...reports,
   [`/staff/reports/completion/${dJob.split('/').pop()}`, 'demo-report']])
 
 const exec = await staff(browser, 'Priya Nair')
 await audit(exec, 'exec', [['/staff/accounts', 'accounts'], ['/staff/demos', 'demos'], ['/staff/referrals', 'referrals'], ['/staff/campaigns', 'campaigns'], ['/staff/follow-ups', 'follow-ups']])
 
 const kavita = await portal(browser, '9810011003')
-await audit(kavita, 'kavita', [['/portal', 'home'], ['/portal/referrals', 'refer'], ['/portal/history', 'history'], ['/portal/history?tab=work', 'hist-work'], ['/portal/team', 'team']])
+await audit(kavita, 'kavita', [['/portal', 'home'], ['/portal/referrals', 'refer'], ['/portal/history', 'history'], ['/portal/history?tab=work', 'hist-work'], ['/portal/history?tab=referrals', 'hist-referrals'], ['/portal/team', 'team']])
 const maple = await portal(browser, '9810011028')
-await audit(maple, 'maple', [['/portal', 'home'], [`/portal/self-assessment/${SA}`, 'self-assessment'], ['/portal/history?tab=assessments', 'hist-ass']])
+await audit(maple, 'maple', [['/portal', 'home'], [`/portal/self-assessment/${SA}`, 'self-assessment'], ['/portal/history?tab=assessments', 'hist-ass'], ['/portal/history?tab=demos', 'hist-demos']])
 const meenal = await portal(browser, '9811204595')
 await audit(meenal, 'meenal', [['/portal', 'home']])
 

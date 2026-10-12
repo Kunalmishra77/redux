@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Wrench } from 'lucide-react'
 import { CtaBand, PageHero, Section } from '@/components/marketing/sections'
 import { getCatalog } from '@/lib/data/catalog'
 import { pageMetadata } from '@/lib/constants/site'
@@ -38,7 +38,8 @@ export default async function ProductsPage({ searchParams }: PageProps<'/product
                   <Link href={`/products/${p.slug}`} className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-card transition hover:border-redux-blue/40">
                     <div className="aspect-[4/3] bg-surface">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      {img ? <img src={img.url} alt={img.alt} className="size-full object-cover" loading="lazy" /> : null}
+                      {img ? <img src={img.url} alt={img.alt} className="size-full object-cover" loading="lazy" />
+                        : <div className="flex size-full flex-col items-center justify-center gap-2 text-faint"><Wrench className="size-10" aria-hidden /><span className="text-xs">Picture coming soon</span></div>}
                     </div>
                     <div className="flex flex-1 flex-col p-5">
                       {p.category && <p className="eyebrow text-redux-blue">{p.category.name}</p>}
