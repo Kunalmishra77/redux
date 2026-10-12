@@ -359,6 +359,10 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-10-09 | A referral credit is redeemed as a settlement on an issued invoice (payment by `reward_credit`), not as a quote discount | Keeps the tax invoice and GST unchanged; redemption still references the invoice (BR-R6) | migration 002700 |
 | 2026-10-09 | Referrer credit = 5% of the first order's taxable value (before GST) | "5% of the order" read as the value of the work, not the tax | migration 002700 |
 | 2026-10-09 | BR-R5 (no stacking) enforced as "one discount on the quote": the referral sets the discount to the larger of the two | Campaign offers arrive in phase 9 and will use the same rule | migration 002700 |
+| 2026-10-12 | Cadences create executive tasks only (follow_ups), no automatic customer messages | A scheduled reminder to a customer is outreach and must pass the consent gate of a campaign | migration 002900 |
+| 2026-10-12 | Outreach statuses (delivered/read) come from `messages`; recipients keep queued/skipped/replied/reactivated/opted_out | One source of delivery truth, written by the worker | migration 002900 |
+| 2026-10-12 | STOP and reply handling is a trigger on `whatsapp_messages` (inbound) | Works whatever writes the inbound message (webhook worker today, demo button) | migration 002900 |
+| 2026-10-12 | Phase 7 (catalog) skipped for now; phase 9 built first | Client has not supplied the catalog or photos | — |
 
 ### Open review items (27 Sep 2026) — each fixed in the migration for its section
 
@@ -585,4 +589,23 @@ Append one line per working session. This is how the next session (or the next p
             referral discount. Fix: reviewer form defaults to Chrome when the customer did not know
             the finish (rate card prices by finish). Awaiting phase 7 approval (catalog — needs the
             client's catalog).
+2026-10-12  CR-001 PHASE 9 (E26, D32) built (phase 7 waits for the client's catalog). Migration 002900:
+            offers + apply_offer (eligibility, validity, cap; BR-R5 larger single benefit), discount
+            pre-approval now covers referral and offer %, followup_cadences (5 seeded) + cadence_runs
+            -> follow_ups for the lead's executive, closed when the lead moves on (existing open leads
+            started), outreach_campaigns/recipients, resolve_audience (leads or accounts; tier, stage,
+            lost reason, segment, city, quiet days, past customers, referrers) used by both preview and
+            launch (BR-C3), marketing-consent + frequency-cap gate (BR-C1/C2), marketing-template-only
+            trigger, quiet hours, launch_due_campaigns in install_schedules, inbound trigger: STOP
+            withdraws marketing consent, a reply reopens a lost lead with a touch + TN22 (BR-L8), 4
+            marketing templates (3 WhatsApp, 1 email; Meta approval still needed). pgTAP 26 (21); all
+            27 files green. App: /staff/campaigns (list with sent/skipped/replied/reactivated, offers,
+            cadences), /staff/campaigns/new (builder, live audience count, rendered preview, send now /
+            schedule), campaign page (recipients, skip reasons, demo reply buttons), offer code on the
+            quote. Verified live: lost leads 3 matched / 2 eligible / 1 no consent; utility template
+            refused; launch queued 2 = preview; Shalini's reply reopened her lost lead. Demo data: two
+            lost leads given a WhatsApp marketing opt-in, offer COMEBACK10, campaign "Lost leads — come
+            back (October)" with Imran still waiting for a reply. Open: Meta approval of the marketing
+            templates; email provider; scheduled sends need install_schedules() on the worker.
+            Awaiting phase 10 approval.
 ```
