@@ -1,7 +1,7 @@
 -- CR-001 phase 7 · product catalog · D30.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(9);
+select plan(10);
 
 insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-000000000aa1', 'admin.cat@test.local'),
@@ -21,9 +21,10 @@ create temp table res on commit drop as select public.import_products('[
   {"sku":"EB-TEST-101","name":"Test Basin Mixer 101","category":"mixers","fitting_type":"cat_test_mixer","benefits":"Fast|Quiet","finishes":"cat_test_chrome","published":true,"image":"catalog/eb-test-101.jpg"},
   {"sku":"EB-TEST-102","name":"Test Draft Mixer","category":"mixers","published":false},
   {"sku":"bad sku!","name":"Broken"},
-  {"sku":"EB-TEST-103","name":"Wrong category","category":"nope"}
+  {"sku":"EB-TEST-103","name":"Wrong category","category":"nope"},
+  {"sku":"EB-TEST-104","name":"With specs","specs":{"Series":"Pure","Code":"PU 104"},"sort":"5"}
 ]'::jsonb) as r;
-select is((select (r ->> 'created')::int from res), 2, 'import creates the valid rows');
+select is((select (r ->> 'created')::int from res), 3, 'import creates the valid rows');
 select is((select jsonb_array_length(r -> 'errors') from res), 2, '…and reports each bad row with its reason');
 select is((select row(array_length(benefits, 1), array_length(finish_ids, 1), (select count(*) from public.product_media m where m.product_id = p.id))::text
   from public.products p where sku = 'EB-TEST-101'), '(2,1,1)', 'benefits, finishes and the image are read');
@@ -57,6 +58,8 @@ select is((select p.sku from public.quotation_lines l join public.products p on 
 
 select is((select count(*)::int from public.product_categories where slug in ('mixers', 'showers', 'diverters', 'spouts-faucets', 'valves-accessories')), 5,
   'the catalog categories are seeded (works on an empty database too)');
+
+select is((select specs ->> 'Series' from public.products where sku = 'EB-TEST-104'), 'Pure', 'import keeps product details (specs) and order');
 
 select * from finish();
 rollback;
