@@ -369,6 +369,9 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-10-12 | Catalog pages use /products?category= instead of /products/[category] | /products/[category] and /products/[slug] cannot share one dynamic level | app/(marketing)/products |
 | 2026-10-12 | Phase 8 built without the premium redesign: assessment, demo and referral programme pages, CTA "Request an assessment" (C1), nav and footer | The redesign and the process story need the client's content and design sign-off | app/(marketing) |
 | 2026-10-12 | Staging runs the three CR-001 database jobs on pg_cron (self-assessment SLA, scheduled campaigns, nightly rescore); worker-dependent jobs wait for the worker | They need nothing but the database; production still uses install_schedules() | staging only |
+| 2026-10-15 | The website lists the whole Eurobrass 2025 catalogue (469 items, incl. sink mixers and accessories), grouped into 11 categories | The client sent the full catalogue; D-i asks whether to trim to bath fittings | data (staging) |
+| 2026-10-15 | The REDUX Way step 02 reads "The fixture is dismantled" instead of the SOP's "The customer dismantles" | The SOP conflicts with the site and job flow (REDUX removes and refits); D-g asks REDUX to decide | lib/content/process.ts |
+| 2026-10-15 | Site contacts: Eurobrass head office line +91 11 4161 2972 and info@eurobrass.in (eurobrass.in and the catalogue); WhatsApp number and REDUX mailbox still stand-ins | A2/A19 | lib/constants/site.ts |
 
 ### Open review items (27 Sep 2026) — each fixed in the migration for its section
 
@@ -664,4 +667,19 @@ Append one line per working session. This is how the next session (or the next p
             skipped for no consent), page audit 112/114 (the 2 = intended /homes 404); pgTAP 29 files,
             unit 112, CI green. Left: client material (catalog, process content, design sign-off),
             Meta template approvals, email provider, worker + production schedules, client UAT.
+2026-10-15  CLIENT MATERIAL LOADED. EUROBRASS_CAT_2025.pdf (48 pages): digits in the PDF use a substituted
+            font (decoded: ȉȦȶȴȏȍȰȮȁȟ = 0–9); 469 products with code, name, series, page and their own
+            photo (467) extracted by position, classified into 11 categories and rate-card fitting
+            types, series descriptions from the catalogue, loaded through import_products as the Super
+            Admin (migration 003200 adds specs + order to the import; pgTAP 28 → 10). GEN placeholders
+            unpublished; brand Eurobrass set. Photos served through /api/media in the demo (ISP blocks
+            supabase.co). Website: /products grouped by category (8 each, "See all"), product pages with
+            code/series/catalogue page, no stretching of the ~80 px catalogue thumbnails.
+            redux_process.pdf → lib/content/process.ts + /how-we-restore ("The REDUX Way", 10 steps),
+            linked from /process, footer, sitemap. eurobrass.in → office phone, email, legal name
+            (Eurobrass India Pvt. Ltd.; demo setting keeps "— DEMO" while the GSTIN is a stand-in).
+            Pipeline kept in scripts/catalog/. Open items to REDUX: A15–A19, D-g, D-h, D-i
+            (04-assumptions-open-questions.md). E2E green: B2B golden path (98112 04630 — Lakeview's
+            third ordered referral issued its free fitting automatically), page audit 116/118 (2 =
+            intended /homes 404), CI green.
 ```
