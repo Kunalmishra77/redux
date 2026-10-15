@@ -92,7 +92,7 @@ export function SiteFooter({ legalName, b2c = false }: { legalName: string | nul
             </ul>
           </nav>
           <p className="text-pale/80">
-            © 2026 {legalName ?? 'Eurobrass Industries'}. All rights reserved.
+            © 2026 {legalName ?? 'Eurobrass India Pvt. Ltd.'}. All rights reserved.
           </p>
         </div>
       </div>
