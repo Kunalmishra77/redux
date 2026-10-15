@@ -108,6 +108,7 @@ export default function ProcessPage() {
             </li>
           ))}
         </ol>
+        <p className="mt-8 text-[15px] text-muted-ink">Inside the Eurobrass facility, each fitting goes through ten steps — from stripping to nickel and chrome electroplating and pressure testing. <a href="/how-we-restore" className="font-semibold text-redux-blue hover:underline">See the REDUX Way →</a></p>
       </Section>
 
       <CtaBand />

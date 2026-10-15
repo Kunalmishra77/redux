@@ -16,17 +16,18 @@ export const SITE = {
     postalCode: '110020',
     country: 'India',
   },
-  // CLIENT INPUT A2 — the WhatsApp Business number and the published phone line (demo stand-ins)
-  phoneDisplay: '+91 11 4000 0000',
-  phoneE164: '+911140000000',
+  // Eurobrass head office line and email (eurobrass.in contact page and the 2025 catalogue, Oct 2026).
+  // CLIENT INPUT A2 — still needed: the WhatsApp Business number (stand-in below) and a REDUX mailbox
+  phoneDisplay: '+91 11 4161 2972',
+  phoneE164: '+911141612972',
   whatsappNumber: '911140000000',
-  email: 'hello@reduxbath.com',
+  email: 'info@eurobrass.in',
   privacyEmail: 'privacy@reduxbath.com',
   // Consumer Protection (E-Commerce) Rules 2020 — CLIENT INPUT: the named officer
   grievance: {
     name: 'Grievance Officer, REDUX',
     email: 'grievance@reduxbath.com',
-    phoneDisplay: '+91 11 4000 0000',
+    phoneDisplay: '+91 11 4161 2972',
   },
   hours: 'Monday to Saturday, 10:00 to 18:30 IST',
   serviceAreas: ['Delhi', 'Gurugram', 'Noida', 'Ghaziabad', 'Faridabad'],
@@ -72,6 +73,7 @@ export const FOOTER_NAV: { title: string; items: NavItem[] }[] = [
     items: [
       { href: '/why-redux', label: 'Why REDUX' },
       { href: '/process', label: 'Assessment & pilot' },
+      { href: '/how-we-restore', label: 'The REDUX Way' },
       { href: '/assessment', label: 'How the assessment works' },
       { href: '/demo-programme', label: 'Free demo programme' },
       { href: '/referral-programme', label: 'Referral programme' },
@@ -101,6 +103,7 @@ const PAGE_NAMES: [prefix: string, name: string][] = [
   ['/why-redux', 'Why REDUX'],
   ['/work', 'Before & after'],
   ['/process', 'Assessment & pilot process'],
+  ['/how-we-restore', 'The REDUX Way'],
   ['/assessment', 'How the assessment works'],
   ['/demo-programme', 'Free demo programme'],
   ['/referral-programme', 'Referral programme'],

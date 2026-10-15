@@ -20,6 +20,8 @@ export type CatalogCategory = { slug: string; name: string }
 export function mediaUrl(path: string): string {
   if (path.startsWith('demo/') || path.startsWith('/')) return path.startsWith('/') ? path : `/${path}`
   if (/^https?:\/\//.test(path)) return path
+  // demo: through the app (app/api/media), so networks that block *.supabase.co still show pictures
+  if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') return `/api/media/${path}`
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/brand/${path}`
 }
 

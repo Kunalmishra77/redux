@@ -11,8 +11,8 @@ import { shrinkImage } from '@/lib/shrink-image'
 
 // CR-001 phase 7 (D30) — catalog import, pictures and publishing
 
-const TEMPLATE = 'sku,name,category,fitting_type,description,applications,benefits,restore_info,finishes,published,image\r\n' +
-  'EB-BM-101,Single-lever basin mixer,mixers,basin_mixer,"Deck-mounted, ceramic cartridge",Hotel guest bathrooms,Costs a fraction of new|No retiling,"Cartridge rebuilt, chrome re-plated",chrome|pvd_brushed_gold,yes,\r\n'
+const TEMPLATE = 'sku,name,category,fitting_type,description,applications,benefits,restore_info,finishes,published,image,spec:Code,spec:Series\r\n' +
+  'PU-102,Pure single lever basin mixer extended,basin-mixers,basin_mixer,"Minimal, modern luxury",Hotel guest bathrooms,Lead-free casting|Water-saving aerator,"Cartridge rebuilt, chrome re-plated",chrome,yes,,PU 102,Pure\r\n'
 
 export function CatalogImport() {
   const router = useRouter()

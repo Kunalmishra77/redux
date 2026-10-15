@@ -21,7 +21,11 @@ export async function importProductsAction(rows: Record<string, string>[]): Prom
   if (rows.length > 2000) return { ok: false, code: 'TOO_MANY', message: 'Import up to 2,000 products at a time.' }
   const supabase = await createClient()
   const { data, error } = await supabase.rpc('import_products', {
-    p: rows.map((r) => ({ ...r, published: /^(yes|true|1|y)$/i.test(r.published ?? '') })),
+    // columns named "spec:<Name>" become product details (code, series, size, …)
+    p: rows.map((r) => {
+      const specs = Object.fromEntries(Object.entries(r).filter(([k, v]) => k.startsWith('spec:') && v).map(([k, v]) => [k.slice(5).trim().replace(/^./, (c) => c.toUpperCase()), v]))
+      return { ...r, specs, published: /^(yes|true|1|y)$/i.test(r.published ?? '') }
+    }),
   })
   if (error) return { ok: false, code: error.code ?? 'FAILED', message: error.code === '42501' ? error.message : 'The import could not run. Check the file and try again.' }
   refresh()
