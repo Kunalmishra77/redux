@@ -48,7 +48,7 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
             )}
             {images.map((m) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={m.url} src={m.url} alt={m.alt} className="w-full rounded-xl border border-line bg-white object-contain p-6" loading="lazy" />
+              <div key={m.url} className="flex justify-center rounded-xl border border-line bg-white p-6"><img src={m.url} alt={m.alt} className="h-auto max-h-72 w-auto max-w-full object-contain" loading="lazy" /></div>
             ))}
             {p.media.length === 0 && (
               <div className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-xl border border-line bg-surface text-faint"><Wrench className="size-12" aria-hidden /><span className="text-sm">Picture coming soon</span></div>
