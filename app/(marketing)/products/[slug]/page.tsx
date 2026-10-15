@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Check } from 'lucide-react'
+import { Check, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CtaBand, PageHero, Section } from '@/components/marketing/sections'
 import { EnquiryLink } from '@/components/marketing/enquiry-dialog'
@@ -24,7 +24,7 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
   const images = p.media.filter((m) => m.kind === 'image')
   return (
     <>
-      <PageHero breadcrumbs={[{ name: 'What we restore', href: '/products' }, { name: p.name, href: `/products/${p.slug}` }]}
+      <PageHero breadcrumbs={[{ name: 'Products', href: '/products' }, { name: p.name, href: `/products/${p.slug}` }]}
         eyebrow={p.category?.name ?? 'Catalog'} title={p.name} intro={p.description ?? undefined}
         actions={
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -48,8 +48,11 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
             )}
             {images.map((m) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={m.url} src={m.url} alt={m.alt} className="w-full rounded-xl border border-line" loading="lazy" />
+              <img key={m.url} src={m.url} alt={m.alt} className="w-full rounded-xl border border-line bg-white object-contain p-6" loading="lazy" />
             ))}
+            {p.media.length === 0 && (
+              <div className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-xl border border-line bg-surface text-faint"><Wrench className="size-12" aria-hidden /><span className="text-sm">Picture coming soon</span></div>
+            )}
           </div>
           <div className="space-y-8">
             <h2 id="detail" className="sr-only">Details</h2>
