@@ -43,6 +43,9 @@ def classify(prefix, name):
     return None, None
 
 rows, skus, unknown = [], Counter(), []
+BASE = lambda code: re.sub(r'[^A-Z0-9]+', '-', code.upper()).strip('-')
+total = Counter(BASE(p['code']) for p in P)
+FIX = {'DN-7810': 'Wall spout button type'}   # a paragraph glued to the name in the PDF
 for p in P:
     name = re.split(r'\s+(?:EUROTECH|Eurobrass)\b', p['name'])[0].strip()   # drop a paragraph that bled in
     name = re.sub(r'\bmixture\b', 'mixer', name)                         # catalogue typo, consistently
@@ -50,14 +53,17 @@ for p in P:
     cat, ft = classify(p['prefix'], name)
     if not cat:
         unknown.append((p['code'], name)); cat = 'accessories'
-    base = re.sub(r'[^A-Z0-9]+', '-', p['code'].upper()).strip('-')
+    base = BASE(p['code'])
+    name = FIX.get(base, name)
     skus[base] += 1
-    sku = base if skus[base] == 1 else f'{base}-{chr(64 + skus[base])}'   # same code, different item → -B, -C
+    version = chr(64 + skus[base]) if total[base] > 1 else None   # same code, different items → Version A, B, C
+    sku = f'{base}-{version}' if version else base
     series = p['series'] if p['series'] and p['series'] != 'Medicare' else ('Eurotech' if cat == 'sensor-taps' else None)
     title = f'{series} {name[0].lower() + name[1:]}' if series and series not in ('Eurotech',) else name
+    if version: title += f' (Version {version})'
     desc = SERIES_BLURB.get(series) or (SENSOR if cat == 'sensor-taps' else None)
     specs = {'Code': p['code'], **({'Series': series} if series else {}), 'Catalogue page': str(p['page'])}
-    if skus[base] > 1: specs['Note'] = 'This code is shared by more than one item in the catalogue'
+    if version: specs['Version'] = version
     rows.append({'sku': sku, 'name': title, 'category': cat, 'fitting_type': ft or '', 'description': desc or '',
                  'specs': specs, 'image': f'catalog/{sku.lower()}.jpg' if p['image'] else '', 'src_image': p['image'], 'published': True})
 
@@ -66,5 +72,5 @@ print(len(rows), 'rows')
 print(Counter(r['category'] for r in rows))
 print(Counter(r['fitting_type'] or '-' for r in rows))
 print('unclassified', unknown)
-print('dup-code SKUs', [r['sku'] for r in rows if r['sku'][-2] == '-' and r['sku'][-1] in 'BCD'])
+print('versioned SKUs', [r['sku'] for r in rows if 'Version' in r['specs']])
 for r in rows[:4] + rows[-3:]: print(r['sku'], '|', r['name'], '|', r['category'], r['fitting_type'])
