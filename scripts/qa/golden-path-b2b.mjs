@@ -136,7 +136,7 @@ await toast(sp, /Scheduled/)
 const { data: d1 } = await admin.from('demos').select('job_id, demo_no').eq('id', demoId).single()
 async function runJob(jobId) {
   await sp.goto(`${B}/staff/jobs/${jobId}`, { waitUntil: 'networkidle' })
-  for (const stage of ['Removal & pickup', 'At Eurobrass', 'Quality check', 'Refit & test']) {
+  for (const stage of ['Dismantled & collected', 'At Eurobrass', 'Quality check', 'Returned for refit']) {
     await sp.getByRole('button', { name: stage, exact: false }).first().click()
     await sp.waitForTimeout(2500)
     await sp.reload({ waitUntil: 'networkidle' })

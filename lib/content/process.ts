@@ -12,8 +12,8 @@ export const PROCESS_STEPS: ProcessStep[] = [
     objective: "Evaluate the incoming fixture's overall condition, structural integrity and feasibility for rechroming.",
     actions: 'Inspect for deep cracks, severe corrosion, structural damage or missing components. Determine whether replacement child parts will be required.' },
   { n: '02', title: 'Dismantling & workshop receipt',
-    objective: 'Securely transport the fixture from the client to our facility.',
-    actions: 'The fixture is dismantled from the plumbing system. Upon receipt at our workshop, we log the item, verify components against the initial assessment, and issue a job tracking ticket.' },
+    objective: 'Receive the fixture safely from the client at our facility.',
+    actions: 'The customer dismantles the fixture from the plumbing system and hands it over; we transport it to the workshop. Upon receipt at our workshop, we log the item, verify components against the initial assessment, and issue a job tracking ticket.' },
   { n: '03', title: 'Workshop dismantling into child parts',
     objective: 'Break down the faucet completely to treat every individual component effectively.',
     actions: 'Carefully disassemble handles, spouts, cartridges, stems, nuts and washers into individual “child parts” to prevent chemical trapping and ensure thorough surface treatment.' },
@@ -39,3 +39,20 @@ export const PROCESS_STEPS: ProcessStep[] = [
     objective: 'Protect the pristine finish in transit and deliver it to the customer.',
     actions: 'Clean the exterior surface, apply protective wrapping (such as anti-tarnish tissue and bubble wrap), box it securely with any maintenance guidelines, and despatch it to the client.' },
 ]
+
+/** REDUX 2026-10-19: nickel + chrome is part of every restoration; PVD colours are an extra, quoted per requirement. */
+export const FINISH_NOTE = {
+  included: 'Nickel and chrome plating is included in every restoration.',
+  extra: 'PVD colour finishes — brushed gold, matte black and others — are available at extra cost, quoted to your requirement.',
+}
+
+/** The same body at five points of the process — Eurobrass's own photographs (eurobrass.in, Technology),
+ *  stored in the brand bucket until REDUX shoots its own (blueprint/05-content/03-image-prompts.md). */
+export const PROCESS_STAGES = [
+  { image: 'catalog/process/stage-1.jpg', label: 'Stripped to bare brass', steps: '03–04' },
+  { image: 'catalog/process/stage-2.jpg', label: 'Re-ground smooth', steps: '05' },
+  { image: 'catalog/process/stage-3.jpg', label: 'Polished to a mirror', steps: '06' },
+  { image: 'catalog/process/stage-4.jpg', label: 'Nickel and chrome plated', steps: '07' },
+  { image: 'catalog/process/stage-5.jpg', label: 'Re-assembled and tested', steps: '08–09' },
+]
+

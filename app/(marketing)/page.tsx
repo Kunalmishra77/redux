@@ -370,7 +370,7 @@ export default async function HomePage() {
             n="02"
             icon={Timer}
             title="Define the downtime"
-            body="We confirm the schedule for removal, factory restoration and refitting, including transport and testing."
+            body="We agree the dates your team dismantles the fittings, then our collection, factory restoration and return — including transport and pressure testing."
           />
           <NumberedCard
             n="03"

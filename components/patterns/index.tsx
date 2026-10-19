@@ -149,10 +149,10 @@ export function Kpi({ label, value, hint, icon }: { label: string; value: React.
 // ── Stage tracker: 7 dots; done = blue, current = lime, pending = line (§5) ───
 export const JOB_STAGES = [
   { key: 'dates_confirmed', label: 'Dates confirmed' },
-  { key: 'removal_pickup', label: 'Removal & pickup' },
+  { key: 'removal_pickup', label: 'Dismantled & collected' },
   { key: 'at_eurobrass', label: 'At Eurobrass' },
   { key: 'quality_check', label: 'Quality check' },
-  { key: 'refit_test', label: 'Refit & test' },
+  { key: 'refit_test', label: 'Returned for refit' },
   { key: 'handover', label: 'Handover' },
   { key: 'warranty_active', label: 'Warranty active' },
 ] as const

@@ -83,8 +83,8 @@ export default function ProcessPage() {
         <SectionHeading id="downtime" tone="blue" eyebrow="3 · The wider project" title="Room downtime and work planning" />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           <NumberedCard tone="blue" n="01" icon={CalendarRange} title="Schedule around availability" body="Your team provides available work dates, helping us schedule restoration in batches." />
-          <NumberedCard tone="blue" n="02" icon={Timer} title="Define the downtime" body="We confirm the schedule for removal, factory restoration and refitting, including transport and testing." />
-          <NumberedCard tone="blue" n="03" icon={ShieldCheck} title="Check before reopening" body="We check for leaks, test fitting operation and inspect the finish before returning rooms to service." />
+          <NumberedCard tone="blue" n="02" icon={Timer} title="Define the downtime" body="We agree the dates your team dismantles the fittings, then our collection, factory restoration and return — including transport and pressure testing." />
+          <NumberedCard tone="blue" n="03" icon={ShieldCheck} title="Tested before it comes back" body="Every fitting is pressure-tested for leaks, operated through its full range and inspected for finish at the workshop before it is returned." />
         </div>
         <p className="mt-8 text-sm text-pale italic">Batch sizes and downtime depend on the scope and property-approved work dates.</p>
       </Section>
@@ -93,10 +93,10 @@ export default function ProcessPage() {
         <SectionHeading id="journey" eyebrow="A fitting's journey" title="From your bathroom to Eurobrass, and back." />
         <ol className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { icon: Wrench, t: 'Removal', b: 'On the agreed dates, by the REDUX team.' },
-            { icon: Truck, t: 'To Eurobrass', b: 'Fittings are transported to the Eurobrass facility.' },
-            { icon: ClipboardCheck, t: 'Restoration & quality check', b: 'Function and finish restored, then checked before dispatch.' },
-            { icon: ShieldCheck, t: 'Refit, test, handover', b: 'Leak, operation and finish checks before the room reopens. Warranty cards issued.' },
+            { icon: Wrench, t: 'Dismantling', b: 'On the agreed dates, by your own maintenance team or plumber.' },
+            { icon: Truck, t: 'To Eurobrass', b: 'We collect the fittings and take them to the Eurobrass workshop.' },
+            { icon: ClipboardCheck, t: 'Restoration & quality check', b: 'Function and finish restored, pressure-tested and checked before despatch.' },
+            { icon: ShieldCheck, t: 'Return & refit', b: 'Delivered back with warranty cards, ready for your team to refit.' },
           ].map(({ icon, t, b }, i) => (
             <li key={t} className="rounded-xl border border-line bg-white p-5 shadow-card">
               <div className="flex items-center justify-between">

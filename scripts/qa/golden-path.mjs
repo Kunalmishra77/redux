@@ -151,7 +151,7 @@ const vik = await as('vikram@redux.demo')
 const { data: job } = await vik.from('jobs').select('id, job_no').eq('quotation_id', quoteId).single()
 must(job, 'job opened')
 await ap.goto(B + `/staff/jobs/${job.id}`, { waitUntil: 'networkidle' })
-for (const stage of ['Removal & pickup', 'At Eurobrass', 'Quality check', 'Refit & test']) {
+for (const stage of ['Dismantled & collected', 'At Eurobrass', 'Quality check', 'Returned for refit']) {
   for (let i = 0; i < 2; i++) {
     await ap.getByRole('button', { name: stage, exact: false }).first().click()
     await ap.waitForTimeout(2500)

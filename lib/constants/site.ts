@@ -16,17 +16,18 @@ export const SITE = {
     postalCode: '110020',
     country: 'India',
   },
-  // Eurobrass head office line and email (eurobrass.in contact page and the 2025 catalogue, Oct 2026).
-  // CLIENT INPUT A2 — still needed: the WhatsApp Business number (stand-in below) and a REDUX mailbox
+  // TEMPORARY (REDUX, 19 Oct 2026): REDUX will have its own number and mailbox (A2). Until then every
+  // contact point uses the Eurobrass head office line and email (eurobrass.in and the 2025 catalogue) —
+  // including WhatsApp, so no button on the site points at a number that does not exist.
   phoneDisplay: '+91 11 4161 2972',
   phoneE164: '+911141612972',
-  whatsappNumber: '911140000000',
+  whatsappNumber: '911141612972',
   email: 'info@eurobrass.in',
-  privacyEmail: 'privacy@reduxbath.com',
-  // Consumer Protection (E-Commerce) Rules 2020 — CLIENT INPUT: the named officer
+  privacyEmail: 'info@eurobrass.in',
+  // Consumer Protection (E-Commerce) Rules 2020 — CLIENT INPUT: the named officer (temporary: the office)
   grievance: {
     name: 'Grievance Officer, REDUX',
-    email: 'grievance@reduxbath.com',
+    email: 'info@eurobrass.in',
     phoneDisplay: '+91 11 4161 2972',
   },
   hours: 'Monday to Saturday, 10:00 to 18:30 IST',

@@ -57,7 +57,7 @@ export default function TermsPage() {
         <li>Each quotation states its validity period. Prices are those of the rate card in force on the quotation date.</li>
         <li>
           Available repairs and finishes depend on the condition of each fitting. If a fitting proves unsuitable once
-          removed, we will tell you before doing any further work on it.
+          dismantled, we will tell you before doing any further work on it.
         </li>
         <li>An approved quotation is not changed afterwards; any change in scope is issued as a new version for approval.</li>
       </ul>

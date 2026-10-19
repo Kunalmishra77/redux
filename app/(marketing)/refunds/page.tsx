@@ -14,7 +14,7 @@ export const metadata: Metadata = pageMetadata({
 const TOC = [
   { id: 'assessment', label: 'The free assessment' },
   { id: 'before', label: 'Cancelling before work begins' },
-  { id: 'after', label: 'After fittings are removed' },
+  { id: 'after', label: 'After fittings are handed over' },
   { id: 'refunds', label: 'How refunds are paid' },
   { id: 'warranty', label: 'Warranty claims' },
   { id: 'contact', label: 'Contact' },
@@ -38,13 +38,13 @@ export default function RefundsPage() {
 
       <h2 id="before">Cancelling before work begins</h2>
       <p>
-        If you cancel an approved quotation before any fitting has been removed, any advance you have paid is refunded in
+        If you cancel an approved quotation before any fitting has been handed over to us, any advance you have paid is refunded in
         full.
       </p>
 
-      <h2 id="after">After fittings are removed</h2>
+      <h2 id="after">After fittings are handed over</h2>
       <p>
-        Once fittings have been removed for restoration, work on them has begun. If you cancel at this stage, we will refit
+        Once fittings have been handed over for restoration, work on them has begun. If you cancel at this stage, we will return
         the fittings and charge only for work already carried out and parts already made for your fittings, as itemised on
         your quotation. Any balance of your advance is refunded.
       </p>

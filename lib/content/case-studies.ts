@@ -47,7 +47,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     downtime: [
       'Rooms taken out of service in batches around dates the hotel approved, avoiding conference weeks.',
-      'Removal, factory restoration and refitting scheduled before work began, including transport and testing.',
+      'Dismantling by the hotel team, collection, factory restoration and return scheduled before work began.',
       'Every room checked for leaks, tested for operation and inspected for finish before reopening.',
     ],
     outcome: 'The restored fittings were back in service in batches, without taking a floor offline for a month.',
@@ -102,7 +102,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       'Finishes restored in PVD matte black, at the family’s choice.',
     ],
     downtime: [
-      'Fittings removed and refitted on agreed dates, one bathroom at a time so the home stayed usable.',
+      'Fittings dismantled by the owner\'s plumber and returned restored one bathroom at a time, so the home stayed usable.',
       'Each fitting tested for leaks and operation at handover.',
     ],
     outcome: 'The family kept their fittings and their tiles, with a finish they chose.',

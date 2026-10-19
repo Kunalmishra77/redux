@@ -153,12 +153,12 @@ export default async function HotelsPage() {
             tone="blue"
             eyebrow="Downtime and work planning"
             title="Agreed before work begins."
-            intro="Removal, refitting, access and room availability are agreed before work begins. Your onboarded maintenance panel handles any required civil work — walls or tiles — agreed with REDUX in advance."
+            intro="Your own maintenance team dismantles the fittings and refits them on dates agreed before work begins; REDUX collects, restores and returns them. Any civil work — walls or tiles — is handled by your onboarded panel, agreed with REDUX in advance."
           />
           <div className="grid gap-4">
             {[
               { icon: CalendarRange, t: 'Batches around your dates', b: 'Rooms are taken out of service together, around the dates your team approves.' },
-              { icon: Wrench, t: 'Removal, factory restoration, refitting', b: 'Scheduled in advance, including transport and testing.' },
+              { icon: Wrench, t: 'Collection, factory restoration, return', b: 'Your team dismantles on agreed dates; we collect, restore and return the fittings pressure-tested and ready to refit.' },
               { icon: ShieldCheck, t: 'Checked before reopening', b: 'Every room is checked for leaks, tested for operation and inspected for finish before it returns to service.' },
             ].map(({ icon, t, b }) => (
               <div key={t} className="flex gap-4 rounded-xl bg-white/[0.06] p-5 ring-1 ring-white/15">

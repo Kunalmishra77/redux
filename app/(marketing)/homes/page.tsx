@@ -63,7 +63,7 @@ export default async function HomesPage() {
             steps={[
               { title: 'Free assessment at home', body: 'We look at each fitting, photograph it from four angles and note what can be restored.' },
               { title: 'A written scope', body: 'Three prices per fitting — restore, replace with Eurobrass, or replace at market. You choose, fitting by fitting.' },
-              { title: 'Restored and refitted', body: 'Fittings are removed and refitted on dates you agree, then tested for leaks and operation at handover.' },
+              { title: 'Restored and returned', body: 'Your plumber dismantles the fittings on a date that suits you; we collect them, restore them at the workshop and return them pressure-tested and ready to refit.' },
             ]}
           />
         </div>

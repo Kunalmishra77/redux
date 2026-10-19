@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { CtaBand, PageHero, Section } from '@/components/marketing/sections'
 import { EnquiryLink } from '@/components/marketing/enquiry-dialog'
 import { getProduct } from '@/lib/data/catalog'
+import { FINISH_NOTE } from '@/lib/content/process'
 import { pageMetadata } from '@/lib/constants/site'
 
 export async function generateMetadata({ params }: PageProps<'/products/[slug]'>): Promise<Metadata> {
@@ -61,10 +62,9 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
               <ul className="space-y-2">{p.benefits.map((b) => <li key={b} className="flex gap-2 text-[15px] text-ink"><Check className="mt-0.5 size-5 shrink-0 text-success" aria-hidden />{b}</li>)}</ul>
             )}
             {p.applications && <div><h3 className="text-lg font-semibold text-ink">Where it is used</h3><p className="mt-2 text-[15px] leading-relaxed text-muted-ink">{p.applications}</p></div>}
-            {p.finishes.length > 0 && (
-              <div><h3 className="text-lg font-semibold text-ink">Finishes</h3>
-                <div className="mt-2 flex flex-wrap gap-2">{p.finishes.map((f) => <span key={f} className="rounded-full bg-surface px-3 py-1 text-sm text-ink">{f}</span>)}</div></div>
-            )}
+            <div><h3 className="text-lg font-semibold text-ink">Finishes</h3>
+              {p.finishes.length > 0 && <div className="mt-2 flex flex-wrap gap-2">{p.finishes.map((f) => <span key={f} className="rounded-full bg-surface px-3 py-1 text-sm text-ink">{f}</span>)}</div>}
+              <p className="mt-2 text-sm leading-relaxed text-muted-ink">{FINISH_NOTE.included} {FINISH_NOTE.extra}</p></div>
             {Object.keys(p.specs).length > 0 && (
               <div><h3 className="text-lg font-semibold text-ink">Specifications</h3>
                 <dl className="mt-2 divide-y divide-line rounded-xl border border-line">{Object.entries(p.specs).map(([k, v]) => <div key={k} className="flex justify-between gap-4 px-4 py-2 text-sm"><dt className="text-muted-ink">{k}</dt><dd className="text-right text-ink">{String(v)}</dd></div>)}</dl></div>

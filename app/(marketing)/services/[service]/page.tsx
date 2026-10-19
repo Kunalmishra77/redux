@@ -105,7 +105,7 @@ export default async function ServicePage({ params }: PageProps<'/services/[serv
             steps={[
               { title: 'Free assessment', body: 'Each fitting is recorded — type, brand, model, finish and condition — and photographed from four angles.' },
               { title: 'Written scope', body: 'Three prices per fitting: restore, replace with Eurobrass, or replace at market. You choose.' },
-              { title: 'Restoration', body: 'Fittings are removed on agreed dates, restored at the Eurobrass facility and refitted.' },
+              { title: 'Restoration', body: 'Your team dismantles the fittings on agreed dates; they are restored at the Eurobrass facility and returned ready to refit.' },
               { title: 'Checked at handover', body: 'Leak, operation and finish checks before the bathroom returns to service.' },
             ]}
           />

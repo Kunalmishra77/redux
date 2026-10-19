@@ -43,7 +43,7 @@ export const SERVICES: Record<ServiceSlug, Service> = {
     ],
     checks: [
       'Component suitability, dimensions and operation checked for each assessed fitting',
-      'Pressure and leak test after refitting',
+      'Pressure and leak test at the workshop before return',
       'Operation tested through the full range before handover',
     ],
     note: 'Available repairs depend on the condition of each fitting. Where a fitting is not suitable, the assessment says so.',
@@ -60,22 +60,22 @@ export const SERVICES: Record<ServiceSlug, Service> = {
     intro: 'Recoat suitable fittings in chrome or coloured PVD finishes to renew their appearance.',
     points: [
       {
-        title: 'Chrome',
-        body: 'Scaling, pitting and worn plating are taken back and the finish restored in chrome, so repaired fittings meet the property’s appearance standard.',
+        title: 'Nickel + chrome — included',
+        body: 'Scaling, pitting and worn plating are taken back and the finish restored in nickel and chrome, so repaired fittings meet the property’s appearance standard. Included in every restoration.',
       },
       {
-        title: 'Coloured PVD',
-        body: 'Physical vapour deposition finishes — brushed gold, matte black and others — give suitable fittings a new look without replacing them.',
+        title: 'Coloured PVD — on request',
+        body: 'Physical vapour deposition finishes — brushed gold, matte black and others — give suitable fittings a new look without replacing them. At extra cost, quoted to your requirement.',
       },
       {
         title: 'Done at the factory',
-        body: 'Finish restoration happens at the Eurobrass facility, not on site. Fittings are removed, restored and refitted on scheduled dates.',
+        body: 'Finish restoration happens at the Eurobrass facility, not on site. Your team dismantles the fittings on agreed dates; we restore them and return them ready to refit.',
       },
     ],
     checks: [
       'Base material and condition assessed before a finish is recommended',
       'Finish inspected before the fitting leaves the factory',
-      'Finish inspected again after refitting, before the room returns to service',
+      'Finish inspected again before the fitting is packed and returned',
     ],
     note: 'Not every fitting is suitable for recoating. Suitability is confirmed fitting by fitting in the assessment.',
     galleryIds: ['basin_mixer-pvd_brushed_gold', 'shower_mixer-pvd_matte_black', 'spout-chrome'],
@@ -105,7 +105,7 @@ export const SERVICES: Record<ServiceSlug, Service> = {
     ],
     checks: [
       'Compatibility confirmed for each fitting in the assessment',
-      'Flow checked after refitting',
+      'Flow checked at the workshop before return',
     ],
     note: 'Water-saving components are added only where they are compatible with the fitting.',
     galleryIds: ['spout-pvd_matte_black', 'shower_head-chrome', 'basin_mixer-chrome'],

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { CtaBand, PageHero, Section, SectionHeading } from '@/components/marketing/sections'
-import { PROCESS_INTRO, PROCESS_STEPS } from '@/lib/content/process'
+import { FINISH_NOTE, PROCESS_INTRO, PROCESS_STAGES, PROCESS_STEPS } from '@/lib/content/process'
+import { mediaUrl } from '@/lib/data/catalog'
 import { pageMetadata } from '@/lib/constants/site'
 
 export const metadata: Metadata = pageMetadata({
@@ -15,6 +16,18 @@ export default function HowWeRestorePage() {
     <>
       <PageHero breadcrumbs={[{ name: 'The REDUX Way', href: '/how-we-restore' }]} eyebrow="The REDUX Way"
         title="Ten steps from tarnished to factory-fresh." intro={PROCESS_INTRO} />
+      <Section tone="surface" labelledBy="stages">
+        <SectionHeading id="stages" eyebrow="One fitting, five moments" title="From bare brass to mirror chrome." />
+        <ol className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          {PROCESS_STAGES.map((s, i) => (
+            <li key={s.image} className={`overflow-hidden rounded-2xl bg-white shadow-card${i === PROCESS_STAGES.length - 1 ? ' col-span-2 sm:col-span-1' : ''}`}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={mediaUrl(s.image)} alt={s.label} className="aspect-[4/5] w-full object-cover" loading="lazy" />
+              <div className="p-4"><p className="num eyebrow text-redux-blue">Step {s.steps}</p><p className="mt-1 text-[15px] font-semibold text-ink">{s.label}</p></div>
+            </li>
+          ))}
+        </ol>
+      </Section>
       <Section labelledBy="steps">
         <SectionHeading id="steps" eyebrow="Rechroming, reviving and refinishing" title="What happens to every fitting." />
         <ol className="relative mt-12 space-y-6 before:absolute before:top-2 before:bottom-2 before:left-6 before:w-px before:bg-line sm:before:left-7">
@@ -31,8 +44,9 @@ export default function HowWeRestorePage() {
             </li>
           ))}
         </ol>
+        <p className="mt-10 rounded-2xl bg-surface p-5 text-[15px] leading-relaxed text-ink sm:p-6"><strong className="font-semibold">{FINISH_NOTE.included}</strong> {FINISH_NOTE.extra}</p>
       </Section>
-      <CtaBand title="See it on your own fittings." body="Start with a free assessment — every fitting photographed, assessed and priced before anything is removed." />
+      <CtaBand title="See it on your own fittings." body="Start with a free assessment — every fitting photographed, assessed and priced before anything is dismantled." />
     </>
   )
 }
