@@ -372,6 +372,9 @@ blueprint that silently stops matching the code is worse than no blueprint.
 | 2026-10-15 | The website lists the whole Eurobrass 2025 catalogue (469 items, incl. sink mixers and accessories), grouped into 11 categories | The client sent the full catalogue; D-i asks whether to trim to bath fittings | data (staging) |
 | 2026-10-15 | The REDUX Way step 02 reads "The fixture is dismantled" instead of the SOP's "The customer dismantles" | The SOP conflicts with the site and job flow (REDUX removes and refits); D-g asks REDUX to decide | lib/content/process.ts |
 | 2026-10-15 | Site contacts: Eurobrass head office line +91 11 4161 2972 and info@eurobrass.in (eurobrass.in and the catalogue); WhatsApp number and REDUX mailbox still stand-ins | A2/A19 | lib/constants/site.ts |
+| 2026-10-19 | Customer dismantles and refits (D-g); job-stage labels "Dismantled & collected" / "Returned for refit"; stage keys unchanged | REDUX decision | migration 003300, components/patterns |
+| 2026-10-19 | All contact points temporarily use the Eurobrass office line and info@eurobrass.in, including WhatsApp | REDUX: its own number and mail come later (A19) | lib/constants/site.ts |
+| 2026-10-19 | /how-we-restore shows Eurobrass's technology photos (eurobrass.in) as process stages | Temporary until REDUX's generated images (A18) | catalog/process/* |
 
 ### Open review items (27 Sep 2026) — each fixed in the migration for its section
 
@@ -682,4 +685,11 @@ Append one line per working session. This is how the next session (or the next p
             (04-assumptions-open-questions.md). E2E green: B2B golden path (98112 04630 — Lakeview's
             third ordered referral issued its free fitting automatically), page audit 116/118 (2 =
             intended /homes 404), CI green.
+2026-10-19  CLIENT ANSWERS APPLIED. /products shown in steps (type tiles, 15 series covers, search by
+            name/code, 24 per page, Version A/B on 16 codes); 360 products on eurobrass.in 600 px photos;
+            customer dismantles/refits across the website, The REDUX Way and job-stage words (migration
+            003300); nickel + chrome included, PVD at extra cost; temporary contacts = Eurobrass office;
+            process stage photos; image prompts for everything still missing
+            (blueprint/05-content/03-image-prompts.md); catalogue pipeline scripts updated. Answered:
+            D-g, D-h, D-i, A16 (versions). Open: A15 (109 photos), A16 (3 mismatches), A17, A18, A19, GSTIN.
 ```

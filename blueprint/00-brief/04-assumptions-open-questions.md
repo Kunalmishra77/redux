@@ -26,11 +26,11 @@ Anything marked `[CLIENT INPUT NEEDED]` anywhere in this blueprint appears in se
 | A12 | Bank account for Razorpay settlement | D13 | Week 17 | REDUX |
 | A13 | Team list with roles and cities (care executives, surveyors, admins) | D6 | Week 6 | REDUX |
 | A14 | Decision on call recording (yes/no) and the announcement script | D4 | Week 6 | REDUX |
-| A15 | **High-resolution product photos** (the 2025 catalogue PDF embeds ~80 px thumbnails; 467 are on the site, sharp ones replace them by the catalog import) | D30 | CR-001 | REDUX |
-| A16 | Confirm the 16 catalogue codes used for two different items (PU 610, PU 3015, PU 4007, ST 2001, IV 102, SG 676, RN 3012, DN 1005, DN 1016, NE 2006, AL 3012, CL 3036 ×3, CL 3015, EBSEN 010, EBA 9155) and the 2 products without a photo (PU 102, IV 679) | D30 | CR-001 | REDUX |
+| A15 | **Product photos.** 360 of 469 now use the 600 px photos from eurobrass.in (19 Oct 2026); REDUX is generating the other 109 (accessories, showers, sensor taps and a few mixers) with `blueprint/05-content/03-image-prompts.md` §2–3 | D30 | CR-001 | REDUX |
+| A16 | ~~Codes used for two items~~ — answered 19 Oct 2026: shown as **Version A / Version B** (CL 3036 A/B/C). Still to confirm: three codes where eurobrass.in shows a different product than the catalogue (ST 930, CL 3015-B, LT 4006), and the 2 products without a photo (PU 102, IV 679) | D30 | CR-001 | REDUX |
 | A17 | GEORGIAN series introduction (the catalogue page still has placeholder "Lorem ipsum" text) | D30, D31 | CR-001 | REDUX |
-| A18 | Real REDUX process / before-after photography and 2–3 case studies with numbers (the process story has no photos yet) | D31 | CR-001 | REDUX |
-| A19 | REDUX mailbox (the site shows info@eurobrass.in), a WhatsApp Business number, and the grievance officer's name | D1, D3 | CR-001 | REDUX |
+| A18 | Process / before-after photography and case studies. REDUX is generating images (prompts §4–8); meanwhile /how-we-restore uses Eurobrass's own technology photos and the case studies stay labelled *illustrative* | D31 | CR-001 | REDUX |
+| A19 | REDUX's own mailbox, WhatsApp Business number and grievance officer's name. **Temporary (19 Oct 2026):** every contact point uses the Eurobrass office line +91 11 4161 2972 and info@eurobrass.in | D1, D3 | CR-001 | REDUX |
 
 ---
 
@@ -148,6 +148,6 @@ request when REDUX wants it.
 | D-d | Can a customer raise a service request under warranty from the portal? | Yes / call only | Yes — it is D13 scope and it captures repeat revenue |
 | D-e | Call recording: on or off? | On / off | On, with a compliant announcement and 90-day retention — it is how you coach the care team |
 | D-f | Does a dealer get a login? | Yes / no | Not in v1. Dealer enquiries land in the CRM as a source. A dealer portal is a change request. |
-| D-g | Who removes and refits fittings? The REDUX Way SOP says the **customer dismantles** and REDUX **despatches** back; the job flow and website say the **REDUX team removes, refits and tests on site** | Customer / REDUX / by account type | REDUX for hotels (rooms return to service tested — the platform's handover and warranty start rely on it); customer for walk-in or shipped jobs |
-| D-h | PVD finishes (gold, matte black, rose gold) are in the rate card, but the SOP describes nickel + chrome only. Is PVD offered, and through which process? | Chrome only / chrome + PVD | Confirm before quoting PVD finishes |
-| D-i | Which Eurobrass products should the website show — the whole 2025 catalogue (469 items incl. kitchen sinks and accessories) or the bath fittings REDUX restores? | All / bath only | Show all for now, with categories; trim if REDUX prefers a restoration focus |
+| D-g | ~~Who removes and refits fittings?~~ **Decided 19 Oct 2026: for now the customer's own team dismantles and refits; REDUX collects, restores and returns.** Website copy, The REDUX Way step 02 and the job-stage words follow (migration 003300); stage keys unchanged so REDUX-side removal can return later | — | — |
+| D-h | ~~PVD?~~ **Decided 19 Oct 2026: nickel + chrome is included in every restoration; PVD colours are offered at extra cost, quoted to the customer's requirement.** Shown on /how-we-restore, every product page and the restore-finish service | — | — |
+| D-i | ~~Which products?~~ **Decided 19 Oct 2026: show the whole catalogue, but in steps** — /products opens on type tiles and series covers with search; results 24 per page | — | — |

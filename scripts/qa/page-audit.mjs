@@ -114,7 +114,7 @@ async function firstHref(ctx, path, prefix) {
 
 const browser = await chromium.launch()
 const pub = await browser.newContext()
-await audit(pub, 'web', [['/', 'home'], ['/hotels', 'hotels'], ['/register', 'register'], ['/r/LAKE631', 'ref-link'], ['/book-assessment', 'book'], ['/homes', 'homes-404'], ['/products', 'products'], ['/products?category=mixers', 'products-mixers'], ['/products/pure-shower-mixer-wall-mounted-pu-4007', 'product'], ['/products?category=sink-mixers', 'products-sinks'], ['/how-we-restore', 'how-we-restore'], ['/assessment', 'assessment'], ['/demo-programme', 'demo-programme'], ['/referral-programme', 'referral-programme']])
+await audit(pub, 'web', [['/', 'home'], ['/hotels', 'hotels'], ['/register', 'register'], ['/r/LAKE631', 'ref-link'], ['/book-assessment', 'book'], ['/homes', 'homes-404'], ['/products', 'products'], ['/products?category=basin-mixers', 'products-basin'], ['/products?series=pure', 'products-series'], ['/products?q=towel', 'products-search'], ['/products/pure-shower-mixer-wall-mounted-version-a-pu-4007-a', 'product'], ['/products?category=sink-mixers', 'products-sinks'], ['/how-we-restore', 'how-we-restore'], ['/assessment', 'assessment'], ['/demo-programme', 'demo-programme'], ['/referral-programme', 'referral-programme']])
 
 const LAKE = '3f6754af-d2d4-470f-bd98-10aab12ef1da', SA = 'af56d47b-3f57-4bfa-bc35-1f8ad78f5c62'
 const admin = await staff(browser, 'Vikram Sethi')

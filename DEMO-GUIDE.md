@@ -13,7 +13,7 @@ customer would receive appears in the **Demo outbox** (`/demo/outbox`), with its
 | Morning of the demo | In the repo: `pnpm demo:refresh` — moves every demo date to today (SLA timers, today's survey visits, follow-ups, quote validity). Safe to run any time; it does nothing if already current. |
 | 15 min before | Open the tabs below once each (the first load after a quiet spell takes a few seconds — do it before the client is watching). |
 | Phone (for the surveyor app) | Android phone with **Expo Go** installed, on **mobile data** (home Wi-Fi ISPs may block Supabase), or set Private DNS to `dns.google`. On the laptop: `cd mobile && npx expo start`, scan the QR in Expo Go, sign in as Ankit. |
-| Pick a fresh phone number | For a live enquiry or registration, use a mobile number that has **never** been used in the demo (each number can hold only one open lead). Already used: up to 98112 04630. Use 98112 04640, 98112 04641, 98112 04642 … |
+| Pick a fresh phone number | For a live enquiry or registration, use a mobile number that has **never** been used in the demo (each number can hold only one open lead). Already used: up to 98112 04642. Use 98112 04650, 98112 04651, 98112 04652 … |
 
 **Tabs to keep open** (one browser profile per role, or use a private window for the customer):
 
@@ -212,9 +212,12 @@ live demo on 12 Oct 2026.
 - **Follow-up cadences**: the tasks each tier's lead gives its executive (see Priya → Follow-ups).
 
 ### Act H2 — The website and catalog (3 min) · *Website tab*
-- Header: **Products** → the Eurobrass 2025 range (469 products from the client's catalogue) by
-  category → a product: its code, series and catalogue page → **Assess this fitting**.
-- Footer → **The REDUX Way**: the ten-step rechroming process from REDUX's own SOP.
+- Header: **Products** → the Eurobrass 2025 range (469 products) shown in steps: pick a type tile or a
+  series cover, or search a code ("PU 102") → 24 per page with type/series chips → a product: code,
+  series, Version A/B where one code has two designs, finishes (nickel + chrome included, PVD extra)
+  → **Assess this fitting**.
+- Footer → **The REDUX Way**: the five stage photos (bare brass → chrome) and the ten-step process.
+  The customer's own team dismantles and refits; REDUX collects, restores and returns.
 - **/assessment** (on site, self-assessment, video), **/demo-programme**, **/referral-programme** — the
   numbers on these pages come from the admin settings.
 - Vikram → **Admin → Catalog**: download the template, import a spreadsheet, add a picture, publish.
@@ -240,6 +243,7 @@ live demo on 12 Oct 2026.
 - **Campaigns:** only contacts who agreed to marketing receive them; in the demo two lost leads were
   given a WhatsApp opt-in so a campaign has someone to reach. "Send later" works on the demo — the
   scheduler checks every 5 minutes. A campaign named "QA — scheduled referral invite" is a test run.
-- **Catalog:** the products are the client's 2025 Eurobrass catalogue. Its photos are small
-  thumbnails (that is all the PDF contains) — sharp photos are an open request to REDUX.
+- **Catalog:** the client's 2025 Eurobrass catalogue. 360 products show eurobrass.in photos; 109
+  (mostly accessories and showers) still show the small catalogue thumbnail until REDUX's generated
+  images arrive. Phone and email on the site are the Eurobrass office, temporarily.
 - **Lakeview** now holds three ₹104.50 credits and one free fitting (three referred hotels ordered).
