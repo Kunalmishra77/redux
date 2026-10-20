@@ -4,6 +4,7 @@ import { ArrowRight, Brush, Droplet, Droplets, Grid3x3, PackageSearch, Paintbrus
 import { Button } from '@/components/ui/button'
 import { BeforeAfterGallery } from '@/components/marketing/before-after-gallery'
 import { EnquiryForm } from '@/components/marketing/enquiry-form'
+import { EnquirySection } from '@/components/marketing/enquiry-section'
 import { NumberedCard, PageHero, Section, SectionHeading, Steps } from '@/components/marketing/sections'
 import { GALLERY } from '@/lib/content/gallery'
 import { notFound } from 'next/navigation'
@@ -81,19 +82,11 @@ export default async function HomesPage() {
         <BeforeAfterGallery items={gallery} className="mt-10" />
       </Section>
 
-      <Section id="enquiry" labelledBy="home-enquiry">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
-          <SectionHeading
-            id="home-enquiry"
-            eyebrow="Book free assessment"
-            title="Tell us about the fittings."
-            intro="One of our team will call you within 2 working hours to understand the fittings and arrange a free assessment at your home. The assessment is free and carries no obligation."
-          />
-          <div className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-8">
-            <EnquiryForm cities={cities} noticeVersion={notice?.version ?? null} defaultKind="home" />
-          </div>
-        </div>
-      </Section>
+      <EnquirySection headingId="home-enquiry" eyebrow="Book free assessment" whatsappFrom="/homes" image="/site/hero/hero-homes.jpg"
+        title="Tell us about the fittings."
+        intro="One of our team will call you within 2 working hours to understand the fittings and arrange a free assessment at your home. No charge and no obligation.">
+        <EnquiryForm cities={cities} noticeVersion={notice?.version ?? null} defaultKind="home" />
+      </EnquirySection>
     </>
   )
 }

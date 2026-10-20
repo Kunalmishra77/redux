@@ -18,6 +18,7 @@ import { IconCircle } from '@/components/patterns'
 import { Button } from '@/components/ui/button'
 import { BeforeAfterGallery } from '@/components/marketing/before-after-gallery'
 import { EnquiryForm } from '@/components/marketing/enquiry-form'
+import { EnquirySection } from '@/components/marketing/enquiry-section'
 import { EnquiryLink } from '@/components/marketing/enquiry-dialog'
 import { NumberedCard, PageHero, Section, SectionHeading, Steps } from '@/components/marketing/sections'
 import { CASE_STUDIES } from '@/lib/content/case-studies'
@@ -257,19 +258,16 @@ export default async function HotelsPage() {
       </Section>
 
       {/* Hotel enquiry */}
-      <Section id="enquiry" tone="surface" labelledBy="hotel-enquiry">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
-          <SectionHeading
-            id="hotel-enquiry"
-            eyebrow="Hotel enquiry"
-            title="A technical walkthrough is the first step."
-            intro="Bring your recurring faults and difficult-to-source parts. Together, we'll review representative fittings and maintenance records, then identify whether a selected restoration pilot is suitable."
-          />
-          <div className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-8">
-            <EnquiryForm cities={cities} noticeVersion={notice?.version ?? null} defaultKind="hotel" />
-          </div>
-        </div>
-      </Section>
+      <EnquirySection headingId="hotel-enquiry" eyebrow="Hotel enquiry" whatsappFrom="/hotels" image="/site/hero/hero-hotels.jpg"
+        title="A technical walkthrough is the first step."
+        intro="Bring your recurring faults and difficult-to-source parts. We review representative fittings and maintenance records with you, then say whether a restoration pilot is suitable."
+        steps={[
+          { title: 'We call within 2 working hours', body: 'To understand the property, the fittings and the dates your team can work around.' },
+          { title: 'A free room-by-room assessment', body: 'Every fitting photographed from four angles — on site, or from your own photos.' },
+          { title: 'A pilot bathroom, then batches', body: 'Three prices per fitting, a pilot first, then rooms in batches around your approved dates.' },
+        ]}>
+        <EnquiryForm cities={cities} noticeVersion={notice?.version ?? null} defaultKind="hotel" />
+      </EnquirySection>
     </>
   )
 }

@@ -15,7 +15,6 @@ import {
   Layers,
   PackageSearch,
   Paintbrush,
-  Phone,
   ShieldCheck,
   Timer,
   Wrench,
@@ -25,6 +24,7 @@ import { IconCircle } from '@/components/patterns'
 import { BeforeAfterGallery } from '@/components/marketing/before-after-gallery'
 import { EnquiryLink } from '@/components/marketing/enquiry-dialog'
 import { EnquiryForm } from '@/components/marketing/enquiry-form'
+import { EnquirySection } from '@/components/marketing/enquiry-section'
 import { Container, HeroBackdrop, JsonLd, NumberedCard, Section, SectionHeading, Steps } from '@/components/marketing/sections'
 import { FEATURED_GALLERY } from '@/lib/content/gallery'
 import { CASE_STUDIES } from '@/lib/content/case-studies'
@@ -166,7 +166,7 @@ export default async function HomePage() {
                 <IconCircle icon={Wrench} size="sm" />
               </figcaption>
             </div>
-            <div className="absolute -bottom-6 -left-4 hidden rounded-xl bg-white px-4 py-3 text-ink shadow-card sm:block">
+            <div className="absolute -top-6 -right-4 hidden rounded-xl bg-white px-4 py-3 text-ink shadow-card ring-1 ring-line sm:block">
               <p className="num text-2xl leading-none font-bold text-redux-blue">50 years</p>
               <p className="mt-1 text-xs text-muted-ink">of Eurobrass manufacturing</p>
             </div>
@@ -384,42 +384,11 @@ export default async function HomePage() {
       </Section>
 
       {/* 9 · Enquiry — the tab sets the lead source */}
-      <Section id="enquiry" labelledBy="enquiry-title">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
-          <div>
-            <SectionHeading
-              id="enquiry-title"
-              eyebrow="Request an assessment"
-              title="A technical walkthrough is the first step."
-              intro="Bring your recurring faults and difficult-to-source parts. Together, we'll review representative fittings and maintenance records, then identify whether a selected restoration pilot is suitable."
-            />
-            <ul className="mt-8 space-y-4">
-              {[
-                ['We call within 2 working hours', 'To understand the fittings and arrange a visit at a time that suits you.'],
-                ['The assessment is free', 'No charge and no obligation — for a single bathroom or a whole property.'],
-                ['You receive a written scope', 'Restore, replace with Eurobrass, or replace at market — three prices per fitting.'],
-              ].map(([t, b]) => (
-                <li key={t} className="flex gap-4">
-                  <IconCircle icon={BadgeCheck} size="sm" />
-                  <div>
-                    <p className="font-semibold text-ink">{t}</p>
-                    <p className="text-[15px] text-muted-ink">{b}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <a
-              href={`tel:${SITE.phoneE164}`}
-              className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-redux-blue hover:underline hover:underline-offset-4"
-            >
-              <Phone className="size-4" aria-hidden /> Prefer to call? <span className="num">{SITE.phoneDisplay}</span>
-            </a>
-          </div>
-          <div className="rounded-2xl border border-line bg-white p-5 shadow-card sm:p-8">
-            <EnquiryForm cities={cities} noticeVersion={notice?.version ?? null} />
-          </div>
-        </div>
-      </Section>
+      <EnquirySection headingId="enquiry-title" eyebrow="Request an assessment" whatsappFrom="/"
+        title="A technical walkthrough is the first step."
+        intro="Bring your recurring faults and difficult-to-source parts. We review representative fittings and maintenance records with you, then say whether a restoration pilot is suitable.">
+        <EnquiryForm cities={cities} noticeVersion={notice?.version ?? null} />
+      </EnquirySection>
     </>
   )
 }
