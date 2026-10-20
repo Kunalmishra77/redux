@@ -18,7 +18,7 @@ export const metadata: Metadata = pageMetadata({
 export default function DealersPage() {
   return (
     <>
-      <PageHero
+      <PageHero image="/site/hero/hero-products.jpg"
         breadcrumbs={[{ name: 'For dealers', href: '/dealers' }]}
         eyebrow="For dealers"
         title="Offer restoration alongside replacement."

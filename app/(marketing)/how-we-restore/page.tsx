@@ -50,7 +50,7 @@ export default function HowWeRestorePage() {
         </ol>
         <p className="mt-10 rounded-2xl bg-surface p-5 text-[15px] leading-relaxed text-ink sm:p-6"><strong className="font-semibold">{FINISH_NOTE.included}</strong> {FINISH_NOTE.extra}</p>
       </Section>
-      <CtaBand title="See it on your own fittings." body="Start with a free assessment — every fitting photographed, assessed and priced before anything is dismantled." />
+      <CtaBand image="/site/process/process-10-packing.jpg" title="See it on your own fittings." body="Start with a free assessment — every fitting photographed, assessed and priced before anything is dismantled." />
     </>
   )
 }

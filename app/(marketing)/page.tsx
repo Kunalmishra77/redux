@@ -25,7 +25,7 @@ import { IconCircle } from '@/components/patterns'
 import { BeforeAfterGallery } from '@/components/marketing/before-after-gallery'
 import { EnquiryLink } from '@/components/marketing/enquiry-dialog'
 import { EnquiryForm } from '@/components/marketing/enquiry-form'
-import { Container, HeroBackdrop, JsonLd, NumberedCard, Section, SectionHeading, Steps, Watermark } from '@/components/marketing/sections'
+import { Container, HeroBackdrop, JsonLd, NumberedCard, Section, SectionHeading, Steps } from '@/components/marketing/sections'
 import { FEATURED_GALLERY } from '@/lib/content/gallery'
 import { CASE_STUDIES } from '@/lib/content/case-studies'
 import { getEnquiryContext } from '@/lib/data/website'
@@ -87,7 +87,7 @@ export default async function HomePage() {
       />
 
       {/* 1 · Hero */}
-      <section className="relative overflow-hidden bg-redux-blue text-white">
+      <section className="relative overflow-hidden bg-ink text-white">
         <HeroBackdrop src="/site/hero/hero-home.jpg" />
         <Container className="relative grid gap-12 py-14 sm:py-20 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-16 lg:py-24">
           <div>
@@ -229,8 +229,7 @@ export default async function HomePage() {
       </Section>
 
       {/* 4 · Why REDUX — the credibility line lives here */}
-      <Section tone="blue" labelledBy="why">
-        <Watermark className="-top-40 -right-24 opacity-70 lg:-top-48" />
+      <Section tone="blue" labelledBy="why" image="/site/process/process-06-polishing.jpg">
         <div className="relative grid gap-12 lg:grid-cols-[1fr_2fr] lg:gap-16">
           <div>
             <SectionHeading id="why" tone="blue" eyebrow="Why REDUX" title="Manufacturing behind restoration" />

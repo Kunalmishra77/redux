@@ -16,7 +16,7 @@ export const metadata: Metadata = pageMetadata({
 export default function WhyReduxPage() {
   return (
     <>
-      <PageHero
+      <PageHero image="/site/process/process-05-regrinding.jpg"
         breadcrumbs={[{ name: 'Why REDUX', href: '/why-redux' }]}
         eyebrow="Why REDUX"
         title="Manufacturing behind restoration."

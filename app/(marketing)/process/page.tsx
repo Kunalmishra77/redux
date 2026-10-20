@@ -79,7 +79,7 @@ export default function ProcessPage() {
         </div>
       </Section>
 
-      <Section tone="blue" labelledBy="downtime">
+      <Section tone="blue" labelledBy="downtime" image="/site/hero/hero-demo.jpg">
         <SectionHeading id="downtime" tone="blue" eyebrow="3 · The wider project" title="Room downtime and work planning" />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           <NumberedCard tone="blue" n="01" icon={CalendarRange} title="Schedule around availability" body="Your team provides available work dates, helping us schedule restoration in batches." />
@@ -111,7 +111,7 @@ export default function ProcessPage() {
         <p className="mt-8 text-[15px] text-muted-ink">Inside the Eurobrass facility, each fitting goes through ten steps — from stripping to nickel and chrome electroplating and pressure testing. <a href="/how-we-restore" className="font-semibold text-redux-blue hover:underline">See the REDUX Way →</a></p>
       </Section>
 
-      <CtaBand />
+      <CtaBand image="/site/process/process-10-packing.jpg" />
     </>
   )
 }

@@ -19,7 +19,7 @@ export const metadata: Metadata = pageMetadata({
 export default function WorkPage() {
   return (
     <>
-      <PageHero
+      <PageHero image="/site/case-studies/case-business-hotel-gurugram-cover.jpg"
         breadcrumbs={[{ name: 'Our work', href: '/work' }]}
         eyebrow="See the difference"
         title="Before and after."
@@ -70,7 +70,7 @@ export default function WorkPage() {
         </p>
       </Section>
 
-      <CtaBand />
+      <CtaBand image="/site/hero/hero-homes.jpg" />
     </>
   )
 }

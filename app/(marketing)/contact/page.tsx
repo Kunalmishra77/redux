@@ -54,7 +54,7 @@ export default async function ContactPage() {
 
   return (
     <>
-      <PageHero
+      <PageHero image="/site/hero/hero-referral.jpg"
         breadcrumbs={[{ name: 'Contact', href: '/contact' }]}
         eyebrow="Contact"
         title="Talk to REDUX."

@@ -38,7 +38,7 @@ export default async function AssessmentPage() {
         </div>
         <p className="mt-10 text-[15px] text-muted-ink">High-value projects may also be offered a <Link className="font-medium text-redux-blue hover:underline" href="/demo-programme">free demo</Link> before you decide.</p>
       </Section>
-      <CtaBand title="Start with the assessment." body="Create a business account to do a self-assessment today, or ask us to visit." />
+      <CtaBand image="/site/hero/hero-home.jpg" title="Start with the assessment." body="Create a business account to do a self-assessment today, or ask us to visit." />
     </>
   )
 }

@@ -40,7 +40,7 @@ export default async function ProductsPage({ searchParams }: PageProps<'/product
         ? <Section><p className="text-muted-ink">The catalogue is being prepared. Ask us about any tap, mixer or shower — we assess them all.</p></Section>
         : browsing ? <Browse categories={categories} products={products} />
           : <Results products={products} categories={categories} category={category} series={series} q={q} page={Number(str(sp.page)) || 1} />}
-      <CtaBand title="Not sure what you have?" body="Photograph it in a free self-assessment, or ask us to visit. You get the three prices for every fitting before you decide." />
+      <CtaBand image="/site/hero/hero-assessment.jpg" title="Not sure what you have?" body="Photograph it in a free self-assessment, or ask us to visit. You get the three prices for every fitting before you decide." />
     </>
   )
 }

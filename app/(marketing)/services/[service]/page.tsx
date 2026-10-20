@@ -28,6 +28,12 @@ export async function generateMetadata({ params }: PageProps<'/services/[service
   return pageMetadata({ title: s.metaTitle, description: s.metaDescription, path: `/services/${s.slug}` })
 }
 
+const SERVICE_BANNER: Record<ServiceSlug, string> = {
+  'restore-function': '/site/process/process-08-reassembly.jpg',
+  'restore-finish': '/site/process/process-07-plating.jpg',
+  'water-efficiency': '/site/process/process-09-testing.jpg',
+}
+
 export default async function ServicePage({ params }: PageProps<'/services/[service]'>) {
   const s = serviceFor((await params).service)
   if (!s) notFound()
@@ -47,7 +53,7 @@ export default async function ServicePage({ params }: PageProps<'/services/[serv
           provider: { '@type': 'LocalBusiness', name: SITE.name, url: SITE.url },
         }}
       />
-      <PageHero
+      <PageHero image={SERVICE_BANNER[s.slug]}
         breadcrumbs={[{ name: s.name, href: `/services/${s.slug}` }]}
         eyebrow={`Service ${s.number} · ${s.name}`}
         title={s.headline}

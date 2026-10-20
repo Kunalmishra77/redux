@@ -115,7 +115,7 @@ export default async function CaseStudyPage({ params }: PageProps<'/work/[slug]'
         </Container>
       </section>
 
-      <CtaBand />
+      <CtaBand image="/site/hero/hero-homes.jpg" />
     </>
   )
 }

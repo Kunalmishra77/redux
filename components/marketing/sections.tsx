@@ -24,12 +24,15 @@ export function Section({
   className,
   children,
   labelledBy,
+  image,
 }: {
   id?: string
   tone?: Tone
   className?: string
   children: React.ReactNode
   labelledBy?: string
+  /** tone="blue" only: a banner photograph behind the section instead of flat blue */
+  image?: string
 }) {
   return (
     <section
@@ -39,9 +42,11 @@ export function Section({
         'relative scroll-mt-20 py-16 sm:py-20 lg:py-24',
         tone === 'surface' && 'bg-surface',
         tone === 'blue' && 'overflow-hidden bg-redux-blue text-white',
+        tone === 'blue' && image && 'bg-ink',
         className,
       )}
     >
+      {tone === 'blue' && image && <HeroBackdrop src={image} even priority={false} />}
       <Container className="relative">{children}</Container>
     </section>
   )
@@ -186,12 +191,16 @@ export function Watermark({ className }: { className?: string }) {
   )
 }
 
-/** A hero photograph behind the brand blue: solid blue where the text sits, the picture showing through on the right. */
-export function HeroBackdrop({ src }: { src: string }) {
+/** A banner photograph with a neutral dark scrim: dark enough behind the text for contrast, clear on the
+ *  right so the picture reads as a photograph (not a blue panel). `even` darkens the whole frame — for
+ *  sections whose content spans the full width. */
+export function HeroBackdrop({ src, even = false, priority = true }: { src: string; even?: boolean; priority?: boolean }) {
   return (
     <>
-      <Image src={src} alt="" fill priority sizes="100vw" className="object-cover object-right" />
-      <div className="absolute inset-0 bg-redux-blue/85 lg:bg-transparent lg:bg-gradient-to-r lg:from-redux-blue lg:from-35% lg:via-redux-blue/85 lg:to-redux-blue/20" aria-hidden />
+      <Image src={src} alt="" fill priority={priority} sizes="100vw" className="object-cover object-center" />
+      <div aria-hidden className={cn('absolute inset-0', even
+        ? 'bg-ink/75'
+        : 'bg-ink/65 lg:bg-transparent lg:bg-gradient-to-r lg:from-ink/85 lg:from-25% lg:via-ink/50 lg:via-55% lg:to-ink/5')} />
     </>
   )
 }
@@ -217,7 +226,7 @@ export function PageHero({
   image?: string
 }) {
   return (
-    <section className="relative overflow-hidden bg-redux-blue text-white">
+    <section className={cn('relative overflow-hidden text-white', image ? 'bg-ink' : 'bg-redux-blue')}>
       {image ? <HeroBackdrop src={image} /> : <Watermark />}
       <Container className={cn('relative py-14 sm:py-20', aside && 'lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-14')}>
         <div className="max-w-3xl">
@@ -247,16 +256,19 @@ export function CtaBand({
   body = 'Bring your recurring faults and difficult-to-source parts. Together, we’ll review representative fittings and maintenance records, then identify whether a selected restoration pilot is suitable.',
   dealer = true,
   dealerOnly = false,
+  image = '/site/hero/hero-demo.jpg',
 }: {
   title?: string
   body?: string
   dealer?: boolean
   /** The dealer page: the one action is the dealer enquiry */
   dealerOnly?: boolean
+  /** Banner photograph behind the band */
+  image?: string
 }) {
   return (
-    <section className="relative overflow-hidden bg-redux-blue text-white">
-      <Watermark className="-top-40 lg:-top-56" />
+    <section className="relative overflow-hidden bg-ink text-white">
+      <HeroBackdrop src={image} priority={false} />
       <Container className="relative flex flex-col gap-8 py-16 lg:flex-row lg:items-center lg:justify-between lg:py-20">
         <div className="max-w-2xl">
           <h2 className="text-[28px] leading-tight font-semibold tracking-tight text-balance sm:text-4xl">{title}</h2>

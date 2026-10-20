@@ -146,7 +146,7 @@ export default async function HotelsPage() {
       </Section>
 
       {/* Downtime */}
-      <Section tone="blue" labelledBy="downtime">
+      <Section tone="blue" labelledBy="downtime" image="/site/case-studies/case-business-hotel-gurugram-cover.jpg">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <SectionHeading
             id="downtime"

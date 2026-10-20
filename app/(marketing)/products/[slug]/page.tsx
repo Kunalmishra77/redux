@@ -25,7 +25,7 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
   const images = p.media.filter((m) => m.kind === 'image')
   return (
     <>
-      <PageHero breadcrumbs={[{ name: 'Products', href: '/products' }, { name: p.name, href: `/products/${p.slug}` }]}
+      <PageHero image="/site/hero/hero-products.jpg" breadcrumbs={[{ name: 'Products', href: '/products' }, { name: p.name, href: `/products/${p.slug}` }]}
         eyebrow={p.category?.name ?? 'Catalog'} title={p.name} intro={p.description ?? undefined}
         actions={
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -72,7 +72,7 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
           </div>
         </div>
       </Section>
-      <CtaBand title="Have this fitting in your rooms?" body="A free assessment prices it three ways — restore, repair, or replace with Eurobrass — before you decide anything." />
+      <CtaBand image="/site/hero/hero-assessment.jpg" title="Have this fitting in your rooms?" body="A free assessment prices it three ways — restore, repair, or replace with Eurobrass — before you decide anything." />
     </>
   )
 }
