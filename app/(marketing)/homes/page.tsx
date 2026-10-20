@@ -29,7 +29,7 @@ export default async function HomesPage() {
 
   return (
     <>
-      <PageHero
+      <PageHero image="/site/hero/hero-homes.jpg"
         breadcrumbs={[{ name: 'For homes', href: '/homes' }]}
         eyebrow="For homes"
         title="Keep the fittings you chose. Restore how they work and how they look."

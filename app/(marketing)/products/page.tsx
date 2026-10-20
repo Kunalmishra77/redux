@@ -31,7 +31,7 @@ export default async function ProductsPage({ searchParams }: PageProps<'/product
 
   return (
     <>
-      <PageHero breadcrumbs={[{ name: 'Products', href: '/products' }]} eyebrow="The Eurobrass range"
+      <PageHero image="/site/hero/hero-products.jpg" breadcrumbs={[{ name: 'Products', href: '/products' }]} eyebrow="The Eurobrass range"
         title="Restore what you have — or replace it with Eurobrass."
         intro={`${products.length} products from the Eurobrass catalogue. In a REDUX assessment, every fitting you have is priced three ways — restore, repair, or replace with Eurobrass — so you choose with the numbers in front of you.`}>
         <SearchBox q={q} />

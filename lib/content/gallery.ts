@@ -1,7 +1,8 @@
 // A9 — Before & after showcase.
 //
 // BR-P3: a customer's site photographs never reach this page. The gallery is REDUX's own showcase
-// set (client input A6 — demo illustrations until REDUX's photography arrives), not survey evidence.
+// set (client input A6 — images REDUX generated, 20 Oct 2026, shown as illustrative until real job
+// photographs replace them), not survey evidence.
 // Publishing consented site photos (v_marketing_photos) is a later step and must go through that view.
 
 export const FITTING_GROUPS = [
@@ -48,8 +49,8 @@ export const GALLERY: GalleryItem[] = TYPES.flatMap((t) =>
     group: t.group,
     finish: f.key,
     finishLabel: f.label,
-    before: `/demo/fittings/${t.code}-${f.key}-before.svg`,
-    after: `/demo/fittings/${t.code}-${f.key}-after.svg`,
+    before: `/site/before-after/${t.code}-${f.key}-before.jpg`,
+    after: `/site/before-after/${t.code}-${f.key}-after.jpg`,
     caption: `${t.label} — ${t.fix}, restored in ${f.label.toLowerCase().replace('pvd', 'PVD')}.`,
   })),
 )

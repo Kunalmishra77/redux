@@ -55,7 +55,7 @@ export default async function CaseStudyPage({ params }: PageProps<'/work/[slug]'
           ]),
         }}
       />
-      <PageHero
+      <PageHero image={c.cover}
         breadcrumbs={[
           { name: 'Our work', href: '/work' },
           { name: c.propertyType, href: `/work/${c.slug}` },
@@ -104,7 +104,7 @@ export default async function CaseStudyPage({ params }: PageProps<'/work/[slug]'
           <p className="eyebrow text-redux-blue">Outcome</p>
           <p className="mt-3 max-w-3xl text-2xl leading-snug font-semibold text-ink sm:text-3xl">{c.outcome}</p>
           <p className="mt-6 text-sm text-muted-ink">
-            Illustrative engagement. Property names are published only with the client&apos;s permission.
+            Illustrative engagement and images. Property names are published only with the client&apos;s permission.
           </p>
           <Link
             href="/work"

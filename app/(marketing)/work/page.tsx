@@ -23,7 +23,7 @@ export default function WorkPage() {
         breadcrumbs={[{ name: 'Our work', href: '/work' }]}
         eyebrow="See the difference"
         title="Before and after."
-        intro="Every restoration is photographed from four angles before work begins and again at handover. Here is a selection."
+        intro="Every restoration is photographed from four angles before work begins and again at handover. The images here are illustrative until project photographs are published."
         actions={false}
       />
 
@@ -48,8 +48,8 @@ export default function WorkPage() {
                 href={`/work/${c.slug}`}
                 className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-white shadow-card transition-colors hover:border-redux-blue"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element -- local SVG illustration */}
-                <img src={c.pairs[0].after} alt="" loading="lazy" className="aspect-[4/3] w-full bg-surface object-cover" />
+                {/* eslint-disable-next-line @next/next/no-img-element -- static file in public/site */}
+                <img src={c.cover} alt="" loading="lazy" className="aspect-[16/10] w-full bg-surface object-cover" />
                 <div className="flex flex-1 flex-col p-5">
                   <span className="eyebrow text-redux-blue">
                     {c.propertyType} · {c.city}
@@ -65,7 +65,7 @@ export default function WorkPage() {
           ))}
         </ul>
         <p className="mt-6 text-sm text-muted-ink">
-          Illustrative engagements. Client names are published only with the client&apos;s permission; references are shared
+          Illustrative engagements and images. Client names are published only with the client&apos;s permission; references are shared
           on request.
         </p>
       </Section>

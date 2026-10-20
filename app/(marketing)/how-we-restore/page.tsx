@@ -14,7 +14,7 @@ export const metadata: Metadata = pageMetadata({
 export default function HowWeRestorePage() {
   return (
     <>
-      <PageHero breadcrumbs={[{ name: 'The REDUX Way', href: '/how-we-restore' }]} eyebrow="The REDUX Way"
+      <PageHero image="/site/process/process-07-plating.jpg" breadcrumbs={[{ name: 'The REDUX Way', href: '/how-we-restore' }]} eyebrow="The REDUX Way"
         title="Ten steps from tarnished to factory-fresh." intro={PROCESS_INTRO} />
       <Section tone="surface" labelledBy="stages">
         <SectionHeading id="stages" eyebrow="One fitting, five moments" title="From bare brass to mirror chrome." />
@@ -34,12 +34,16 @@ export default function HowWeRestorePage() {
           {PROCESS_STEPS.map((s) => (
             <li key={s.n} className="relative flex gap-5 sm:gap-6">
               <span className="num relative z-10 flex size-12 shrink-0 items-center justify-center rounded-full bg-redux-blue text-base font-semibold text-white ring-4 ring-white sm:size-14">{s.n}</span>
-              <div className="flex-1 rounded-2xl border border-line bg-white p-5 shadow-card sm:p-6">
+              <div className="flex-1 overflow-hidden rounded-2xl border border-line bg-white shadow-card md:grid md:grid-cols-[1fr_15rem] lg:grid-cols-[1fr_18rem]">
+                <div className="p-5 sm:p-6">
                 <h3 className="text-lg font-semibold text-ink">{s.title}</h3>
                 <dl className="mt-3 grid gap-3 text-[15px] leading-relaxed sm:grid-cols-[7rem_1fr]">
                   <dt className="eyebrow pt-1 text-redux-blue">Objective</dt><dd className="text-ink">{s.objective}</dd>
                   <dt className="eyebrow pt-1 text-redux-blue">What we do</dt><dd className="text-muted-ink">{s.actions}</dd>
                 </dl>
+                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element -- static file in public/site */}
+                <img src={s.image} alt={s.title} loading="lazy" className="aspect-[4/3] w-full object-cover md:order-last md:h-full" />
               </div>
             </li>
           ))}

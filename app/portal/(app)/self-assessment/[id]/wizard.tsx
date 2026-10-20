@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -90,7 +91,7 @@ export function SelfAssessmentWizard({ surveyId, open, noun, fittings, types, fi
                   <div key={slot} className="relative overflow-hidden rounded-lg border border-line bg-surface">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {url ? <img src={url} alt={`${typeName(f.fitting_type_id)} — ${SLOT_LABEL[slot]}`} className="aspect-[4/3] w-full object-cover" />
-                      : <div className="flex aspect-[4/3] flex-col items-center justify-center gap-1 p-2 text-center"><Camera className="size-5 text-redux-blue" aria-hidden /><span className="text-[11px] leading-tight text-muted-ink">{HINT[slot]}</span></div>}
+                      : <div className="relative flex aspect-[4/3] flex-col items-center justify-center gap-1 p-2 text-center"><Image src={`/site/slots/slot-${slot}.jpg`} alt="" fill sizes="200px" className="object-cover opacity-25" /><Camera className="relative size-5 text-redux-blue" aria-hidden /><span className="relative text-[11px] leading-tight font-medium text-ink">{HINT[slot]}</span></div>}
                     <span className="eyebrow absolute top-1 left-1 rounded-sm bg-ink/75 px-1.5 py-0.5 text-[9px] text-white">{SLOT_LABEL[slot]}</span>
                     {open && (
                       <label htmlFor={inputId} className={`absolute inset-x-1 bottom-1 flex cursor-pointer items-center justify-center gap-1 rounded-md py-1 text-xs font-semibold ${url ? 'bg-white/90 text-ink' : 'bg-redux-blue text-white'}`}>

@@ -17,7 +17,7 @@ export default async function ReferralProgrammePage() {
   const { referral: r } = await getProgrammes()
   return (
     <>
-      <PageHero breadcrumbs={[{ name: 'Referral programme', href: '/referral-programme' }]} eyebrow="For REDUX customers"
+      <PageHero image="/site/hero/hero-referral.jpg" breadcrumbs={[{ name: 'Referral programme', href: '/referral-programme' }]} eyebrow="For REDUX customers"
         title="Know a hotel that should restore, not replace?"
         intro={`They get ${r.referred_discount_pct}% off their first order. You earn ${r.referrer_credit_pct}% of that order as credit once they pay${r.free_fitting_every > 0 ? `, and one fitting restored free for every ${r.free_fitting_every} businesses that order` : ''}.`}
         actions={<div className="mt-8"><Button asChild size="lg" className="text-base"><Link href="/portal/referrals">Get my referral link</Link></Button></div>} />

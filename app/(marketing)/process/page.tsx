@@ -16,7 +16,7 @@ export const metadata: Metadata = pageMetadata({
 export default function ProcessPage() {
   return (
     <>
-      <PageHero
+      <PageHero image="/site/hero/hero-process.jpg"
         breadcrumbs={[{ name: 'Process', href: '/process' }]}
         eyebrow="How it works"
         title="The assessment and pilot process."

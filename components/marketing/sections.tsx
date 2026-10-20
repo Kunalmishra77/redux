@@ -1,4 +1,5 @@
 import * as React from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import { ChevronRight } from 'lucide-react'
@@ -185,6 +186,16 @@ export function Watermark({ className }: { className?: string }) {
   )
 }
 
+/** A hero photograph behind the brand blue: solid blue where the text sits, the picture showing through on the right. */
+export function HeroBackdrop({ src }: { src: string }) {
+  return (
+    <>
+      <Image src={src} alt="" fill priority sizes="100vw" className="object-cover object-right" />
+      <div className="absolute inset-0 bg-redux-blue/85 lg:bg-transparent lg:bg-gradient-to-r lg:from-redux-blue lg:from-35% lg:via-redux-blue/85 lg:to-redux-blue/20" aria-hidden />
+    </>
+  )
+}
+
 export function PageHero({
   eyebrow,
   title,
@@ -193,6 +204,7 @@ export function PageHero({
   actions = true,
   aside,
   breadcrumbs,
+  image,
 }: {
   eyebrow?: string
   title: React.ReactNode
@@ -201,10 +213,12 @@ export function PageHero({
   actions?: boolean | React.ReactNode
   aside?: React.ReactNode
   breadcrumbs?: { name: string; href: string }[]
+  /** A photograph behind the hero, under the brand blue so the text keeps its contrast */
+  image?: string
 }) {
   return (
     <section className="relative overflow-hidden bg-redux-blue text-white">
-      <Watermark />
+      {image ? <HeroBackdrop src={image} /> : <Watermark />}
       <Container className={cn('relative py-14 sm:py-20', aside && 'lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-14')}>
         <div className="max-w-3xl">
           {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}

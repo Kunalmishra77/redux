@@ -15,7 +15,7 @@ export default async function DemoProgrammePage() {
   const { demoTypes } = await getProgrammes()
   return (
     <>
-      <PageHero breadcrumbs={[{ name: 'Free demo programme', href: '/demo-programme' }]} eyebrow="Free demo"
+      <PageHero image="/site/hero/hero-demo.jpg" breadcrumbs={[{ name: 'Free demo programme', href: '/demo-programme' }]} eyebrow="Free demo"
         title="See it on your own wall before you commit."
         intro="For qualifying properties, after the assessment, REDUX restores one room or one fitting free — so your team judges the result in your own bathrooms." />
       <Section labelledBy="types">

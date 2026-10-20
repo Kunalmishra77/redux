@@ -16,18 +16,22 @@ export type CaseStudy = {
   restored: string[]
   downtime: string[]
   outcome: string
+  cover: string
   pairs: { before: string; after: string; caption: string }[]
 }
 
-const pair = (type: string, finish: string, caption: string) => ({
-  before: `/demo/fittings/${type}-${finish}-before.svg`,
-  after: `/demo/fittings/${type}-${finish}-after.svg`,
+// REDUX's generated images (20 Oct 2026), public/site/case-studies — illustrative, like the engagements
+const cover = (slug: string) => `/site/case-studies/case-${slug}-cover.jpg`
+const pair = (slug: string, n: number, caption: string) => ({
+  before: `/site/case-studies/case-${slug}-before-${n}.jpg`,
+  after: `/site/case-studies/case-${slug}-after-${n}.jpg`,
   caption,
 })
 
 export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'business-hotel-gurugram',
+    cover: cover('business-hotel-gurugram'),
     title: 'A 120-room business hotel, restored in batches between conferences',
     summary:
       'Recurring shower-mixer leaks and a scaled chrome finish, ahead of a brand-standard audit. Pilot bathroom first, then the wider project floor by floor.',
@@ -52,25 +56,26 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     outcome: 'The restored fittings were back in service in batches, without taking a floor offline for a month.',
     pairs: [
-      pair('shower_mixer', 'chrome', 'Shower mixer — cartridge re-machined, chrome finish restored.'),
-      pair('basin_mixer', 'chrome', 'Basin mixer — internal parts renewed, aerator added.'),
+      pair('business-hotel-gurugram', 1, 'Basin mixer — internal parts renewed, aerator added.'),
+      pair('business-hotel-gurugram', 2, 'Shower mixer — cartridge re-machined, chrome finish restored.'),
     ],
   },
   {
     slug: 'heritage-hotel-jaipur',
+    cover: cover('heritage-hotel-jaipur'),
     title: 'A heritage property keeps its original fittings — in a new finish',
     summary:
-      'Premium fittings the owners wanted to keep, with worn finishes and stiff controls. Restored in coloured PVD to match a room refresh.',
+      'Premium fittings the owners wanted to keep, with worn finishes and stiff controls. Restored in PVD brushed gold to match a room refresh.',
     propertyType: 'Heritage hotel',
     scale: '48 rooms',
     city: 'Jaipur',
     problem: [
-      'Original diverters and spouts had become stiff to operate and inconsistent in flow.',
+      'Original basin mixers and spouts had become stiff to operate and inconsistent in flow.',
       'The finish no longer matched the property’s refreshed interiors.',
       'Replacement would have meant new fittings that did not suit the character of the rooms.',
     ],
     restored: [
-      'Diverter spindles re-machined and seals renewed.',
+      'Cartridges renewed and seals replaced.',
       'Suitable fittings recoated in PVD brushed gold to match the new interiors.',
       'Fittings not suitable for restoration were identified in the assessment and quoted for replacement.',
     ],
@@ -80,12 +85,13 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     outcome: 'The property retained the fittings that defined its rooms, in a finish that matched the refresh.',
     pairs: [
-      pair('diverter', 'pvd_brushed_gold', 'Diverter — spindle re-machined, restored in PVD brushed gold.'),
-      pair('spout', 'pvd_brushed_gold', 'Bath spout — restored in PVD brushed gold.'),
+      pair('heritage-hotel-jaipur', 1, 'Basin mixer — cartridge renewed, restored in PVD brushed gold.'),
+      pair('heritage-hotel-jaipur', 2, 'Bath spout — restored in PVD brushed gold.'),
     ],
   },
   {
     slug: 'south-delhi-residence',
+    cover: cover('south-delhi-residence'),
     title: 'Three bathrooms in a family home, restored in a single visit window',
     summary:
       'Leaking health faucets and a peeling finish. The family chose restoration over retiling around new fittings.',
@@ -93,22 +99,22 @@ export const CASE_STUDIES: CaseStudy[] = [
     scale: '3 bathrooms',
     city: 'Delhi',
     problem: [
-      'Health faucets leaking from the trigger, and a basin mixer stiff to turn.',
+      'Health faucets leaking from the trigger, and a wall mixer stiff to turn.',
       'Chrome peeling on fittings that were otherwise sound.',
       'New fittings of a different size would have meant disturbing the tiles.',
     ],
     restored: [
       'Trigger mechanisms repaired and internal parts renewed.',
-      'Finishes restored in PVD matte black, at the family’s choice.',
+      'Finishes restored in chrome, to match the rest of the bathrooms.',
     ],
     downtime: [
       'Fittings dismantled by the owner\'s plumber and returned restored one bathroom at a time, so the home stayed usable.',
       'Each fitting tested for leaks and operation at handover.',
     ],
-    outcome: 'The family kept their fittings and their tiles, with a finish they chose.',
+    outcome: 'The family kept their fittings and their tiles, with the finish looking new.',
     pairs: [
-      pair('health_faucet', 'pvd_matte_black', 'Health faucet — trigger repaired, restored in PVD matte black.'),
-      pair('basin_mixer', 'pvd_matte_black', 'Basin mixer — cartridge renewed, restored in PVD matte black.'),
+      pair('south-delhi-residence', 1, 'Wall mixer — cartridge renewed, chrome finish restored.'),
+      pair('south-delhi-residence', 2, 'Health faucet — trigger repaired, chrome finish restored.'),
     ],
   },
 ]

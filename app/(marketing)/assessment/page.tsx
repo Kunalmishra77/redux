@@ -16,7 +16,7 @@ export default async function AssessmentPage() {
   const { slaHours, nearKm } = await getProgrammes()
   return (
     <>
-      <PageHero breadcrumbs={[{ name: 'How the assessment works', href: '/assessment' }]} eyebrow="Always free"
+      <PageHero image="/site/hero/hero-assessment.jpg" breadcrumbs={[{ name: 'How the assessment works', href: '/assessment' }]} eyebrow="Always free"
         title="An assessment of every fitting — the way that suits your property."
         intro="The assessment never costs anything. How we do it depends on where you are and how many rooms you have; the report you get is the same." />
       <Section labelledBy="modes">

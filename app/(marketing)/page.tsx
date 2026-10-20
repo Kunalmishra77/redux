@@ -25,7 +25,7 @@ import { IconCircle } from '@/components/patterns'
 import { BeforeAfterGallery } from '@/components/marketing/before-after-gallery'
 import { EnquiryLink } from '@/components/marketing/enquiry-dialog'
 import { EnquiryForm } from '@/components/marketing/enquiry-form'
-import { Container, JsonLd, NumberedCard, Section, SectionHeading, Steps, Watermark } from '@/components/marketing/sections'
+import { Container, HeroBackdrop, JsonLd, NumberedCard, Section, SectionHeading, Steps, Watermark } from '@/components/marketing/sections'
 import { FEATURED_GALLERY } from '@/lib/content/gallery'
 import { CASE_STUDIES } from '@/lib/content/case-studies'
 import { getEnquiryContext } from '@/lib/data/website'
@@ -88,7 +88,7 @@ export default async function HomePage() {
 
       {/* 1 · Hero */}
       <section className="relative overflow-hidden bg-redux-blue text-white">
-        <Watermark />
+        <HeroBackdrop src="/site/hero/hero-home.jpg" />
         <Container className="relative grid gap-12 py-14 sm:py-20 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-16 lg:py-24">
           <div>
             <p className="eyebrow text-redux-lime">Bath Restorations by Eurobrass</p>
@@ -133,8 +133,8 @@ export default async function HomePage() {
               <div className="grid grid-cols-2 gap-2">
                 {(
                   [
-                    ['before', '/demo/fittings/basin_mixer-chrome-before.svg', 'BEFORE'],
-                    ['after', '/demo/fittings/basin_mixer-chrome-after.svg', 'AFTER'],
+                    ['before', '/site/before-after/basin_mixer-chrome-before.jpg', 'BEFORE'],
+                    ['after', '/site/before-after/basin_mixer-chrome-after.jpg', 'AFTER'],
                   ] as const
                 ).map(([k, src, label]) => (
                   <div key={k} className="relative overflow-hidden rounded-md border border-line bg-surface">

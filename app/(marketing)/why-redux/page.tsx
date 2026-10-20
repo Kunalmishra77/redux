@@ -62,7 +62,7 @@ export default function WhyReduxPage() {
             {[
               { icon: Factory, t: 'Our own facility', b: 'Finish restoration and part re-machining happen at the Eurobrass facility — not in a van on site.' },
               { icon: Ruler, t: 'Made to the fitting', b: 'Re-machined parts are made to match the dimensions and operation of the fitting they go back into.' },
-              { icon: ShieldCheck, t: 'Checked before reopening', b: 'Every restored fitting is checked for leaks, tested for operation and inspected for finish at handover.' },
+              { icon: ShieldCheck, t: 'Tested before it comes back', b: 'Every restored fitting is pressure-tested for leaks, operated and inspected for finish at the workshop before it is returned.' },
             ].map(({ icon: Icon, t, b }) => (
               <li key={t} className="flex gap-4 rounded-xl border border-line bg-white p-5 shadow-card">
                 <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-select text-redux-blue">

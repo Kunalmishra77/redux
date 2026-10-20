@@ -44,7 +44,7 @@ export default async function HotelsPage() {
 
   return (
     <>
-      <PageHero
+      <PageHero image="/site/hero/hero-hotels.jpg"
         breadcrumbs={[{ name: 'For hotels', href: '/hotels' }]}
         eyebrow="For hotels"
         title="Restore your bathroom fittings without taking a floor out of service for a month."
@@ -159,7 +159,7 @@ export default async function HotelsPage() {
             {[
               { icon: CalendarRange, t: 'Batches around your dates', b: 'Rooms are taken out of service together, around the dates your team approves.' },
               { icon: Wrench, t: 'Collection, factory restoration, return', b: 'Your team dismantles on agreed dates; we collect, restore and return the fittings pressure-tested and ready to refit.' },
-              { icon: ShieldCheck, t: 'Checked before reopening', b: 'Every room is checked for leaks, tested for operation and inspected for finish before it returns to service.' },
+              { icon: ShieldCheck, t: 'Tested before it comes back', b: 'Every fitting is pressure-tested for leaks, operated and inspected for finish at the workshop before it is returned.' },
             ].map(({ icon, t, b }) => (
               <div key={t} className="flex gap-4 rounded-xl bg-white/[0.06] p-5 ring-1 ring-white/15">
                 <IconCircle icon={icon} tone="lime" />
