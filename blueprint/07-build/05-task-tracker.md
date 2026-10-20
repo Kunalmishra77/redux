@@ -692,4 +692,12 @@ Append one line per working session. This is how the next session (or the next p
             process stage photos; image prompts for everything still missing
             (blueprint/05-content/03-image-prompts.md); catalogue pipeline scripts updated. Answered:
             D-g, D-h, D-i, A16 (versions). Open: A15 (109 photos), A16 (3 mismatches), A17, A18, A19, GSTIN.
+2026-10-20  REDUX'S GENERATED IMAGES LIVE (182). 109 product studio photos → brand/catalog/studio (all 469
+            products now sharp; scripts/catalog/studio-photos.mjs). public/site/: hero backdrops (PageHero
+            `image`, home, 7 pages + case studies), 18 before/after pairs (gallery, home card), 10 REDUX Way
+            step photos, 3 case studies with their own pairs and covers (Jaipur/Delhi text matched to the
+            images), photo-slot examples in the self-assessment wizard. Fixed: the 5 Eurobrass stage photos
+            were CMYK and rendered inverted since 19 Oct — re-converted to RGB (stage-<n>-rgb.jpg). Labels:
+            gallery and case studies say *illustrative*. Open: A16 (3 code mismatches), A17, A18 (real
+            photos), A19, GSTIN.
 ```

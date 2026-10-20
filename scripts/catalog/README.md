@@ -24,7 +24,11 @@ is **Admin → Catalog → Import CSV**; these scripts are for a whole new catal
 6. `node … series-covers.mjs` — the 15 series covers (`catalog/series/<slug>.jpg`) used on /products.
 7. `node … process-photos.mjs <dir>` — the five stage photos on /how-we-restore.
 
-Images REDUX generates itself follow `blueprint/05-content/03-image-prompts.md`.
+8. `node … studio-photos.mjs <dir>` — REDUX's own studio photos (files named by code, e.g. `ebsen010-a.jpg`)
+   → `catalog/studio/<sku>.jpg`. 20 Oct 2026: the 109 products left on thumbnails; every product now has a sharp photo.
+
+Images REDUX generates itself follow `blueprint/05-content/03-image-prompts.md`; website images (hero, before/after,
+process, case studies, photo-slot examples) live in `public/site/`, resized to the sizes in that document.
 
 Known limits of the 2025 PDF: product photos are ~80 px thumbnails; two products have none (PU 102,
 IV 679); 16 codes are shared by two items (shown as Version A / B; CL 3036 has A/B/C); the GEORGIAN page has placeholder text. See

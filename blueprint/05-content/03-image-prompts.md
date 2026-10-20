@@ -5,7 +5,11 @@ every image the website still needs. Each section gives a finished prompt you ca
 Each section also lists the file name to save the image under, so the images can go straight onto
 the site.
 
-**Status (19 Oct 2026):**
+**Delivered 20 Oct 2026:** all 182 images, now on the site. Products are in `brand/catalog/studio/`; the
+rest are in `public/site/`. Before/after and case-study images remain labelled *illustrative*. Replace
+them with real job photographs when REDUX has them.
+
+**Status before delivery (19 Oct 2026):**
 
 - 360 of 469 products already have a sharp Eurobrass photo from eurobrass.in.
 - The 109 listed in §3 have only a small catalogue thumbnail.
